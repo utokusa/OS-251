@@ -2,7 +2,10 @@
 
 <JUCERPROJECT id="iDRS5w" name="OS-251" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="Onsen Audio" version="0.0.1">
+              companyName="Onsen Audio" version="0.0.1" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginManufacturerCode="htMi" pluginAUMainType="'aumu'" pluginVST3Category="Instrument"
+              pluginVSTCategory="kPlugCategSynth">
   <MAINGROUP id="NH6Z2v" name="OS-251">
     <GROUP id="{39F06B4C-446D-F36A-0E9D-1599C4C66CE1}" name="Source">
       <FILE id="XpCZ7q" name="PluginProcessor.cpp" compile="1" resource="0"
