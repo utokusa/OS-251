@@ -23,6 +23,64 @@ struct SineWaveSound   : public juce::SynthesiserSound
 };
 
 //==============================================================================
+// Synthesizer parameters
+// This struct is singleton.
+struct SynthParams
+{
+    std::atomic<float>* release;
+    
+    static SynthParams& getInstance()
+    {
+        static SynthParams instance;
+        return instance;
+    }
+private:
+    SynthParams() {}
+};
+
+//==============================================================================
+class Envelope
+{
+    using flnum = double;
+public:
+    Envelope ()
+    : on(false),
+    sp(SynthParams::getInstance()),
+    level(0.0)
+    {
+    }
+    
+    void noteOn ()
+    {
+        on = true;
+        level = MAX_LEVEL;
+    }
+    
+    void noteOFf ()
+    {
+        on = false;
+    }
+    
+    void update ()
+    {
+        if (on)
+            return;
+        level = level * (*sp.release);
+    }
+    
+    flnum getLevel () const
+    {
+        return level;
+    }
+    
+private:
+    static constexpr double MAX_LEVEL = 1.0;
+    bool on;
+    SynthParams& sp;
+    flnum level;
+};
+
+//==============================================================================
 struct SineWaveVoice   : public juce::SynthesiserVoice
 {
     SineWaveVoice() {}
@@ -37,7 +95,7 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
-        tailOff = 0.0;
+        env.noteOn();
 
         auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber);
         auto cyclesPerSample = cyclesPerSecond / getSampleRate();
@@ -49,8 +107,7 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
     {
         if (allowTailOff)
         {
-            if (tailOff == 0.0)
-                tailOff = 1.0;
+            env.noteOFf();
         }
         else
         {
@@ -66,47 +123,29 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
     {
         if (angleDelta != 0.0)
         {
-            if (tailOff > 0.0) // [7]
+            while (--numSamples >= 0)
             {
-                while (--numSamples >= 0)
+                auto currentSample = (float) (std::sin (currentAngle) * level * env.getLevel());
+
+                for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
+                    outputBuffer.addSample (i, startSample, currentSample);
+
+                currentAngle += angleDelta;
+                ++startSample;
+                env.update();
+                if (env.getLevel() < 0.005)
                 {
-                    auto currentSample = (float) (std::sin (currentAngle) * level * tailOff);
-
-                    for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                        outputBuffer.addSample (i, startSample, currentSample);
-
-                    currentAngle += angleDelta;
-                    ++startSample;
-
-                    tailOff *= 0.99; // [8]
-
-                    if (tailOff <= 0.005)
-                    {
-                        clearCurrentNote(); // [9]
-
-                        angleDelta = 0.0;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                while (--numSamples >= 0) // [6]
-                {
-                    auto currentSample = (float) (std::sin (currentAngle) * level);
-
-                    for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                        outputBuffer.addSample (i, startSample, currentSample);
-
-                    currentAngle += angleDelta;
-                    ++startSample;
+                    clearCurrentNote();
+                    angleDelta = 0.0;
+                    break;
                 }
             }
         }
     }
 
 private:
-    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0, tailOff = 0.0;
+    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    Envelope env;
 };
 
 //==============================================================================

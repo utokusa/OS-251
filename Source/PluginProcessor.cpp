@@ -19,9 +19,26 @@ Os251AudioProcessor::Os251AudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
 #endif
+parameters(*this, nullptr),
+synthAudioSource()
 {
+    SynthParams& synthParams(SynthParams::getInstance());
+    
+    // Parameter value convertion from [0, 1.0] float to physical quantity juce::String.
+    auto numDecimal = 4;
+    auto valueToTextFunction = [=](float value) { return juce::String(value, numDecimal); };
+    
+    // Set audio parameters
+    using Parameter = juce::AudioProcessorValueTreeState::Parameter;
+    juce::NormalisableRange<float> nrange (0.0f, 1.0f,  0.0f);
+    parameters.createAndAddParameter(std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f
+                                                                  ,  valueToTextFunction,  nullptr, true));
+    synthParams.release = parameters.getRawParameterValue("release");
+    parameters.addParameterListener ("release", this);
+    parameters.state = juce::ValueTree(juce::Identifier("BiquadLimiter"));
+    
 }
 
 Os251AudioProcessor::~Os251AudioProcessor()
@@ -185,6 +202,11 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
+
+void Os251AudioProcessor::parameterChanged(const juce::String &parameterID, float newValue) {
+    
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..
