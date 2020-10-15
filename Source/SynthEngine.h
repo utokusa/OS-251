@@ -33,6 +33,16 @@ public:
         static SynthParams instance;
         return instance;
     }
+    float getAttack() const
+    {
+        constexpr float minVal = 0.95;
+        constexpr float maxVal = 0.9999;
+        return minVal + (*attack) * (maxVal - minVal);
+    }
+    void setAttackPtr(const std::atomic<float>* _attack)
+    {
+        attack = _attack;
+    }
     float getRelease() const
     {
         constexpr float minVal = 0.9995;
@@ -44,6 +54,7 @@ public:
         release = _release;
     }
 private:
+    const std::atomic<float>* attack;
     const std::atomic<float>* release;
     SynthParams() {}
 };
@@ -63,7 +74,8 @@ public:
     void noteOn ()
     {
         on = true;
-        level = MAX_LEVEL;
+        constexpr flnum levelNoteStart = MAX_LEVEL * 0.01;
+            level = levelNoteStart;
     }
     
     void noteOFf ()
@@ -74,9 +86,16 @@ public:
     void update ()
     {
         if (on)
-            return;
-        // Value of sp.getRelease() is around 0.99
-        level = level * sp.getRelease();
+        {
+            constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
+            // Value of sp.getAttack() is around 0.99
+            level = level < valFinishAttack ? level * 1.0 / sp.getAttack() : MAX_LEVEL;
+        }
+        else
+        {
+            // Value of sp.getRelease() is around 0.99
+            level = level * sp.getRelease();
+        }
     }
     
     flnum getLevel () const
@@ -85,7 +104,7 @@ public:
     }
     
 private:
-    static constexpr double MAX_LEVEL = 1.0;
+    static constexpr flnum MAX_LEVEL = 1.0;
     bool on;
     SynthParams& sp;
     flnum level;

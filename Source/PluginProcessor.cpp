@@ -33,11 +33,18 @@ synthAudioSource()
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f,  0.01f);
-    parameters.createAndAddParameter(std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f
-                                                                  ,  valueToTextFunction,  nullptr, true));
+    // Attack
+    parameters.createAndAddParameter(std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f,
+                                                                  valueToTextFunction,  nullptr, true));
+    synthParams.setAttackPtr(parameters.getRawParameterValue("attack"));
+    parameters.addParameterListener ("attack", this);
+    // Release
+    parameters.createAndAddParameter(std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f,
+                                                                  valueToTextFunction,  nullptr, true));
     synthParams.setReleasePtr(parameters.getRawParameterValue("release"));
     parameters.addParameterListener ("release", this);
-    parameters.state = juce::ValueTree(juce::Identifier("BiquadLimiter"));
+    
+    parameters.state = juce::ValueTree(juce::Identifier("OS-251"));
     
 }
 
