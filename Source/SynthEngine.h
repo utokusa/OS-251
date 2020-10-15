@@ -24,17 +24,27 @@ struct SineWaveSound   : public juce::SynthesiserSound
 
 //==============================================================================
 // Synthesizer parameters
-// This struct is singleton.
-struct SynthParams
+// This class is singleton.
+class SynthParams
 {
-    std::atomic<float>* release;
-    
+public:
     static SynthParams& getInstance()
     {
         static SynthParams instance;
         return instance;
     }
+    float getRelease() const
+    {
+        constexpr float minVal = 0.9995;
+        constexpr float maxVal = 0.99999;
+        return minVal + (*release) * (maxVal - minVal);
+    }
+    void setReleasePtr(const std::atomic<float>* _release)
+    {
+        release = _release;
+    }
 private:
+    const std::atomic<float>* release;
     SynthParams() {}
 };
 
@@ -65,7 +75,8 @@ public:
     {
         if (on)
             return;
-        level = level * (*sp.release);
+        // Value of sp.getRelease() is around 0.99
+        level = level * sp.getRelease();
     }
     
     flnum getLevel () const
