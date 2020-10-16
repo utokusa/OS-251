@@ -115,10 +115,10 @@ public:
         {
             constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
             // Value of sp.getAttack() is around 0.99
-            level = level < valFinishAttack ? level * 1.0 / sp.getAttack() : MAX_LEVEL;
+            level = level * MAX_LEVEL / sp.getAttack();
             if (level >=  valFinishAttack)
             {
-                level = 1.0;
+                level = MAX_LEVEL;
                 state = State::DECAY;
             }
             
