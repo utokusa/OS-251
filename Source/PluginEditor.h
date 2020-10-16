@@ -17,7 +17,7 @@
 class Os251AudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    Os251AudioProcessorEditor (Os251AudioProcessor&);
+    Os251AudioProcessorEditor (Os251AudioProcessor&, juce::AudioProcessorValueTreeState&);
     ~Os251AudioProcessorEditor() override;
 
     //==============================================================================
@@ -28,6 +28,18 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     Os251AudioProcessor& audioProcessor;
+    
+    juce::AudioProcessorValueTreeState& parameters;
+    
+    juce::Slider sAttack;
+    juce::Slider sRelease;
+    
+    juce::Label sAttackLabel;
+    juce::Label sReleaseLabel;
+    
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<SliderAttachment> sAttackAttachment;
+    std::unique_ptr<SliderAttachment> sReleaseAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };

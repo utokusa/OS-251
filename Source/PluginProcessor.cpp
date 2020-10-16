@@ -193,7 +193,7 @@ bool Os251AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
-    return new Os251AudioProcessorEditor (*this);
+    return new Os251AudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================
