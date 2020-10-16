@@ -33,11 +33,26 @@ synthAudioSource()
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f,  0.01f);
+    
     // Attack
     parameters.createAndAddParameter(std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f,
                                                                   valueToTextFunction,  nullptr, true));
     synthParams.setAttackPtr(parameters.getRawParameterValue("attack"));
     parameters.addParameterListener ("attack", this);
+    
+    // Decay
+    parameters.createAndAddParameter(std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0f,
+                                                                  valueToTextFunction,  nullptr, true));
+    synthParams.setDecayPtr(parameters.getRawParameterValue("decay"));
+    parameters.addParameterListener ("decay", this);
+    
+    // Sustain
+    parameters.createAndAddParameter(std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0f,
+                                                                  valueToTextFunction,  nullptr, true));
+    synthParams.setSustainPtr(parameters.getRawParameterValue("sustain"));
+    parameters.addParameterListener ("sustain", this);
+    
+    
     // Release
     parameters.createAndAddParameter(std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f,
                                                                   valueToTextFunction,  nullptr, true));

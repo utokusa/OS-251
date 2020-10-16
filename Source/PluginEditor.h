@@ -32,13 +32,19 @@ private:
     juce::AudioProcessorValueTreeState& parameters;
     
     juce::Slider sAttack;
+    juce::Slider sDecay;
+    juce::Slider sSustain;
     juce::Slider sRelease;
     
     juce::Label sAttackLabel;
+    juce::Label sDecayLabel;
+    juce::Label sSustainLabel;
     juce::Label sReleaseLabel;
     
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     std::unique_ptr<SliderAttachment> sAttackAttachment;
+    std::unique_ptr<SliderAttachment> sDecayAttachment;
+    std::unique_ptr<SliderAttachment> sSustainAttachment;
     std::unique_ptr<SliderAttachment> sReleaseAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)

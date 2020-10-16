@@ -27,6 +27,22 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     sAttackAttachment.reset (new SliderAttachment (parameters, "attack", sAttack));
     addAndMakeVisible (sAttackLabel);
     
+    // Initialize decay slider (knob).
+    sDecay.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sDecay.setTextBoxIsEditable(false);
+    sDecayLabel.setText (parameters.getParameter ("decay")->name, juce::dontSendNotification);
+    addAndMakeVisible (sDecay);
+    sDecayAttachment.reset (new SliderAttachment (parameters, "decay", sDecay));
+    addAndMakeVisible (sDecayLabel);
+    
+    // Initialize sustain slider (knob).
+    sSustain.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sSustain.setTextBoxIsEditable(false);
+    sSustainLabel.setText (parameters.getParameter ("sustain")->name, juce::dontSendNotification);
+    addAndMakeVisible (sSustain);
+    sSustainAttachment.reset (new SliderAttachment (parameters, "sustain", sSustain));
+    addAndMakeVisible (sSustainLabel);
+    
     // Initialize release slider (knob).
     sRelease.setSliderStyle (juce::Slider::RotaryVerticalDrag);
     sRelease.setTextBoxIsEditable(false);
@@ -48,7 +64,7 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Make sure the build: 1", getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText ("Make sure the build: 2", getLocalBounds(), juce::Justification::bottomRight, 1);
 }
 
 void Os251AudioProcessorEditor::resized()
@@ -57,10 +73,19 @@ void Os251AudioProcessorEditor::resized()
     // subcomponents in your editor..
     sAttack.setBounds (0, 0, 150, 100);
     sAttack.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sAttackLabel.setBounds (0,60,100,30);
+    sAttackLabel.setBounds (0, 60, 100, 30);
     
-    sRelease.setBounds (200, 0, 150, 100);
+    sDecay.setBounds (200, 0, 150, 100);
+    sDecay.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
+    sDecayLabel.setBounds (200, 60, 100, 30);
+    
+    constexpr int deltaY = 150;
+    sSustain.setBounds (0, deltaY, 150, 100);
+    sSustain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
+    sSustainLabel.setBounds (0,60 + deltaY, 100, 30);
+    
+    sRelease.setBounds (200, deltaY, 150, 100);
     sRelease.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sReleaseLabel.setBounds (200,60,100,30);
+    sReleaseLabel.setBounds (200, 60 + deltaY, 100, 30);
     
 }

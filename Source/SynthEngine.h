@@ -43,6 +43,24 @@ public:
     {
         attack = _attack;
     }
+    float getDecay() const
+    {
+        constexpr float minVal = 0.9995;
+        constexpr float maxVal = 0.99999;
+        return minVal + (*decay) * (maxVal - minVal);
+    }
+    void setDecayPtr(const std::atomic<float>* _decay)
+    {
+        decay = _decay;
+    }
+    float getSustain() const
+    {
+        return *sustain;
+    }
+    void setSustainPtr(const std::atomic<float>* _sustain)
+    {
+        sustain = _sustain;
+    }
     float getRelease() const
     {
         constexpr float minVal = 0.9995;
@@ -55,6 +73,8 @@ public:
     }
 private:
     const std::atomic<float>* attack;
+    const std::atomic<float>* decay;
+    const std::atomic<float>* sustain;
     const std::atomic<float>* release;
     SynthParams() {}
 };
@@ -63,9 +83,15 @@ private:
 class Envelope
 {
     using flnum = double;
+    
+    enum class State
+    {
+      OFF, ATTACK, DECAY, SUSTAIN, RELEASE
+    };
+    
 public:
     Envelope ()
-    : on(false),
+    : state(State::OFF),
     sp(SynthParams::getInstance()),
     level(0.0)
     {
@@ -73,28 +99,54 @@ public:
     
     void noteOn ()
     {
-        on = true;
+        state = State::ATTACK;
         constexpr flnum levelNoteStart = MAX_LEVEL * 0.01;
             level = levelNoteStart;
     }
     
     void noteOFf ()
     {
-        on = false;
+        state = State::RELEASE;
     }
     
     void update ()
     {
-        if (on)
+        if (state == State::ATTACK)
         {
             constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
             // Value of sp.getAttack() is around 0.99
             level = level < valFinishAttack ? level * 1.0 / sp.getAttack() : MAX_LEVEL;
+            if (level >=  valFinishAttack)
+            {
+                level = 1.0;
+                state = State::DECAY;
+            }
+            
         }
-        else
+        else if (state == State::DECAY)
+        {
+            // Value of sp.getDecay() is around 0.99
+            level = level * sp.getDecay();
+            flnum sustain = sp.getSustain();
+            if (level <= sustain)
+            {
+                level = sustain;
+                state = State::SUSTAIN;
+            }
+            
+        }
+        else if (state == State::SUSTAIN)
+        {
+            // Nothing to do here
+        }
+        else if (state == State::RELEASE)
         {
             // Value of sp.getRelease() is around 0.99
             level = level * sp.getRelease();
+        }
+        else
+        {
+            assert(false && "Unknow state of envelope");
         }
     }
     
@@ -105,7 +157,7 @@ public:
     
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
-    bool on;
+    State state;
     SynthParams& sp;
     flnum level;
 };
