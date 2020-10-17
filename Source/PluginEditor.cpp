@@ -62,9 +62,13 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Make sure the build: 2", getLocalBounds(), juce::Justification::bottomRight, 1);
+    // For debugging
+#ifdef DEBUG
+     g.setColour (juce::Colours::white);
+     g.setFont (15.0f);
+     g.drawFittedText ("Build: " __DATE__ " " __TIME__, getLocalBounds(), juce::Justification::bottomRight, 1);
+#endif
+    
 }
 
 void Os251AudioProcessorEditor::resized()
