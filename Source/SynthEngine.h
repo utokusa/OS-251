@@ -91,7 +91,8 @@ class Envelope
     
 public:
     Envelope ()
-    : state(State::OFF),
+    : sampleRate(DEFAULT_SAMPLE_RATE),
+    state(State::OFF),
     sp(SynthParams::getInstance()),
     level(0.0)
     {
@@ -115,7 +116,7 @@ public:
         {
             constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
             // Value of sp.getAttack() is around 0.99
-            level = level * MAX_LEVEL / sp.getAttack();
+            level = level * MAX_LEVEL / adjust(sp.getAttack());
             if (level >=  valFinishAttack)
             {
                 level = MAX_LEVEL;
@@ -126,7 +127,7 @@ public:
         else if (state == State::DECAY)
         {
             // Value of sp.getDecay() is around 0.99
-            level = level * sp.getDecay();
+            level = level * adjust(sp.getDecay());
             flnum sustain = sp.getSustain();
             if (level <= sustain)
             {
@@ -142,7 +143,7 @@ public:
         else if (state == State::RELEASE)
         {
             // Value of sp.getRelease() is around 0.99
-            level = level * sp.getRelease();
+            level = level * adjust(sp.getRelease());
         }
         else
         {
@@ -155,11 +156,33 @@ public:
         return level;
     }
     
+    void setCurrentPlaybackSampleRate (const double newRate)
+    {
+        sampleRate = newRate;
+    }
+    
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
+    static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
+    static constexpr flnum ESPSILON = std::numeric_limits<flnum>::epsilon();
+    
+    flnum sampleRate;
     State state;
     SynthParams& sp;
     flnum level;
+    
+    // Adust parameter value like attack, decay or release according to the
+    // sampling rate
+    flnum adjust (const flnum val)
+    {
+        // If no need to adjust
+        if (std::abs(sampleRate - DEFAULT_SAMPLE_RATE) <= ESPSILON)
+        {
+            return val;
+        }
+        flnum amount = std::pow(val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
+        return val * amount;
+    }
 };
 
 //==============================================================================
@@ -170,6 +193,12 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
     bool canPlaySound (juce::SynthesiserSound* sound) override
     {
         return dynamic_cast<SineWaveSound*> (sound) != nullptr;
+    }
+    
+    void setCurrentPlaybackSampleRate (const double newRate) override
+    {
+        juce::SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
+        env.setCurrentPlaybackSampleRate(newRate);
     }
 
     void startNote (int midiNoteNumber, float velocity,
@@ -250,7 +279,7 @@ public:
     void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
-        midiCollector.reset (sampleRate); // [10]
+        midiCollector.reset (sampleRate);
     }
 
     void releaseResources() {}
