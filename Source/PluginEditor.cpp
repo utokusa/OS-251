@@ -17,7 +17,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (400, 500);
 
     // Initialize attack slider (knob).
     sAttack.setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -50,6 +50,22 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     addAndMakeVisible (sRelease);
     sReleaseAttachment = std::make_unique<SliderAttachment> (parameters, "release", sRelease);
     addAndMakeVisible (sReleaseLabel);
+
+    // Initialize filter frequency slider (knob).
+    sFrequency.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sFrequency.setTextBoxIsEditable (false);
+    sFrequencyLabel.setText (parameters.getParameter ("frequency")->name, juce::dontSendNotification);
+    addAndMakeVisible (sFrequency);
+    sFrequencyAttachment = std::make_unique<SliderAttachment> (parameters, "frequency", sFrequency);
+    addAndMakeVisible (sFrequencyLabel);
+
+    // Initializer filter resonance slider (knob).
+    sResonance.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sResonance.setTextBoxIsEditable (false);
+    sResonanceLabel.setText (parameters.getParameter ("resonance")->name, juce::dontSendNotification);
+    addAndMakeVisible (sResonance);
+    sResonanceAttachment = std::make_unique<SliderAttachment> (parameters, "resonance", sResonance);
+    addAndMakeVisible (sResonanceLabel);
 }
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor() = default;
@@ -72,20 +88,40 @@ void Os251AudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    sAttack.setBounds (0, 0, 150, 100);
-    sAttack.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sAttackLabel.setBounds (0, 60, 100, 30);
 
-    sDecay.setBounds (200, 0, 150, 100);
-    sDecay.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sDecayLabel.setBounds (200, 60, 100, 30);
-
+    // Lay out parameters
+    constexpr int deltaX = 200;
     constexpr int deltaY = 150;
-    sSustain.setBounds (0, deltaY, 150, 100);
-    sSustain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sSustainLabel.setBounds (0, 60 + deltaY, 100, 30);
+    constexpr int sliderW = 150;
+    constexpr int sliderH = 100;
+    constexpr int sliderTxtW = 80;
+    constexpr int sliderTxtH = 20;
+    // {label's Y} = {slider's Y} + {this value}
+    constexpr int sliderLabelDistY = 58;
+    constexpr int labelW = 100;
+    constexpr int labelH = 30;
 
-    sRelease.setBounds (200, deltaY, 150, 100);
-    sRelease.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sReleaseLabel.setBounds (200, 60 + deltaY, 100, 30);
+    sAttack.setBounds (0, 0, sliderW, sliderH);
+    sAttack.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sAttackLabel.setBounds (0, sliderLabelDistY, labelW, labelH);
+
+    sDecay.setBounds (deltaX, 0, sliderW, sliderH);
+    sDecay.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sDecayLabel.setBounds (deltaX, sliderLabelDistY, labelW, labelH);
+
+    sSustain.setBounds (0, deltaY, sliderW, sliderH);
+    sSustain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sSustainLabel.setBounds (0, sliderLabelDistY + deltaY, labelW, labelH);
+
+    sRelease.setBounds (deltaX, deltaY, sliderW, sliderH);
+    sRelease.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sReleaseLabel.setBounds (deltaX, sliderLabelDistY + deltaY, labelW, labelH);
+
+    sFrequency.setBounds (0, deltaY * 2, sliderW, sliderH);
+    sFrequency.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sFrequencyLabel.setBounds (0, sliderLabelDistY + deltaY * 2, labelW, labelH);
+
+    sResonance.setBounds (deltaX, deltaY * 2, sliderW, sliderH);
+    sResonance.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sResonanceLabel.setBounds (deltaX, sliderLabelDistY + deltaY * 2, labelW, labelH);
 }

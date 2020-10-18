@@ -22,14 +22,27 @@ Os251AudioProcessor::Os251AudioProcessor()
                           ),
 #endif
       parameters (*this, nullptr),
-      synthAudioSource()
+      synthAudioSource (maxNumChannels)
 {
     SynthParams& synthParams (SynthParams::getInstance());
 
+    // ---
     // Parameter value conversion from [0, 1.0] float to physical quantity juce::String.
-    auto numDecimal = 4;
-    auto valueToTextFunction = [=] (float value) { return juce::String (value, numDecimal); };
+    constexpr int numDecimal = 4;
+    auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
 
+    // Frequency
+    constexpr float lowestFreqVal = SynthParams::lowestFreqVal();
+    constexpr float freqBaseNumber = SynthParams::freqBaseNumber();
+    auto valueToFreqFunction = [] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
+
+    // Resonance
+    constexpr float lowestResVal = SynthParams::lowestResVal();
+    constexpr float resBaseNumber = SynthParams::resBaseNumber();
+    auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
+    // ---
+
+    // ---
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
@@ -53,6 +66,17 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
     synthParams.setReleasePtr (parameters.getRawParameterValue ("release"));
     parameters.addParameterListener ("release", this);
+
+    // Filter cutoff frequency
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0f, valueToFreqFunction, nullptr, true));
+    synthParams.setFrequencyPtr (parameters.getRawParameterValue ("frequency"));
+    parameters.addParameterListener ("frequency", this);
+
+    // Filter resonance
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0f, valueToResFunction, nullptr, true));
+    synthParams.setResonancePtr (parameters.getRawParameterValue ("resonance"));
+    parameters.addParameterListener ("resonance", this);
+    // ---
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 }

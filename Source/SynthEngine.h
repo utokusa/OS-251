@@ -70,12 +70,53 @@ public:
     {
         release = _release;
     }
+    float getFrequency() const
+    {
+        return lowestFreqVal() * pow (freqBaseNumber(), *frequency);
+    }
+    void setFrequencyPtr (const std::atomic<float>* _frequency)
+    {
+        frequency = _frequency;
+    }
+    float getResonance() const
+    {
+        return lowestResVal() * pow (resBaseNumber(), *resonance);
+    }
+    void setResonancePtr (const std::atomic<float>* _resonance)
+    {
+        resonance = _resonance;
+    }
+
+    // ---
+    // Parameter converting consts
+    // Frequency
+    static constexpr float lowestFreqVal()
+    {
+        return 20.0f;
+    }
+    static constexpr float freqBaseNumber()
+    {
+        return 1000.0f;
+    }
+    // Resonance
+    static constexpr float lowestResVal()
+    {
+        return 0.2f;
+    }
+    static constexpr float resBaseNumber()
+    {
+        return 100.0;
+    }
 
 private:
+    // plugin parameters
     const std::atomic<float>* attack {};
     const std::atomic<float>* decay {};
     const std::atomic<float>* sustain {};
     const std::atomic<float>* release {};
+    const std::atomic<float>* frequency {};
+    const std::atomic<float>* resonance {};
+
     SynthParams() = default;
 };
 
@@ -95,9 +136,9 @@ class Envelope
 
 public:
     Envelope()
-        : sampleRate (DEFAULT_SAMPLE_RATE),
+        : sp (SynthParams::getInstance()),
+          sampleRate (DEFAULT_SAMPLE_RATE),
           state (State::OFF),
-          sp (SynthParams::getInstance()),
           level (0.0)
     {
     }
@@ -168,10 +209,10 @@ private:
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
     static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 
-    flnum sampleRate;
-    State state;
     SynthParams& sp;
+    flnum sampleRate;
 
+    State state;
     flnum level;
 
     // Adjust parameter value like attack, decay or release according to the
@@ -186,6 +227,82 @@ private:
         flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
         return val * amount;
     }
+};
+
+//==============================================================================
+class Filter
+{
+    using flnum = double;
+    struct FilterBuffer
+    {
+    public:
+        FilterBuffer() : in1 (0.0f), in2 (0.0f), out1 (0.0f), out2 (0.0f) {}
+        ~FilterBuffer() = default;
+        ;
+        float in1, in2;
+        float out1, out2;
+    };
+
+public:
+    explicit Filter (int _numChannels)
+        : sp (SynthParams::getInstance()),
+          sampleRate (DEFAULT_SAMPLE_RATE),
+          numChannels (_numChannels),
+          filterBuffers (numChannels)
+    {
+    }
+
+    void process (juce::AudioBuffer<float>& buffer)
+    {
+        // Set biquad parameter coefficients
+        // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
+        flnum omega0 = 2.0f * 3.14159265f * sp.getFrequency() / sampleRate;
+        flnum sinw0 = std::sin (omega0);
+        flnum cosw0 = std::cos (omega0);
+        // sp.getResonance() stands for "Q".
+        flnum alpha = sinw0 / 2.0 / sp.getResonance();
+        flnum a0 = 1.0 + alpha;
+        flnum a1 = -2.0 * cosw0;
+        flnum a2 = 1.0 - alpha;
+        flnum b0 = (1 - cosw0) / 2.0;
+        flnum b1 = 1 - cosw0;
+        flnum b2 = (1 - cosw0) / 2.0;
+
+        // Calculate
+        int numInputChannels = buffer.getNumChannels();
+        int bufferSize = buffer.getNumSamples();
+        for (int channel = 0; channel < std::min (numChannels, numInputChannels); channel++)
+        {
+            FilterBuffer& fb = filterBuffers[channel];
+            float* bufferPtr = buffer.getWritePointer (channel);
+            for (int i = 0; i < bufferSize; i++)
+            {
+                flnum out0 = b0 / a0 * bufferPtr[i] + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
+                             - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
+                fb.in2 = fb.in1;
+                fb.in1 = bufferPtr[i];
+
+                fb.out2 = fb.out1;
+                fb.out1 = out0;
+
+                bufferPtr[i] = out0;
+            }
+        }
+    }
+
+    void setCurrentPlaybackSampleRate (double _sampleRate)
+    {
+        sampleRate = _sampleRate;
+    }
+
+private:
+    static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
+
+    SynthParams& sp;
+    flnum sampleRate;
+    int numChannels;
+    // The length of this vector equals to max number of the channels;
+    std::vector<FilterBuffer> filterBuffers;
 };
 
 //==============================================================================
@@ -265,7 +382,8 @@ private:
 class SynthAudioSource
 {
 public:
-    SynthAudioSource()
+    explicit SynthAudioSource (int numChannels)
+        : filter (numChannels)
     {
         for (auto i = 0; i < 4; ++i)
             synth.addVoice (new SineWaveVoice());
@@ -281,6 +399,7 @@ public:
     void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
+        filter.setCurrentPlaybackSampleRate (sampleRate);
         midiCollector.reset (sampleRate);
     }
 
@@ -289,6 +408,7 @@ public:
     void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
+        filter.process (outputAudio);
     }
 
     juce::MidiMessageCollector* getMidiCollector()
@@ -298,5 +418,6 @@ public:
 
 private:
     juce::Synthesiser synth;
+    Filter filter;
     juce::MidiMessageCollector midiCollector;
 };
