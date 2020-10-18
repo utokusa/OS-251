@@ -26,7 +26,7 @@ synthAudioSource()
 {
     SynthParams& synthParams(SynthParams::getInstance());
     
-    // Parameter value convertion from [0, 1.0] float to physical quantity juce::String.
+    // Parameter value conversion from [0, 1.0] float to physical quantity juce::String.
     auto numDecimal = 4;
     auto valueToTextFunction = [=](float value) { return juce::String(value, numDecimal); };
     
@@ -64,8 +64,7 @@ synthAudioSource()
 }
 
 Os251AudioProcessor::~Os251AudioProcessor()
-{
-}
+= default;
 
 //==============================================================================
 const juce::String Os251AudioProcessor::getName() const
@@ -191,7 +190,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        __unused auto* channelData = buffer.getWritePointer (channel);
         
         // ..do something to the data...
         buffer.clear(channel, 0, buffer.getNumSamples());

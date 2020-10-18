@@ -24,7 +24,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     sAttack.setTextBoxIsEditable(false);
     sAttackLabel.setText (parameters.getParameter ("attack")->name, juce::dontSendNotification);
     addAndMakeVisible (sAttack);
-    sAttackAttachment.reset (new SliderAttachment (parameters, "attack", sAttack));
+    sAttackAttachment = std::make_unique<SliderAttachment> (parameters, "attack", sAttack);
     addAndMakeVisible (sAttackLabel);
     
     // Initialize decay slider (knob).
@@ -32,7 +32,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     sDecay.setTextBoxIsEditable(false);
     sDecayLabel.setText (parameters.getParameter ("decay")->name, juce::dontSendNotification);
     addAndMakeVisible (sDecay);
-    sDecayAttachment.reset (new SliderAttachment (parameters, "decay", sDecay));
+    sDecayAttachment = std::make_unique<SliderAttachment> (parameters, "decay", sDecay);
     addAndMakeVisible (sDecayLabel);
     
     // Initialize sustain slider (knob).
@@ -40,7 +40,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     sSustain.setTextBoxIsEditable(false);
     sSustainLabel.setText (parameters.getParameter ("sustain")->name, juce::dontSendNotification);
     addAndMakeVisible (sSustain);
-    sSustainAttachment.reset (new SliderAttachment (parameters, "sustain", sSustain));
+    sSustainAttachment = std::make_unique<SliderAttachment> (parameters, "sustain", sSustain);
     addAndMakeVisible (sSustainLabel);
     
     // Initialize release slider (knob).
@@ -48,13 +48,12 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     sRelease.setTextBoxIsEditable(false);
     sReleaseLabel.setText (parameters.getParameter ("release")->name, juce::dontSendNotification);
     addAndMakeVisible (sRelease);
-    sReleaseAttachment.reset (new SliderAttachment (parameters, "release", sRelease));
+    sReleaseAttachment = std::make_unique<SliderAttachment> (parameters, "release", sRelease);
     addAndMakeVisible (sReleaseLabel);
 }
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
-{
-}
+= default;
 
 //==============================================================================
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)

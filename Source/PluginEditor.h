@@ -27,7 +27,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    Os251AudioProcessor& audioProcessor;
+    __unused Os251AudioProcessor& audioProcessor;
     
     juce::AudioProcessorValueTreeState& parameters;
     

@@ -16,7 +16,7 @@
 //==============================================================================
 struct SineWaveSound   : public juce::SynthesiserSound
 {
-    SineWaveSound() {}
+    SineWaveSound() = default;
 
     bool appliesToNote    (int) override        { return true; }
     bool appliesToChannel (int) override        { return true; }
@@ -72,11 +72,11 @@ public:
         release = _release;
     }
 private:
-    const std::atomic<float>* attack;
-    const std::atomic<float>* decay;
-    const std::atomic<float>* sustain;
-    const std::atomic<float>* release;
-    SynthParams() {}
+    const std::atomic<float>* attack{};
+    const std::atomic<float>* decay{};
+    const std::atomic<float>* sustain{};
+    const std::atomic<float>* release{};
+    SynthParams() = default;
 };
 
 //==============================================================================
@@ -174,7 +174,7 @@ private:
     
     // Adjust parameter value like attack, decay or release according to the
     // sampling rate
-    flnum adjust (const flnum val)
+    flnum adjust (const flnum val) const
     {
         // If no need to adjust
         if (std::abs(sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
@@ -189,7 +189,7 @@ private:
 //==============================================================================
 struct SineWaveVoice   : public juce::SynthesiserVoice
 {
-    SineWaveVoice() {}
+    SineWaveVoice() = default;
 
     bool canPlaySound (juce::SynthesiserSound* sound) override
     {
