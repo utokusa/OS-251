@@ -147,7 +147,7 @@ public:
         }
         else
         {
-            assert(false && "Unknow state of envelope");
+            assert(false && "Unknown state of envelope");
         }
     }
     
@@ -164,19 +164,20 @@ public:
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
-    static constexpr flnum ESPSILON = std::numeric_limits<flnum>::epsilon();
+    static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
     
     flnum sampleRate;
     State state;
     SynthParams& sp;
+
     flnum level;
     
-    // Adust parameter value like attack, decay or release according to the
+    // Adjust parameter value like attack, decay or release according to the
     // sampling rate
     flnum adjust (const flnum val)
     {
         // If no need to adjust
-        if (std::abs(sampleRate - DEFAULT_SAMPLE_RATE) <= ESPSILON)
+        if (std::abs(sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
         {
             return val;
         }
