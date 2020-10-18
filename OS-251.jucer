@@ -22,18 +22,18 @@
   <EXPORTFORMATS>
     <CLION targetFolder="Builds/CLion" clionXcodeEnabled="1">
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
       </MODULEPATHS>
     </CLION>
     <XCODE_MAC targetFolder="Builds/MacOSX">
@@ -42,18 +42,18 @@
         <CONFIGURATION isDebug="0" name="Release" targetName="OS-251"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../../JUCE-6.0.4/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
