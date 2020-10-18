@@ -20,7 +20,7 @@
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <CLION targetFolder="Builds/CLion">
+    <CLION targetFolder="Builds/CLion" clionXcodeEnabled="1">
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../../../../../JUCE-6.0.3/JUCE/modules"/>

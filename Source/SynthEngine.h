@@ -12,14 +12,13 @@
 
 #include <JuceHeader.h>
 
-
 //==============================================================================
-struct SineWaveSound   : public juce::SynthesiserSound
+struct SineWaveSound : public juce::SynthesiserSound
 {
     SineWaveSound() = default;
 
-    bool appliesToNote    (int) override        { return true; }
-    bool appliesToChannel (int) override        { return true; }
+    bool appliesToNote (int) override { return true; }
+    bool appliesToChannel (int) override { return true; }
 };
 
 //==============================================================================
@@ -39,7 +38,7 @@ public:
         constexpr float maxVal = 0.9999;
         return minVal + (*attack) * (maxVal - minVal);
     }
-    void setAttackPtr(const std::atomic<float>* _attack)
+    void setAttackPtr (const std::atomic<float>* _attack)
     {
         attack = _attack;
     }
@@ -49,7 +48,7 @@ public:
         constexpr float maxVal = 0.99999;
         return minVal + (*decay) * (maxVal - minVal);
     }
-    void setDecayPtr(const std::atomic<float>* _decay)
+    void setDecayPtr (const std::atomic<float>* _decay)
     {
         decay = _decay;
     }
@@ -57,7 +56,7 @@ public:
     {
         return *sustain;
     }
-    void setSustainPtr(const std::atomic<float>* _sustain)
+    void setSustainPtr (const std::atomic<float>* _sustain)
     {
         sustain = _sustain;
     }
@@ -67,15 +66,16 @@ public:
         constexpr float maxVal = 0.99999;
         return minVal + (*release) * (maxVal - minVal);
     }
-    void setReleasePtr(const std::atomic<float>* _release)
+    void setReleasePtr (const std::atomic<float>* _release)
     {
         release = _release;
     }
+
 private:
-    const std::atomic<float>* attack{};
-    const std::atomic<float>* decay{};
-    const std::atomic<float>* sustain{};
-    const std::atomic<float>* release{};
+    const std::atomic<float>* attack {};
+    const std::atomic<float>* decay {};
+    const std::atomic<float>* sustain {};
+    const std::atomic<float>* release {};
     SynthParams() = default;
 };
 
@@ -83,58 +83,60 @@ private:
 class Envelope
 {
     using flnum = double;
-    
+
     enum class State
     {
-      OFF, ATTACK, DECAY, SUSTAIN, RELEASE
+        OFF,
+        ATTACK,
+        DECAY,
+        SUSTAIN,
+        RELEASE
     };
-    
+
 public:
-    Envelope ()
-    : sampleRate(DEFAULT_SAMPLE_RATE),
-    state(State::OFF),
-    sp(SynthParams::getInstance()),
-    level(0.0)
+    Envelope()
+        : sampleRate (DEFAULT_SAMPLE_RATE),
+          state (State::OFF),
+          sp (SynthParams::getInstance()),
+          level (0.0)
     {
     }
-    
-    void noteOn ()
+
+    void noteOn()
     {
         state = State::ATTACK;
         constexpr flnum levelNoteStart = MAX_LEVEL * 0.01;
-            level = levelNoteStart;
+        level = levelNoteStart;
     }
-    
-    void noteOFf ()
+
+    void noteOFf()
     {
         state = State::RELEASE;
     }
-    
-    void update ()
+
+    void update()
     {
         if (state == State::ATTACK)
         {
             constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
             // Value of sp.getAttack() is around 0.99
-            level = level * MAX_LEVEL / adjust(sp.getAttack());
-            if (level >=  valFinishAttack)
+            level = level * MAX_LEVEL / adjust (sp.getAttack());
+            if (level >= valFinishAttack)
             {
                 level = MAX_LEVEL;
                 state = State::DECAY;
             }
-            
         }
         else if (state == State::DECAY)
         {
             // Value of sp.getDecay() is around 0.99
-            level = level * adjust(sp.getDecay());
+            level = level * adjust (sp.getDecay());
             flnum sustain = sp.getSustain();
             if (level <= sustain)
             {
                 level = sustain;
                 state = State::SUSTAIN;
             }
-            
         }
         else if (state == State::SUSTAIN)
         {
@@ -143,51 +145,51 @@ public:
         else if (state == State::RELEASE)
         {
             // Value of sp.getRelease() is around 0.99
-            level = level * adjust(sp.getRelease());
+            level = level * adjust (sp.getRelease());
         }
         else
         {
-            assert(false && "Unknown state of envelope");
+            assert (false && "Unknown state of envelope");
         }
     }
-    
-    flnum getLevel () const
+
+    flnum getLevel() const
     {
         return level;
     }
-    
+
     void setCurrentPlaybackSampleRate (const double newRate)
     {
         sampleRate = newRate;
     }
-    
+
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
     static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
-    
+
     flnum sampleRate;
     State state;
     SynthParams& sp;
 
     flnum level;
-    
+
     // Adjust parameter value like attack, decay or release according to the
     // sampling rate
     flnum adjust (const flnum val) const
     {
         // If no need to adjust
-        if (std::abs(sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
+        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
         {
             return val;
         }
-        flnum amount = std::pow(val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
+        flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
         return val * amount;
     }
 };
 
 //==============================================================================
-struct SineWaveVoice   : public juce::SynthesiserVoice
+struct SineWaveVoice : public juce::SynthesiserVoice
 {
     SineWaveVoice() = default;
 
@@ -195,15 +197,14 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
     {
         return dynamic_cast<SineWaveSound*> (sound) != nullptr;
     }
-    
+
     void setCurrentPlaybackSampleRate (const double newRate) override
     {
-        juce::SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
-        env.setCurrentPlaybackSampleRate(newRate);
+        juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
+        env.setCurrentPlaybackSampleRate (newRate);
     }
 
-    void startNote (int midiNoteNumber, float velocity,
-                    juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
+    void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -228,7 +229,7 @@ struct SineWaveVoice   : public juce::SynthesiserVoice
         }
     }
 
-    void pitchWheelMoved (int) override      {}
+    void pitchWheelMoved (int) override {}
     void controllerMoved (int, int) override {}
 
     void renderNextBlock (juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
@@ -264,7 +265,7 @@ private:
 class SynthAudioSource
 {
 public:
-    SynthAudioSource ()
+    SynthAudioSource()
     {
         for (auto i = 0; i < 4; ++i)
             synth.addVoice (new SineWaveVoice());
@@ -284,9 +285,8 @@ public:
     }
 
     void releaseResources() {}
-    
-    void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi,
-                                       int startSample, int numSamples)
+
+    void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
     }

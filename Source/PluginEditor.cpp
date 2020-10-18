@@ -6,54 +6,53 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "PluginProcessor.h"
 
 //==============================================================================
 Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, juce::AudioProcessorValueTreeState& params)
     : AudioProcessorEditor (&p),
       audioProcessor (p),
-      parameters(params)
+      parameters (params)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
-    
+
     // Initialize attack slider (knob).
     sAttack.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sAttack.setTextBoxIsEditable(false);
+    sAttack.setTextBoxIsEditable (false);
     sAttackLabel.setText (parameters.getParameter ("attack")->name, juce::dontSendNotification);
     addAndMakeVisible (sAttack);
     sAttackAttachment = std::make_unique<SliderAttachment> (parameters, "attack", sAttack);
     addAndMakeVisible (sAttackLabel);
-    
+
     // Initialize decay slider (knob).
     sDecay.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sDecay.setTextBoxIsEditable(false);
+    sDecay.setTextBoxIsEditable (false);
     sDecayLabel.setText (parameters.getParameter ("decay")->name, juce::dontSendNotification);
     addAndMakeVisible (sDecay);
     sDecayAttachment = std::make_unique<SliderAttachment> (parameters, "decay", sDecay);
     addAndMakeVisible (sDecayLabel);
-    
+
     // Initialize sustain slider (knob).
     sSustain.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sSustain.setTextBoxIsEditable(false);
+    sSustain.setTextBoxIsEditable (false);
     sSustainLabel.setText (parameters.getParameter ("sustain")->name, juce::dontSendNotification);
     addAndMakeVisible (sSustain);
     sSustainAttachment = std::make_unique<SliderAttachment> (parameters, "sustain", sSustain);
     addAndMakeVisible (sSustainLabel);
-    
+
     // Initialize release slider (knob).
     sRelease.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sRelease.setTextBoxIsEditable(false);
+    sRelease.setTextBoxIsEditable (false);
     sReleaseLabel.setText (parameters.getParameter ("release")->name, juce::dontSendNotification);
     addAndMakeVisible (sRelease);
     sReleaseAttachment = std::make_unique<SliderAttachment> (parameters, "release", sRelease);
     addAndMakeVisible (sReleaseLabel);
 }
 
-Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
-= default;
+Os251AudioProcessorEditor::~Os251AudioProcessorEditor() = default;
 
 //==============================================================================
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)
@@ -63,11 +62,10 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 
     // For debugging
 #ifdef DEBUG
-     g.setColour (juce::Colours::white);
-     g.setFont (15.0f);
-     g.drawFittedText ("Build: " __DATE__ " " __TIME__, getLocalBounds(), juce::Justification::bottomRight, 1);
+    g.setColour (juce::Colours::white);
+    g.setFont (15.0f);
+    g.drawFittedText ("Build: " __DATE__ " " __TIME__, getLocalBounds(), juce::Justification::bottomRight, 1);
 #endif
-    
 }
 
 void Os251AudioProcessorEditor::resized()
@@ -77,18 +75,17 @@ void Os251AudioProcessorEditor::resized()
     sAttack.setBounds (0, 0, 150, 100);
     sAttack.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
     sAttackLabel.setBounds (0, 60, 100, 30);
-    
+
     sDecay.setBounds (200, 0, 150, 100);
     sDecay.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
     sDecayLabel.setBounds (200, 60, 100, 30);
-    
+
     constexpr int deltaY = 150;
     sSustain.setBounds (0, deltaY, 150, 100);
     sSustain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
-    sSustainLabel.setBounds (0,60 + deltaY, 100, 30);
-    
+    sSustainLabel.setBounds (0, 60 + deltaY, 100, 30);
+
     sRelease.setBounds (200, deltaY, 150, 100);
     sRelease.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 20);
     sReleaseLabel.setBounds (200, 60 + deltaY, 100, 30);
-    
 }

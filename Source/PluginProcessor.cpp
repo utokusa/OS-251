@@ -12,59 +12,52 @@
 //==============================================================================
 Os251AudioProcessor::Os251AudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
+    : AudioProcessor (BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+                          .withInput ("Input", juce::AudioChannelSet::stereo(), true)
 #endif
-parameters(*this, nullptr),
-synthAudioSource()
+                          .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+                          ),
+#endif
+      parameters (*this, nullptr),
+      synthAudioSource()
 {
-    SynthParams& synthParams(SynthParams::getInstance());
-    
+    SynthParams& synthParams (SynthParams::getInstance());
+
     // Parameter value conversion from [0, 1.0] float to physical quantity juce::String.
     auto numDecimal = 4;
-    auto valueToTextFunction = [=](float value) { return juce::String(value, numDecimal); };
-    
+    auto valueToTextFunction = [=] (float value) { return juce::String (value, numDecimal); };
+
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
-    juce::NormalisableRange<float> nrange (0.0f, 1.0f,  0.01f);
-    
+    juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
+
     // Attack
-    parameters.createAndAddParameter(std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f,
-                                                                  valueToTextFunction,  nullptr, true));
-    synthParams.setAttackPtr(parameters.getRawParameterValue("attack"));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    synthParams.setAttackPtr (parameters.getRawParameterValue ("attack"));
     parameters.addParameterListener ("attack", this);
-    
+
     // Decay
-    parameters.createAndAddParameter(std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0f,
-                                                                  valueToTextFunction,  nullptr, true));
-    synthParams.setDecayPtr(parameters.getRawParameterValue("decay"));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    synthParams.setDecayPtr (parameters.getRawParameterValue ("decay"));
     parameters.addParameterListener ("decay", this);
-    
+
     // Sustain
-    parameters.createAndAddParameter(std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0f,
-                                                                  valueToTextFunction,  nullptr, true));
-    synthParams.setSustainPtr(parameters.getRawParameterValue("sustain"));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    synthParams.setSustainPtr (parameters.getRawParameterValue ("sustain"));
     parameters.addParameterListener ("sustain", this);
-    
-    
+
     // Release
-    parameters.createAndAddParameter(std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f,
-                                                                  valueToTextFunction,  nullptr, true));
-    synthParams.setReleasePtr(parameters.getRawParameterValue("release"));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    synthParams.setReleasePtr (parameters.getRawParameterValue ("release"));
     parameters.addParameterListener ("release", this);
-    
-    parameters.state = juce::ValueTree(juce::Identifier("OS-251"));
-    
+
+    parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 }
 
-Os251AudioProcessor::~Os251AudioProcessor()
-= default;
+Os251AudioProcessor::~Os251AudioProcessor() = default;
 
 //==============================================================================
 const juce::String Os251AudioProcessor::getName() const
@@ -74,29 +67,29 @@ const juce::String Os251AudioProcessor::getName() const
 
 bool Os251AudioProcessor::acceptsMidi() const
 {
-   #if JucePlugin_WantsMidiInput
+#if JucePlugin_WantsMidiInput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool Os251AudioProcessor::producesMidi() const
 {
-   #if JucePlugin_ProducesMidiOutput
+#if JucePlugin_ProducesMidiOutput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool Os251AudioProcessor::isMidiEffect() const
 {
-   #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 double Os251AudioProcessor::getTailLengthSeconds() const
@@ -106,8 +99,8 @@ double Os251AudioProcessor::getTailLengthSeconds() const
 
 int Os251AudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
+        // so this should be at least 1, even if you're not really implementing programs.
 }
 
 int Os251AudioProcessor::getCurrentProgram()
@@ -146,31 +139,31 @@ void Os251AudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool Os251AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
     return true;
-  #else
+#else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
+        // This checks if the input layout matches the output layout
+#if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
+#endif
 
     return true;
-  #endif
+#endif
 }
 #endif
 
 void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     // In case we have more outputs than inputs, this code clears any output
@@ -191,12 +184,12 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         __unused auto* channelData = buffer.getWritePointer (channel);
-        
+
         // ..do something to the data...
-        buffer.clear(channel, 0, buffer.getNumSamples());
+        buffer.clear (channel, 0, buffer.getNumSamples());
     }
-    
-    synthAudioSource.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    synthAudioSource.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================
@@ -224,10 +217,9 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
     // whose contents will have been created by the getStateInformation() call.
 }
 
-void Os251AudioProcessor::parameterChanged(const juce::String &parameterID, float newValue) {
-    
+void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
+{
 }
-
 
 //==============================================================================
 // This creates new instances of the plugin..

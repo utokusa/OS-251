@@ -14,8 +14,7 @@
 //==============================================================================
 /**
 */
-class Os251AudioProcessor  : public juce::AudioProcessor
-                                , juce::AudioProcessorValueTreeState::Listener
+class Os251AudioProcessor : public juce::AudioProcessor, juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -26,9 +25,9 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-   #ifndef JucePlugin_PreferredChannelConfigurations
+#ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
-   #endif
+#endif
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
@@ -59,9 +58,9 @@ private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
     SynthAudioSource synthAudioSource;
-    
+
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessor)
 };

@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 /**
 */
-class Os251AudioProcessorEditor  : public juce::AudioProcessorEditor
+class Os251AudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     Os251AudioProcessorEditor (Os251AudioProcessor&, juce::AudioProcessorValueTreeState&);
@@ -28,19 +28,19 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     __unused Os251AudioProcessor& audioProcessor;
-    
+
     juce::AudioProcessorValueTreeState& parameters;
-    
+
     juce::Slider sAttack;
     juce::Slider sDecay;
     juce::Slider sSustain;
     juce::Slider sRelease;
-    
+
     juce::Label sAttackLabel;
     juce::Label sDecayLabel;
     juce::Label sSustainLabel;
     juce::Label sReleaseLabel;
-    
+
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     std::unique_ptr<SliderAttachment> sAttackAttachment;
     std::unique_ptr<SliderAttachment> sDecayAttachment;
