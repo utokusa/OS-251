@@ -32,13 +32,13 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
 
     // Frequency
-    constexpr float lowestFreqVal = SynthParams::lowestFreqVal();
-    constexpr float freqBaseNumber = SynthParams::freqBaseNumber();
+    constexpr float lowestFreqVal = FilterParams::lowestResVal();
+    constexpr float freqBaseNumber = FilterParams::resBaseNumber();
     auto valueToFreqFunction = [] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
 
     // Resonance
-    constexpr float lowestResVal = SynthParams::lowestResVal();
-    constexpr float resBaseNumber = SynthParams::resBaseNumber();
+    constexpr float lowestResVal = FilterParams::lowestResVal();
+    constexpr float resBaseNumber = FilterParams::resBaseNumber();
     auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
     // ---
 
@@ -47,34 +47,38 @@ Os251AudioProcessor::Os251AudioProcessor()
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
 
+    // Envelop parameters
+    EnvelopeParams* const envelopeParams = synthParams.envelope();
     // Attack
     parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
-    synthParams.setAttackPtr (parameters.getRawParameterValue ("attack"));
+    envelopeParams->setAttackPtr (parameters.getRawParameterValue ("attack"));
     parameters.addParameterListener ("attack", this);
 
     // Decay
     parameters.createAndAddParameter (std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
-    synthParams.setDecayPtr (parameters.getRawParameterValue ("decay"));
+    envelopeParams->setDecayPtr (parameters.getRawParameterValue ("decay"));
     parameters.addParameterListener ("decay", this);
 
     // Sustain
     parameters.createAndAddParameter (std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
-    synthParams.setSustainPtr (parameters.getRawParameterValue ("sustain"));
+    envelopeParams->setSustainPtr (parameters.getRawParameterValue ("sustain"));
     parameters.addParameterListener ("sustain", this);
 
     // Release
     parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
-    synthParams.setReleasePtr (parameters.getRawParameterValue ("release"));
+    envelopeParams->setReleasePtr (parameters.getRawParameterValue ("release"));
     parameters.addParameterListener ("release", this);
 
+    // Filter parameters
+    FilterParams* const filterParams = synthParams.filter();
     // Filter cutoff frequency
     parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0f, valueToFreqFunction, nullptr, true));
-    synthParams.setFrequencyPtr (parameters.getRawParameterValue ("frequency"));
+    filterParams->setFrequencyPtr (parameters.getRawParameterValue ("frequency"));
     parameters.addParameterListener ("frequency", this);
 
     // Filter resonance
     parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0f, valueToResFunction, nullptr, true));
-    synthParams.setResonancePtr (parameters.getRawParameterValue ("resonance"));
+    filterParams->setResonancePtr (parameters.getRawParameterValue ("resonance"));
     parameters.addParameterListener ("resonance", this);
     // ---
 

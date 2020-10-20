@@ -22,16 +22,9 @@ struct SineWaveSound : public juce::SynthesiserSound
 };
 
 //==============================================================================
-// Synthesizer parameters
-// This class is singleton.
-class SynthParams
+class EnvelopeParams
 {
 public:
-    static SynthParams& getInstance()
-    {
-        static SynthParams instance;
-        return instance;
-    }
     float getAttack() const
     {
         constexpr float minVal = 0.95;
@@ -70,6 +63,17 @@ public:
     {
         release = _release;
     }
+
+private:
+    const std::atomic<float>* attack {};
+    const std::atomic<float>* decay {};
+    const std::atomic<float>* sustain {};
+    const std::atomic<float>* release {};
+};
+
+class FilterParams
+{
+public:
     float getFrequency() const
     {
         return lowestFreqVal() * pow (freqBaseNumber(), *frequency);
@@ -109,14 +113,34 @@ public:
     }
 
 private:
-    // plugin parameters
-    const std::atomic<float>* attack {};
-    const std::atomic<float>* decay {};
-    const std::atomic<float>* sustain {};
-    const std::atomic<float>* release {};
     const std::atomic<float>* frequency {};
     const std::atomic<float>* resonance {};
+};
 
+// Synthesizer parameters
+// This class is singleton.
+class SynthParams
+{
+public:
+    // Singleton
+    static SynthParams& getInstance()
+    {
+        static SynthParams instance;
+        return instance;
+    }
+    EnvelopeParams* envelope()
+    {
+        return &envelopeParams;
+    }
+    FilterParams* filter()
+    {
+        return &filterParams;
+    }
+
+private:
+    // plugin parameters
+    EnvelopeParams envelopeParams;
+    FilterParams filterParams;
     SynthParams() = default;
 };
 
@@ -136,7 +160,7 @@ class Envelope
 
 public:
     Envelope()
-        : sp (SynthParams::getInstance()),
+        : p (SynthParams::getInstance().envelope()),
           sampleRate (DEFAULT_SAMPLE_RATE),
           state (State::OFF),
           level (0.0)
@@ -161,7 +185,7 @@ public:
         {
             constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
             // Value of sp.getAttack() is around 0.99
-            level = level * MAX_LEVEL / adjust (sp.getAttack());
+            level = level * MAX_LEVEL / adjust (p->getAttack());
             if (level >= valFinishAttack)
             {
                 level = MAX_LEVEL;
@@ -171,8 +195,8 @@ public:
         else if (state == State::DECAY)
         {
             // Value of sp.getDecay() is around 0.99
-            level = level * adjust (sp.getDecay());
-            flnum sustain = sp.getSustain();
+            level = level * adjust (p->getDecay());
+            flnum sustain = p->getSustain();
             if (level <= sustain)
             {
                 level = sustain;
@@ -186,7 +210,7 @@ public:
         else if (state == State::RELEASE)
         {
             // Value of sp.getRelease() is around 0.99
-            level = level * adjust (sp.getRelease());
+            level = level * adjust (p->getRelease());
         }
         else
         {
@@ -209,7 +233,7 @@ private:
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
     static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 
-    SynthParams& sp;
+    const EnvelopeParams* const p;
     flnum sampleRate;
 
     State state;
@@ -245,7 +269,7 @@ class Filter
 
 public:
     explicit Filter (int _numChannels)
-        : sp (SynthParams::getInstance()),
+        : p (SynthParams::getInstance().filter()),
           sampleRate (DEFAULT_SAMPLE_RATE),
           numChannels (_numChannels),
           filterBuffers (numChannels)
@@ -256,11 +280,11 @@ public:
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum omega0 = 2.0f * 3.14159265f * sp.getFrequency() / sampleRate;
+        flnum omega0 = 2.0f * 3.14159265f * p->getFrequency() / sampleRate;
         flnum sinw0 = std::sin (omega0);
         flnum cosw0 = std::cos (omega0);
         // sp.getResonance() stands for "Q".
-        flnum alpha = sinw0 / 2.0 / sp.getResonance();
+        flnum alpha = sinw0 / 2.0 / p->getResonance();
         flnum a0 = 1.0 + alpha;
         flnum a1 = -2.0 * cosw0;
         flnum a2 = 1.0 - alpha;
@@ -298,7 +322,7 @@ public:
 private:
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
 
-    SynthParams& sp;
+    const FilterParams* const p;
     flnum sampleRate;
     int numChannels;
     // The length of this vector equals to max number of the channels;
