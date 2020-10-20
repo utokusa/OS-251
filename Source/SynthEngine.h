@@ -123,6 +123,8 @@ class SynthParams
 {
 public:
     // Singleton
+    SynthParams (const SynthParams&) = delete;
+    SynthParams& operator=(SynthParams const&) = delete;
     static SynthParams& getInstance()
     {
         static SynthParams instance;
