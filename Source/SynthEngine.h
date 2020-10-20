@@ -379,10 +379,10 @@ private:
 };
 
 //==============================================================================
-class SynthAudioSource
+class SynthEngine
 {
 public:
-    explicit SynthAudioSource (int numChannels)
+    explicit SynthEngine (int numChannels)
         : filter (numChannels)
     {
         for (auto i = 0; i < 4; ++i)

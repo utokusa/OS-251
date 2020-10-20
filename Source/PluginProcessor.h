@@ -57,7 +57,7 @@ public:
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
-    SynthAudioSource synthAudioSource;
+    SynthEngine synthAudioSource;
     static constexpr int maxNumChannels = 2;
 
     //==============================================================================
