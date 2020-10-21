@@ -8,8 +8,10 @@
 
 #pragma once
 
+#include "ParamSlider.h"
 #include "PluginProcessor.h"
 #include <JuceHeader.h>
+#include <array>
 
 //==============================================================================
 /**
@@ -31,36 +33,15 @@ private:
 
     juce::AudioProcessorValueTreeState& parameters;
 
-    juce::Slider sSinGain;
-    juce::Slider sSquareGain;
-    juce::Slider sTriangleGain;
-    juce::Slider sAttack;
-    juce::Slider sDecay;
-    juce::Slider sSustain;
-    juce::Slider sRelease;
-    juce::Slider sFrequency;
-    juce::Slider sResonance;
-
-    juce::Label sSinGainLabel;
-    juce::Label sSquareGainLabel;
-    juce::Label sTriangleGainLabel;
-    juce::Label sAttackLabel;
-    juce::Label sDecayLabel;
-    juce::Label sSustainLabel;
-    juce::Label sReleaseLabel;
-    juce::Label sFrequencyLabel;
-    juce::Label sResonanceLabel;
-
-    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-    std::unique_ptr<SliderAttachment> sSinGainAttachment;
-    std::unique_ptr<SliderAttachment> sSquareGainAttachment;
-    std::unique_ptr<SliderAttachment> sTriangleGainAttachment;
-    std::unique_ptr<SliderAttachment> sAttackAttachment;
-    std::unique_ptr<SliderAttachment> sDecayAttachment;
-    std::unique_ptr<SliderAttachment> sSustainAttachment;
-    std::unique_ptr<SliderAttachment> sReleaseAttachment;
-    std::unique_ptr<SliderAttachment> sFrequencyAttachment;
-    std::unique_ptr<SliderAttachment> sResonanceAttachment;
+    static constexpr int numRows = 3;
+    static constexpr int numCols = 4;
+    template <class T>
+    using SliderMatrix = std::array<std::array<T, numCols>, numRows>;
+    SliderMatrix<juce::String> paramIdList { { { "sinGain", "squareGain", "triangleGain", "" },
+                                               { "attack", "decay", "sustain", "release" },
+                                               { "frequency", "resonance", "", "" } } };
+    using ParamSliderPtr = std::unique_ptr<ParamSlider>;
+    SliderMatrix<ParamSliderPtr> sliderList;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };

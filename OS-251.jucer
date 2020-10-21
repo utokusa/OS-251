@@ -8,6 +8,7 @@
               pluginVSTCategory="kPlugCategSynth">
   <MAINGROUP id="NH6Z2v" name="OS-251">
     <GROUP id="{39F06B4C-446D-F36A-0E9D-1599C4C66CE1}" name="Source">
+      <FILE id="RU6lsr" name="ParamSlider.h" compile="0" resource="0" file="Source/ParamSlider.h"/>
       <FILE id="Z6vxyA" name="SynthEngine.h" compile="0" resource="0" file="Source/SynthEngine.h"/>
       <FILE id="XpCZ7q" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
