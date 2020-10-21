@@ -22,7 +22,7 @@ Os251AudioProcessor::Os251AudioProcessor()
                           ),
 #endif
       parameters (*this, nullptr),
-      synthAudioSource (maxNumChannels)
+      synthEngine (maxNumChannels)
 {
     SynthParams& synthParams (SynthParams::getInstance());
 
@@ -32,8 +32,8 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
 
     // Frequency
-    constexpr float lowestFreqVal = FilterParams::lowestResVal();
-    constexpr float freqBaseNumber = FilterParams::resBaseNumber();
+    constexpr float lowestFreqVal = FilterParams::lowestFreqVal();
+    constexpr float freqBaseNumber = FilterParams::freqBaseNumber();
     auto valueToFreqFunction = [] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
 
     // Resonance
@@ -47,8 +47,27 @@ Os251AudioProcessor::Os251AudioProcessor()
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
 
+    // Oscillator parameters
+    OscillatorParams* const oscillatorParams = synthParams.oscillator();
+
+    // Sin gain
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    oscillatorParams->setSinGainPtr (parameters.getRawParameterValue ("sinGain"));
+    parameters.addParameterListener ("sinGain", this);
+
+    // Square gain
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("squareGain", "Square", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    oscillatorParams->setSquareGainPtr (parameters.getRawParameterValue ("squareGain"));
+    parameters.addParameterListener ("squareGain", this);
+
+    // Triangle gain
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("triangleGain", "Triangle", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    oscillatorParams->setTriangleGainPtr (parameters.getRawParameterValue ("triangleGain"));
+    parameters.addParameterListener ("triangleGain", this);
+
     // Envelop parameters
     EnvelopeParams* const envelopeParams = synthParams.envelope();
+
     // Attack
     parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
     envelopeParams->setAttackPtr (parameters.getRawParameterValue ("attack"));
@@ -71,6 +90,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Filter parameters
     FilterParams* const filterParams = synthParams.filter();
+
     // Filter cutoff frequency
     parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0f, valueToFreqFunction, nullptr, true));
     filterParams->setFrequencyPtr (parameters.getRawParameterValue ("frequency"));
@@ -154,14 +174,14 @@ void Os251AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    synthAudioSource.prepareToPlay (samplesPerBlock, sampleRate);
+    synthEngine.prepareToPlay (samplesPerBlock, sampleRate);
 }
 
 void Os251AudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    synthAudioSource.releaseResources();
+    synthEngine.releaseResources();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -217,7 +237,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
         buffer.clear (channel, 0, buffer.getNumSamples());
     }
 
-    synthAudioSource.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
+    synthEngine.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================

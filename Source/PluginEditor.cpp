@@ -17,7 +17,31 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 500);
+    setSize (600, 350);
+
+    // Initialize sin oscillator gain slider (knob).
+    sSinGain.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sSinGain.setTextBoxIsEditable (false);
+    sSinGainLabel.setText (parameters.getParameter ("sinGain")->name, juce::dontSendNotification);
+    addAndMakeVisible (sSinGain);
+    sSinGainAttachment = std::make_unique<SliderAttachment> (parameters, "sinGain", sSinGain);
+    addAndMakeVisible (sSinGainLabel);
+
+    // Initialize square oscillator gain slider (knob).
+    sSquareGain.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sSquareGain.setTextBoxIsEditable (false);
+    sSquareGainLabel.setText (parameters.getParameter ("squareGain")->name, juce::dontSendNotification);
+    addAndMakeVisible (sSquareGain);
+    sSquareGainAttachment = std::make_unique<SliderAttachment> (parameters, "squareGain", sSquareGain);
+    addAndMakeVisible (sSquareGainLabel);
+
+    // Initialize triangle oscillator gain slider (knob).
+    sTriangleGain.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sTriangleGain.setTextBoxIsEditable (false);
+    sTriangleGainLabel.setText (parameters.getParameter ("triangleGain")->name, juce::dontSendNotification);
+    addAndMakeVisible (sTriangleGain);
+    sTriangleGainAttachment = std::make_unique<SliderAttachment> (parameters, "triangleGain", sTriangleGain);
+    addAndMakeVisible (sTriangleGainLabel);
 
     // Initialize attack slider (knob).
     sAttack.setSliderStyle (juce::Slider::RotaryVerticalDrag);
@@ -90,8 +114,8 @@ void Os251AudioProcessorEditor::resized()
     // subcomponents in your editor..
 
     // Lay out parameters
-    constexpr int deltaX = 200;
-    constexpr int deltaY = 150;
+    constexpr int deltaX = 150;
+    constexpr int deltaY = 120;
     constexpr int sliderW = 150;
     constexpr int sliderH = 100;
     constexpr int sliderTxtW = 80;
@@ -101,21 +125,33 @@ void Os251AudioProcessorEditor::resized()
     constexpr int labelW = 100;
     constexpr int labelH = 30;
 
-    sAttack.setBounds (0, 0, sliderW, sliderH);
+    sSinGain.setBounds (0, 0, sliderW, sliderH);
+    sSinGain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sSinGainLabel.setBounds (0, sliderLabelDistY, labelW, labelH);
+
+    sSquareGain.setBounds (deltaX, 0, sliderW, sliderH);
+    sSquareGain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sSquareGainLabel.setBounds (deltaX, sliderLabelDistY, labelW, labelH);
+
+    sTriangleGain.setBounds (deltaX * 2, 0, sliderW, sliderH);
+    sTriangleGain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
+    sTriangleGainLabel.setBounds (deltaX * 2, sliderLabelDistY, labelW, labelH);
+
+    sAttack.setBounds (0, deltaY, sliderW, sliderH);
     sAttack.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
-    sAttackLabel.setBounds (0, sliderLabelDistY, labelW, labelH);
+    sAttackLabel.setBounds (0, sliderLabelDistY + deltaY, labelW, labelH);
 
-    sDecay.setBounds (deltaX, 0, sliderW, sliderH);
+    sDecay.setBounds (deltaX, deltaY, sliderW, sliderH);
     sDecay.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
-    sDecayLabel.setBounds (deltaX, sliderLabelDistY, labelW, labelH);
+    sDecayLabel.setBounds (deltaX, sliderLabelDistY + deltaY, labelW, labelH);
 
-    sSustain.setBounds (0, deltaY, sliderW, sliderH);
+    sSustain.setBounds (deltaX * 2, deltaY, sliderW, sliderH);
     sSustain.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
-    sSustainLabel.setBounds (0, sliderLabelDistY + deltaY, labelW, labelH);
+    sSustainLabel.setBounds (deltaX * 2, sliderLabelDistY + deltaY, labelW, labelH);
 
-    sRelease.setBounds (deltaX, deltaY, sliderW, sliderH);
+    sRelease.setBounds (deltaX * 3, deltaY, sliderW, sliderH);
     sRelease.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);
-    sReleaseLabel.setBounds (deltaX, sliderLabelDistY + deltaY, labelW, labelH);
+    sReleaseLabel.setBounds (deltaX * 3, sliderLabelDistY + deltaY, labelW, labelH);
 
     sFrequency.setBounds (0, deltaY * 2, sliderW, sliderH);
     sFrequency.setTextBoxStyle (juce::Slider::TextBoxBelow, false, sliderTxtW, sliderTxtH);

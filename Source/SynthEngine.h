@@ -13,12 +13,67 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-struct SineWaveSound : public juce::SynthesiserSound
+struct FancySynthSound : public juce::SynthesiserSound
 {
-    SineWaveSound() = default;
+    FancySynthSound() = default;
 
     bool appliesToNote (int) override { return true; }
     bool appliesToChannel (int) override { return true; }
+};
+
+//==============================================================================
+class OscillatorParams
+{
+public:
+    float getSinGain() const
+    {
+        auto decibelGain = paramValToDecibel (*sinGain);
+        return decibelToLinear (decibelGain);
+    }
+    void setSinGainPtr (const std::atomic<float>* _sinGain)
+    {
+        sinGain = _sinGain;
+    }
+    float getSquareGain() const
+    {
+        auto decibelGain = paramValToDecibel (*squareGain);
+        return decibelToLinear (decibelGain);
+    }
+    void setSquareGainPtr (const std::atomic<float>* _squareGain)
+    {
+        squareGain = _squareGain;
+    }
+    float getTriangleGain() const
+    {
+        auto decibelGain = paramValToDecibel (*triangleGain);
+        return decibelToLinear (decibelGain);
+    }
+    void setTriangleGainPtr (const std::atomic<float>* _triangleGain)
+    {
+        triangleGain = _triangleGain;
+    }
+
+private:
+    // Dynamic range in [db]
+    static constexpr float dynamicRange = 48.0;
+    const std::atomic<float>* sinGain {};
+    const std::atomic<float>* squareGain {};
+    const std::atomic<float>* triangleGain {};
+
+    // Convert parameter value (linear) to gain ([db])
+    // in order to make UX better.
+    static float paramValToDecibel (float paramVal)
+    {
+        // e.g.
+        // paramVal: 1.0 ---> gain: 0 [db] (max)
+        // paramVal: 0.0 ---> gain: -dynamicRange [db] (min)
+        return dynamicRange * (paramVal - 1.0);
+    }
+
+    static float decibelToLinear (float decibelGain)
+    {
+        return std::pow (10.f, decibelGain / 20.f);
+    }
 };
 
 //==============================================================================
@@ -124,7 +179,7 @@ class SynthParams
 public:
     // Singleton
     SynthParams (const SynthParams&) = delete;
-    SynthParams& operator=(SynthParams const&) = delete;
+    SynthParams& operator= (SynthParams const&) = delete;
     static SynthParams& getInstance()
     {
         static SynthParams instance;
@@ -138,12 +193,55 @@ public:
     {
         return &filterParams;
     }
+    OscillatorParams* oscillator()
+    {
+        return &oscillatorParams;
+    }
 
 private:
     // plugin parameters
     EnvelopeParams envelopeParams;
     FilterParams filterParams;
+    OscillatorParams oscillatorParams;
     SynthParams() = default;
+};
+
+//==============================================================================
+class Oscillator
+{
+public:
+    Oscillator() : p (SynthParams::getInstance().oscillator()) {}
+
+    // Return oscillator voltage value.
+    // Angle is in radian.
+    double oscillatorVal (double angle)
+    {
+        auto currentSample = 0.0;
+        currentSample += sinWave (angle) * p->getSinGain();
+        currentSample += squareWave (angle) * p->getSquareGain();
+        currentSample += triangleWave (angle) * p->getTriangleGain();
+        return currentSample;
+    }
+
+private:
+    static constexpr double pi = juce::MathConstants<double>::pi;
+
+    const OscillatorParams* const p;
+
+    static double sinWave (double angle)
+    {
+        return std::sin (angle);
+    }
+
+    static double squareWave (double angle)
+    {
+        return angle < pi ? 1.0 : -1.0;
+    }
+
+    static double triangleWave (double angle)
+    {
+        return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
+    }
 };
 
 //==============================================================================
@@ -332,13 +430,13 @@ private:
 };
 
 //==============================================================================
-struct SineWaveVoice : public juce::SynthesiserVoice
+struct FancySynthVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice() = default;
+    FancySynthVoice() = default;
 
     bool canPlaySound (juce::SynthesiserSound* sound) override
     {
-        return dynamic_cast<SineWaveSound*> (sound) != nullptr;
+        return dynamic_cast<FancySynthSound*> (sound) != nullptr;
     }
 
     void setCurrentPlaybackSampleRate (const double newRate) override
@@ -356,7 +454,7 @@ struct SineWaveVoice : public juce::SynthesiserVoice
         auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber);
         auto cyclesPerSample = cyclesPerSecond / getSampleRate();
 
-        angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi;
+        angleDelta = cyclesPerSample * 2.0 * pi;
     }
 
     void stopNote (float /*velocity*/, bool allowTailOff) override
@@ -381,12 +479,16 @@ struct SineWaveVoice : public juce::SynthesiserVoice
         {
             while (--numSamples >= 0)
             {
-                auto currentSample = (float) (std::sin (currentAngle) * level * env.getLevel());
+                auto currentSample = (float) (osc.oscillatorVal (currentAngle) * level * env.getLevel());
 
                 for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
                     outputBuffer.addSample (i, startSample, currentSample);
 
                 currentAngle += angleDelta;
+                if (currentAngle > pi * 2.0)
+                {
+                    currentAngle -= pi * 2.0;
+                }
                 ++startSample;
                 env.update();
                 if (env.getLevel() < 0.005)
@@ -400,7 +502,10 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     }
 
 private:
+    static constexpr double pi = juce::MathConstants<double>::pi;
+    // We use angle in radian
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    Oscillator osc;
     Envelope env;
 };
 
@@ -412,9 +517,9 @@ public:
         : filter (numChannels)
     {
         for (auto i = 0; i < 4; ++i)
-            synth.addVoice (new SineWaveVoice());
+            synth.addVoice (new FancySynthVoice());
 
-        synth.addSound (new SineWaveSound());
+        synth.addSound (new FancySynthSound());
     }
 
     void setUsingSineWaveSound()

@@ -31,6 +31,9 @@ private:
 
     juce::AudioProcessorValueTreeState& parameters;
 
+    juce::Slider sSinGain;
+    juce::Slider sSquareGain;
+    juce::Slider sTriangleGain;
     juce::Slider sAttack;
     juce::Slider sDecay;
     juce::Slider sSustain;
@@ -38,6 +41,9 @@ private:
     juce::Slider sFrequency;
     juce::Slider sResonance;
 
+    juce::Label sSinGainLabel;
+    juce::Label sSquareGainLabel;
+    juce::Label sTriangleGainLabel;
     juce::Label sAttackLabel;
     juce::Label sDecayLabel;
     juce::Label sSustainLabel;
@@ -46,6 +52,9 @@ private:
     juce::Label sResonanceLabel;
 
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<SliderAttachment> sSinGainAttachment;
+    std::unique_ptr<SliderAttachment> sSquareGainAttachment;
+    std::unique_ptr<SliderAttachment> sTriangleGainAttachment;
     std::unique_ptr<SliderAttachment> sAttackAttachment;
     std::unique_ptr<SliderAttachment> sDecayAttachment;
     std::unique_ptr<SliderAttachment> sSustainAttachment;
