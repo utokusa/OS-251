@@ -37,7 +37,7 @@ private:
     static constexpr int numCols = 4;
     template <class T>
     using SliderMatrix = std::array<std::array<T, numCols>, numRows>;
-    SliderMatrix<juce::String> paramIdList { { { "sinGain", "squareGain", "triangleGain", "" },
+    SliderMatrix<juce::String> paramIdList { { { "sinGain", "squareGain", "sawGain", "" },
                                                { "attack", "decay", "sustain", "release" },
                                                { "frequency", "resonance", "", "" } } };
     using ParamSliderPtr = std::unique_ptr<ParamSlider>;

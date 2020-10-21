@@ -60,10 +60,10 @@ Os251AudioProcessor::Os251AudioProcessor()
     oscillatorParams->setSquareGainPtr (parameters.getRawParameterValue ("squareGain"));
     parameters.addParameterListener ("squareGain", this);
 
-    // Triangle gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("triangleGain", "Triangle", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
-    oscillatorParams->setTriangleGainPtr (parameters.getRawParameterValue ("triangleGain"));
-    parameters.addParameterListener ("triangleGain", this);
+    // Saw gain
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sawGain", "Saw", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    oscillatorParams->setSawGainPtr (parameters.getRawParameterValue ("sawGain"));
+    parameters.addParameterListener ("sawGain", this);
 
     // Envelop parameters
     EnvelopeParams* const envelopeParams = synthParams.envelope();

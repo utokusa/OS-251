@@ -43,14 +43,14 @@ public:
     {
         squareGain = _squareGain;
     }
-    float getTriangleGain() const
+    float getSawGain() const
     {
-        auto decibelGain = paramValToDecibel (*triangleGain);
+        auto decibelGain = paramValToDecibel (*sawGain);
         return decibelToLinear (decibelGain);
     }
-    void setTriangleGainPtr (const std::atomic<float>* _triangleGain)
+    void setSawGainPtr (const std::atomic<float>* _sawGain)
     {
-        triangleGain = _triangleGain;
+        sawGain = _sawGain;
     }
 
 private:
@@ -58,7 +58,7 @@ private:
     static constexpr float dynamicRange = 48.0;
     const std::atomic<float>* sinGain {};
     const std::atomic<float>* squareGain {};
-    const std::atomic<float>* triangleGain {};
+    const std::atomic<float>* sawGain {};
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
@@ -219,7 +219,7 @@ public:
         auto currentSample = 0.0;
         currentSample += sinWave (angle) * p->getSinGain();
         currentSample += squareWave (angle) * p->getSquareGain();
-        currentSample += triangleWave (angle) * p->getTriangleGain();
+        currentSample += sawWave (angle) * p->getSawGain();
         return currentSample;
     }
 
@@ -238,7 +238,7 @@ private:
         return angle < pi ? 1.0 : -1.0;
     }
 
-    static double triangleWave (double angle)
+    static double sawWave (double angle)
     {
         return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
     }

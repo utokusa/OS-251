@@ -68,7 +68,7 @@ void Os251AudioProcessorEditor::resized()
         {
             if (sliderList[i][j])
             {
-                if (!deltaX || !deltaY)
+                if (! deltaX || ! deltaY)
                 {
                     // Initialize deltaX and deltaY if needed
                     deltaX = sliderList[i][j]->getWidth();

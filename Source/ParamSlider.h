@@ -26,7 +26,7 @@ public:
         addAndMakeVisible (slider);
         sliderAttachment = std::make_unique<SliderAttachment> (parameters, paramId, slider);
         addAndMakeVisible (label);
-        setSize(150, 120);
+        setSize (150, 120);
     }
     ParamSlider() = delete;
 
