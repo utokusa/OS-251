@@ -27,7 +27,9 @@ Os251AudioProcessor::Os251AudioProcessor()
     SynthParams& synthParams (SynthParams::getInstance());
 
     // ---
-    // Parameter value conversion from [0, 1.0] float to physical quantity juce::String.
+    // Parameter value conversion from [0, 1.0] float to juce::String.
+
+    // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
 
@@ -46,6 +48,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
+    juce::NormalisableRange<float> nrangeSigned (-1.0f, 1.0f, 0.01f);
 
     // Oscillator parameters
     OscillatorParams* const oscillatorParams = synthParams.oscillator();
@@ -100,6 +103,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0f, valueToResFunction, nullptr, true));
     filterParams->setResonancePtr (parameters.getRawParameterValue ("resonance"));
     parameters.addParameterListener ("resonance", this);
+
+    // Filter envelope
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Filter Env", "", nrangeSigned, 0.0f, valueToTextFunction, nullptr, true));
+    filterParams->setFilterEnvelopePtr(parameters.getRawParameterValue(("filterEnv")));
+    parameters.addParameterListener ("filterEnv", this);
     // ---
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));

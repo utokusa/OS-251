@@ -39,7 +39,7 @@ private:
     using SliderMatrix = std::array<std::array<T, numCols>, numRows>;
     SliderMatrix<juce::String> paramIdList { { { "sinGain", "squareGain", "sawGain", "" },
                                                { "attack", "decay", "sustain", "release" },
-                                               { "frequency", "resonance", "", "" } } };
+                                               { "frequency", "resonance", "filterEnv", "" } } };
     using ParamSliderPtr = std::unique_ptr<ParamSlider>;
     SliderMatrix<ParamSliderPtr> sliderList;
 

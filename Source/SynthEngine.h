@@ -82,8 +82,8 @@ class EnvelopeParams
 public:
     float getAttack() const
     {
-        constexpr float minVal = 0.95;
-        constexpr float maxVal = 0.9999;
+        constexpr float minVal = 0.995;
+        constexpr float maxVal = 0.99999;
         return minVal + (*attack) * (maxVal - minVal);
     }
     void setAttackPtr (const std::atomic<float>* _attack)
@@ -110,7 +110,7 @@ public:
     }
     float getRelease() const
     {
-        constexpr float minVal = 0.9995;
+        constexpr float minVal = 0.995;
         constexpr float maxVal = 0.99999;
         return minVal + (*release) * (maxVal - minVal);
     }
@@ -145,6 +145,14 @@ public:
     {
         resonance = _resonance;
     }
+    float getFilterEnvelope() const
+    {
+        return *filterEnvelope;
+    }
+    void setFilterEnvelopePtr (const std::atomic<float>* _filterEnvelope)
+    {
+        filterEnvelope = _filterEnvelope;
+    }
 
     // ---
     // Parameter converting consts
@@ -170,6 +178,7 @@ public:
 private:
     const std::atomic<float>* frequency {};
     const std::atomic<float>* resonance {};
+    const std::atomic<float>* filterEnvelope {};
 };
 
 // Synthesizer parameters
