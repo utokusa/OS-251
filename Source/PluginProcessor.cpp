@@ -22,7 +22,7 @@ Os251AudioProcessor::Os251AudioProcessor()
                           ),
 #endif
       parameters (*this, nullptr),
-      synthEngine (maxNumChannels)
+      synthEngine()
 {
     SynthParams& synthParams (SynthParams::getInstance());
 
@@ -106,7 +106,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Filter envelope
     parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Filter Env", "", nrangeSigned, 0.0f, valueToTextFunction, nullptr, true));
-    filterParams->setFilterEnvelopePtr(parameters.getRawParameterValue(("filterEnv")));
+    filterParams->setFilterEnvelopePtr (parameters.getRawParameterValue (("filterEnv")));
     parameters.addParameterListener ("filterEnv", this);
     // ---
 

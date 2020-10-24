@@ -58,7 +58,6 @@ private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
     SynthEngine synthEngine;
-    static constexpr int maxNumChannels = 2;
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;

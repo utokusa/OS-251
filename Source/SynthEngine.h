@@ -133,6 +133,12 @@ public:
     {
         return lowestFreqVal() * pow (freqBaseNumber(), *frequency);
     }
+    float getControlledFrequency (float controlVal) const
+    {
+        // TODO: use std::clamp instead of max(min(...
+        float newFrequency = std::max (std::min (*frequency + controlVal, 1.0f), 0.0f);
+        return lowestFreqVal() * pow (freqBaseNumber(), newFrequency);
+    }
     void setFrequencyPtr (const std::atomic<float>* _frequency)
     {
         frequency = _frequency;
@@ -377,19 +383,19 @@ class Filter
     };
 
 public:
-    explicit Filter (int _numChannels)
+    explicit Filter (Envelope& _env)
         : p (SynthParams::getInstance().filter()),
+          env (_env),
           sampleRate (DEFAULT_SAMPLE_RATE),
-          numChannels (_numChannels),
-          filterBuffers (numChannels)
+          fb()
     {
     }
 
-    void process (juce::AudioBuffer<float>& buffer)
+    float process (float sample)
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum omega0 = 2.0f * 3.14159265f * p->getFrequency() / sampleRate;
+        flnum omega0 = 2.0 * pi * p->getControlledFrequency (env.getLevel() * p->getFilterEnvelope()) / sampleRate;
         flnum sinw0 = std::sin (omega0);
         flnum cosw0 = std::cos (omega0);
         // sp.getResonance() stands for "Q".
@@ -401,26 +407,15 @@ public:
         flnum b1 = 1 - cosw0;
         flnum b2 = (1 - cosw0) / 2.0;
 
-        // Calculate
-        int numInputChannels = buffer.getNumChannels();
-        int bufferSize = buffer.getNumSamples();
-        for (int channel = 0; channel < std::min (numChannels, numInputChannels); channel++)
-        {
-            FilterBuffer& fb = filterBuffers[channel];
-            float* bufferPtr = buffer.getWritePointer (channel);
-            for (int i = 0; i < bufferSize; i++)
-            {
-                flnum out0 = b0 / a0 * bufferPtr[i] + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
-                             - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
-                fb.in2 = fb.in1;
-                fb.in1 = bufferPtr[i];
+        flnum out0 = b0 / a0 * sample + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
+                     - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
+        fb.in2 = fb.in1;
+        fb.in1 = sample;
 
-                fb.out2 = fb.out1;
-                fb.out1 = out0;
+        fb.out2 = fb.out1;
+        fb.out1 = out0;
 
-                bufferPtr[i] = out0;
-            }
-        }
+        return out0;
     }
 
     void setCurrentPlaybackSampleRate (double _sampleRate)
@@ -430,18 +425,23 @@ public:
 
 private:
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
+    static constexpr double pi = juce::MathConstants<double>::pi;
 
     const FilterParams* const p;
+    Envelope& env;
     flnum sampleRate;
-    int numChannels;
     // The length of this vector equals to max number of the channels;
-    std::vector<FilterBuffer> filterBuffers;
+    FilterBuffer fb;
 };
 
 //==============================================================================
 struct FancySynthVoice : public juce::SynthesiserVoice
 {
-    FancySynthVoice() = default;
+    FancySynthVoice()
+        : env(),
+          filter (env)
+    {
+    }
 
     bool canPlaySound (juce::SynthesiserSound* sound) override
     {
@@ -452,6 +452,7 @@ struct FancySynthVoice : public juce::SynthesiserVoice
     {
         juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
         env.setCurrentPlaybackSampleRate (newRate);
+        filter.setCurrentPlaybackSampleRate (newRate);
     }
 
     void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
@@ -489,6 +490,7 @@ struct FancySynthVoice : public juce::SynthesiserVoice
             while (--numSamples >= 0)
             {
                 auto currentSample = (float) (osc.oscillatorVal (currentAngle) * level * env.getLevel());
+                currentSample = filter.process (currentSample);
 
                 for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
                     outputBuffer.addSample (i, startSample, currentSample);
@@ -516,14 +518,14 @@ private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     Oscillator osc;
     Envelope env;
+    Filter filter;
 };
 
 //==============================================================================
 class SynthEngine
 {
 public:
-    explicit SynthEngine (int numChannels)
-        : filter (numChannels)
+    SynthEngine()
     {
         for (auto i = 0; i < 4; ++i)
             synth.addVoice (new FancySynthVoice());
@@ -539,7 +541,6 @@ public:
     void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
-        filter.setCurrentPlaybackSampleRate (sampleRate);
         midiCollector.reset (sampleRate);
     }
 
@@ -548,7 +549,6 @@ public:
     void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
-        filter.process (outputAudio);
     }
 
     juce::MidiMessageCollector* getMidiCollector()
@@ -558,6 +558,5 @@ public:
 
 private:
     juce::Synthesiser synth;
-    Filter filter;
     juce::MidiMessageCollector midiCollector;
 };
