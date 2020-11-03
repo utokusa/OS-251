@@ -68,6 +68,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     oscillatorParams->setSawGainPtr (parameters.getRawParameterValue ("sawGain"));
     parameters.addParameterListener ("sawGain", this);
 
+    // Sub square gain
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("subSquareGain", "SubSquare", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    oscillatorParams->setSubSquareGainPtr (parameters.getRawParameterValue ("subSquareGain"));
+    parameters.addParameterListener ("subSquareGain", this);
+
     // Envelop parameters
     EnvelopeParams* const envelopeParams = synthParams.envelope();
 

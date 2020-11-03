@@ -52,6 +52,15 @@ public:
     {
         sawGain = _sawGain;
     }
+    float getSubSquareGain() const
+    {
+        auto decibelGain = paramValToDecibel (*subSquareGain);
+        return decibelToLinear (decibelGain);
+    }
+    void setSubSquareGainPtr (const std::atomic<float>* _subSquareGain)
+    {
+        subSquareGain = _subSquareGain;
+    }
 
 private:
     // Dynamic range in [db]
@@ -59,6 +68,7 @@ private:
     const std::atomic<float>* sinGain {};
     const std::atomic<float>* squareGain {};
     const std::atomic<float>* sawGain {};
+    const std::atomic<float>* subSquareGain {};
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
@@ -232,9 +242,10 @@ public:
     double oscillatorVal (double angle)
     {
         auto currentSample = 0.0;
-        currentSample += sinWave (angle) * p->getSinGain();
-        currentSample += squareWave (angle) * p->getSquareGain();
-        currentSample += sawWave (angle) * p->getSawGain();
+        currentSample += sinWave (wrapAngle (angle * 2)) * p->getSinGain();
+        currentSample += squareWave (wrapAngle (angle * 2)) * p->getSquareGain();
+        currentSample += sawWave (wrapAngle (angle * 2)) * p->getSawGain();
+        currentSample += squareWave (angle) * p->getSubSquareGain();
         return currentSample;
     }
 
@@ -242,6 +253,15 @@ private:
     static constexpr double pi = juce::MathConstants<double>::pi;
 
     const OscillatorParams* const p;
+
+    static double wrapAngle (double angle)
+    {
+        while (angle > 2 * pi)
+        {
+            angle -= 2 * pi;
+        }
+        return angle;
+    }
 
     static double sinWave (double angle)
     {
@@ -461,7 +481,8 @@ struct FancySynthVoice : public juce::SynthesiserVoice
         level = velocity * 0.15;
         env.noteOn();
 
-        auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber);
+        auto adjustOctave = 2.0;
+        auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
         auto cyclesPerSample = cyclesPerSecond / getSampleRate();
 
         angleDelta = cyclesPerSample * 2.0 * pi;
