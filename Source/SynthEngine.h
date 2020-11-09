@@ -155,7 +155,7 @@ public:
     }
     float getResonance() const
     {
-        return lowestResVal() * pow (resBaseNumber(), *resonance);
+        return lowestResVal() * std::pow (resBaseNumber(), *resonance);
     }
     void setResonancePtr (const std::atomic<float>* _resonance)
     {
