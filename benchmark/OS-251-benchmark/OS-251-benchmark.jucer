@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="K6onVY" name="OS-251-benchmark" projectType="consoleapp"
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
-              jucerFormatVersion="1">
+              jucerFormatVersion="1" cppLanguageStandard="17">
   <MAINGROUP id="wyg8Wy" name="OS-251-benchmark">
     <GROUP id="{0ABDD52A-9D26-E437-0CDE-0BFEE73CCF40}" name="Source">
       <FILE id="CF3pnW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
