@@ -27,39 +27,51 @@ class OscillatorParams
 public:
     float getSinGain() const
     {
-        auto decibelGain = paramValToDecibel (*sinGain);
+        auto decibelGain = paramValToDecibel (sinGainVal);
         return decibelToLinear (decibelGain);
     }
     void setSinGainPtr (const std::atomic<float>* _sinGain)
     {
         sinGain = _sinGain;
+        sinGainVal = *sinGain;
     }
     float getSquareGain() const
     {
-        auto decibelGain = paramValToDecibel (*squareGain);
+        auto decibelGain = paramValToDecibel (squareGainVal);
         return decibelToLinear (decibelGain);
     }
     void setSquareGainPtr (const std::atomic<float>* _squareGain)
     {
         squareGain = _squareGain;
+        squareGainVal = *squareGain;
     }
     float getSawGain() const
     {
-        auto decibelGain = paramValToDecibel (*sawGain);
+        auto decibelGain = paramValToDecibel (sawGainVal);
         return decibelToLinear (decibelGain);
     }
     void setSawGainPtr (const std::atomic<float>* _sawGain)
     {
         sawGain = _sawGain;
+        sawGainVal = *sawGain;
     }
     float getSubSquareGain() const
     {
-        auto decibelGain = paramValToDecibel (*subSquareGain);
+        auto decibelGain = paramValToDecibel (subSquareGainVal);
         return decibelToLinear (decibelGain);
     }
     void setSubSquareGainPtr (const std::atomic<float>* _subSquareGain)
     {
         subSquareGain = _subSquareGain;
+        subSquareGainVal = *subSquareGain;
+    }
+    void parameterChanged()
+    {
+        sinGainVal = *sinGain;
+        squareGainVal = *squareGain;
+        sawGainVal = *sawGain;
+        subSquareGainVal = *subSquareGain;
+
     }
 
 private:
@@ -69,6 +81,12 @@ private:
     const std::atomic<float>* squareGain {};
     const std::atomic<float>* sawGain {};
     const std::atomic<float>* subSquareGain {};
+
+    float sinGainVal = 0.0f;
+    float squareGainVal = 0.0f;
+    float sawGainVal = 0.0f;
+    float subSquareGainVal = 0.0f;
+
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
@@ -94,39 +112,50 @@ public:
     {
         constexpr float minVal = 0.995;
         constexpr float maxVal = 0.99999;
-        return minVal + (*attack) * (maxVal - minVal);
+        return minVal + (attackVal) * (maxVal - minVal);
     }
     void setAttackPtr (const std::atomic<float>* _attack)
     {
         attack = _attack;
+        attackVal = *attack;
     }
     float getDecay() const
     {
         constexpr float minVal = 0.9995;
         constexpr float maxVal = 0.99999;
-        return minVal + (*decay) * (maxVal - minVal);
+        return minVal + (decayVal) * (maxVal - minVal);
     }
     void setDecayPtr (const std::atomic<float>* _decay)
     {
         decay = _decay;
+        decayVal = *decay;
     }
     float getSustain() const
     {
-        return *sustain;
+        return sustainVal;
     }
     void setSustainPtr (const std::atomic<float>* _sustain)
     {
         sustain = _sustain;
+        sustainVal = *sustain;
     }
     float getRelease() const
     {
         constexpr float minVal = 0.995;
         constexpr float maxVal = 0.99999;
-        return minVal + (*release) * (maxVal - minVal);
+        return minVal + (releaseVal) * (maxVal - minVal);
     }
     void setReleasePtr (const std::atomic<float>* _release)
     {
         release = _release;
+        releaseVal = *release;
+    }
+    void parameterChanged()
+    {
+        attackVal = *attack;
+        decayVal = *decay;
+        sustainVal = *sustain;
+        releaseVal = *release;
     }
 
 private:
@@ -134,6 +163,11 @@ private:
     const std::atomic<float>* decay {};
     const std::atomic<float>* sustain {};
     const std::atomic<float>* release {};
+
+    float attackVal = 0.0f;
+    float decayVal = 0.0f;
+    float sustainVal = 0.0f;
+    float releaseVal = 0.0f;
 };
 
 class FilterParams
@@ -141,33 +175,42 @@ class FilterParams
 public:
     float getFrequency() const
     {
-        return lowestFreqVal() * pow (freqBaseNumber(), *frequency);
+        return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
     }
     float getControlledFrequency (float controlVal) const
     {
         // TODO: use std::clamp instead of max(min(...
-        float newFrequency = std::max (std::min (*frequency + controlVal, 1.0f), 0.0f);
+        float newFrequency = std::max (std::min (frequencyVal + controlVal, 1.0f), 0.0f);
         return lowestFreqVal() * pow (freqBaseNumber(), newFrequency);
     }
     void setFrequencyPtr (const std::atomic<float>* _frequency)
     {
         frequency = _frequency;
+        frequencyVal = *frequency;
     }
     float getResonance() const
     {
-        return lowestResVal() * std::pow (resBaseNumber(), *resonance);
+        return lowestResVal() * std::pow (resBaseNumber(), resonanceVal);
     }
     void setResonancePtr (const std::atomic<float>* _resonance)
     {
         resonance = _resonance;
+        resonanceVal = *resonance;
     }
     float getFilterEnvelope() const
     {
-        return *filterEnvelope;
+        return filterEnvelopeVal;
     }
     void setFilterEnvelopePtr (const std::atomic<float>* _filterEnvelope)
     {
         filterEnvelope = _filterEnvelope;
+        filterEnvelopeVal = *filterEnvelope;
+    }
+    void parameterChanged ()
+    {
+        frequencyVal = *frequency;
+        resonanceVal = *resonance;
+        filterEnvelopeVal = *filterEnvelope;
     }
 
     // ---
@@ -195,6 +238,10 @@ private:
     const std::atomic<float>* frequency {};
     const std::atomic<float>* resonance {};
     const std::atomic<float>* filterEnvelope {};
+
+    float frequencyVal = 0.0f;
+    float resonanceVal = 0.0f;
+    float filterEnvelopeVal = 0.0f;
 };
 
 // Synthesizer parameters
