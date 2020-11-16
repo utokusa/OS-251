@@ -554,11 +554,6 @@ public:
         synth.addSound (new FancySynthSound());
     }
 
-    void setUsingSineWaveSound()
-    {
-        synth.clearSounds();
-    }
-
     void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
@@ -570,11 +565,6 @@ public:
     void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
-    }
-
-    juce::MidiMessageCollector* getMidiCollector()
-    {
-        return &midiCollector;
     }
 
 private:
