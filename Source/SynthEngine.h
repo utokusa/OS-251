@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <random>
 #include <JuceHeader.h>
+#include <random>
 
 //==============================================================================
 struct FancySynthSound : public juce::SynthesiserSound
@@ -25,53 +25,55 @@ struct FancySynthSound : public juce::SynthesiserSound
 //==============================================================================
 class OscillatorParams
 {
+    using flnum = float;
+
 public:
-    float getSinGain() const
+    flnum getSinGain() const
     {
         auto decibelGain = paramValToDecibel (sinGainVal);
         return decibelToLinear (decibelGain);
     }
-    void setSinGainPtr (const std::atomic<float>* _sinGain)
+    void setSinGainPtr (const std::atomic<flnum>* _sinGain)
     {
         sinGain = _sinGain;
         sinGainVal = *sinGain;
     }
-    float getSquareGain() const
+    flnum getSquareGain() const
     {
         auto decibelGain = paramValToDecibel (squareGainVal);
         return decibelToLinear (decibelGain);
     }
-    void setSquareGainPtr (const std::atomic<float>* _squareGain)
+    void setSquareGainPtr (const std::atomic<flnum>* _squareGain)
     {
         squareGain = _squareGain;
         squareGainVal = *squareGain;
     }
-    float getSawGain() const
+    flnum getSawGain() const
     {
         auto decibelGain = paramValToDecibel (sawGainVal);
         return decibelToLinear (decibelGain);
     }
-    void setSawGainPtr (const std::atomic<float>* _sawGain)
+    void setSawGainPtr (const std::atomic<flnum>* _sawGain)
     {
         sawGain = _sawGain;
         sawGainVal = *sawGain;
     }
-    float getSubSquareGain() const
+    flnum getSubSquareGain() const
     {
         auto decibelGain = paramValToDecibel (subSquareGainVal);
         return decibelToLinear (decibelGain);
     }
-    void setSubSquareGainPtr (const std::atomic<float>* _subSquareGain)
+    void setSubSquareGainPtr (const std::atomic<flnum>* _subSquareGain)
     {
         subSquareGain = _subSquareGain;
         subSquareGainVal = *subSquareGain;
     }
-    float getNoiseGain() const
+    flnum getNoiseGain() const
     {
         auto decibelGain = paramValToDecibel (noiseGainVal);
         return decibelToLinear (decibelGain);
     }
-    void setNoiseGainPtr (const std::atomic<float>* _noiseGain)
+    void setNoiseGainPtr (const std::atomic<flnum>* _noiseGain)
     {
         noiseGain = _noiseGain;
         noiseGainVal = *noiseGain;
@@ -87,22 +89,22 @@ public:
 
 private:
     // Dynamic range in [db]
-    static constexpr float dynamicRange = 48.0;
-    const std::atomic<float>* sinGain {};
-    const std::atomic<float>* squareGain {};
-    const std::atomic<float>* sawGain {};
-    const std::atomic<float>* subSquareGain {};
-    const std::atomic<float>* noiseGain {};
+    static constexpr flnum dynamicRange = 48.0;
+    const std::atomic<flnum>* sinGain {};
+    const std::atomic<flnum>* squareGain {};
+    const std::atomic<flnum>* sawGain {};
+    const std::atomic<flnum>* subSquareGain {};
+    const std::atomic<flnum>* noiseGain {};
 
-    float sinGainVal = 0.0f;
-    float squareGainVal = 0.0f;
-    float sawGainVal = 0.0f;
-    float subSquareGainVal = 0.0f;
-    float noiseGainVal = 0.0f;
+    flnum sinGainVal = 0.0;
+    flnum squareGainVal = 0.0;
+    flnum sawGainVal = 0.0;
+    flnum subSquareGainVal = 0.0;
+    flnum noiseGainVal = 0.0;
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
-    static float paramValToDecibel (float paramVal)
+    static flnum paramValToDecibel (flnum paramVal)
     {
         // e.g.
         // paramVal: 1.0 ---> gain: 0 [db] (max)
@@ -110,54 +112,55 @@ private:
         return dynamicRange * (paramVal - 1.0);
     }
 
-    static float decibelToLinear (float decibelGain)
+    static flnum decibelToLinear (flnum decibelGain)
     {
-        return std::pow (10.f, decibelGain / 20.f);
+        return std::pow (10.0, decibelGain / 20.0);
     }
 };
 
 //==============================================================================
 class EnvelopeParams
 {
+    using flnum = float;
 public:
-    float getAttack() const
+    flnum getAttack() const
     {
-        constexpr float minVal = 0.995;
-        constexpr float maxVal = 0.99999;
+        constexpr flnum minVal = 0.995;
+        constexpr flnum maxVal = 0.99999;
         return minVal + (attackVal) * (maxVal - minVal);
     }
-    void setAttackPtr (const std::atomic<float>* _attack)
+    void setAttackPtr (const std::atomic<flnum>* _attack)
     {
         attack = _attack;
         attackVal = *attack;
     }
-    float getDecay() const
+    flnum getDecay() const
     {
-        constexpr float minVal = 0.9995;
-        constexpr float maxVal = 0.99999;
+        constexpr flnum minVal = 0.9995;
+        constexpr flnum maxVal = 0.99999;
         return minVal + (decayVal) * (maxVal - minVal);
     }
-    void setDecayPtr (const std::atomic<float>* _decay)
+    void setDecayPtr (const std::atomic<flnum>* _decay)
     {
         decay = _decay;
         decayVal = *decay;
     }
-    float getSustain() const
+    flnum getSustain() const
     {
         return sustainVal;
     }
-    void setSustainPtr (const std::atomic<float>* _sustain)
+    void setSustainPtr (const std::atomic<flnum>* _sustain)
     {
         sustain = _sustain;
         sustainVal = *sustain;
     }
-    float getRelease() const
+    flnum getRelease() const
     {
-        constexpr float minVal = 0.995;
-        constexpr float maxVal = 0.99999;
+        constexpr flnum minVal = 0.995;
+        constexpr flnum maxVal = 0.99999;
         return minVal + (releaseVal) * (maxVal - minVal);
     }
-    void setReleasePtr (const std::atomic<float>* _release)
+    void setReleasePtr (const std::atomic<flnum>* _release)
     {
         release = _release;
         releaseVal = *release;
@@ -171,48 +174,50 @@ public:
     }
 
 private:
-    const std::atomic<float>* attack {};
-    const std::atomic<float>* decay {};
-    const std::atomic<float>* sustain {};
-    const std::atomic<float>* release {};
+    const std::atomic<flnum>* attack {};
+    const std::atomic<flnum>* decay {};
+    const std::atomic<flnum>* sustain {};
+    const std::atomic<flnum>* release {};
 
-    float attackVal = 0.0f;
-    float decayVal = 0.0f;
-    float sustainVal = 0.0f;
-    float releaseVal = 0.0f;
+    flnum attackVal = 0.0;
+    flnum decayVal = 0.0;
+    flnum sustainVal = 0.0;
+    flnum releaseVal = 0.0;
 };
 
 class FilterParams
 {
+    using flnum = float;
+
 public:
-    float getFrequency() const
+    flnum getFrequency() const
     {
         return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
     }
-    float getControlledFrequency (float controlVal) const
+    flnum getControlledFrequency (flnum controlVal) const
     {
-        float newFrequency = std::clamp (frequencyVal + controlVal, 0.0f, 1.0f);
+        flnum newFrequency = std::clamp<flnum> (frequencyVal + controlVal, 0.0, 1.0);
         return lowestFreqVal() * pow (freqBaseNumber(), newFrequency);
     }
-    void setFrequencyPtr (const std::atomic<float>* _frequency)
+    void setFrequencyPtr (const std::atomic<flnum>* _frequency)
     {
         frequency = _frequency;
         frequencyVal = *frequency;
     }
-    float getResonance() const
+    flnum getResonance() const
     {
         return lowestResVal() * std::pow (resBaseNumber(), resonanceVal);
     }
-    void setResonancePtr (const std::atomic<float>* _resonance)
+    void setResonancePtr (const std::atomic<flnum>* _resonance)
     {
         resonance = _resonance;
         resonanceVal = *resonance;
     }
-    float getFilterEnvelope() const
+    flnum getFilterEnvelope() const
     {
         return filterEnvelopeVal;
     }
-    void setFilterEnvelopePtr (const std::atomic<float>* _filterEnvelope)
+    void setFilterEnvelopePtr (const std::atomic<flnum>* _filterEnvelope)
     {
         filterEnvelope = _filterEnvelope;
         filterEnvelopeVal = *filterEnvelope;
@@ -227,32 +232,32 @@ public:
     // ---
     // Parameter converting consts
     // Frequency
-    static constexpr float lowestFreqVal()
+    static constexpr flnum lowestFreqVal()
     {
-        return 20.0f;
+        return 20.0;
     }
-    static constexpr float freqBaseNumber()
+    static constexpr flnum freqBaseNumber()
     {
-        return 1000.0f;
+        return 1000.0;
     }
     // Resonance
-    static constexpr float lowestResVal()
+    static constexpr flnum lowestResVal()
     {
-        return 0.2f;
+        return 0.2;
     }
-    static constexpr float resBaseNumber()
+    static constexpr flnum resBaseNumber()
     {
         return 100.0;
     }
 
 private:
-    const std::atomic<float>* frequency {};
-    const std::atomic<float>* resonance {};
-    const std::atomic<float>* filterEnvelope {};
+    const std::atomic<flnum>* frequency {};
+    const std::atomic<flnum>* resonance {};
+    const std::atomic<flnum>* filterEnvelope {};
 
-    float frequencyVal = 0.0f;
-    float resonanceVal = 0.0f;
-    float filterEnvelopeVal = 0.0f;
+    flnum frequencyVal = 0.0;
+    flnum resonanceVal = 0.0;
+    flnum filterEnvelopeVal = 0.0;
 };
 
 // Synthesizer parameters
@@ -292,14 +297,16 @@ private:
 //==============================================================================
 class Oscillator
 {
+    using flnum = float;
+
 public:
     Oscillator() : p (SynthParams::getInstance().oscillator()) {}
 
     // Return oscillator voltage value.
     // Angle is in radian.
-    double oscillatorVal (double angle)
+    flnum oscillatorVal (flnum angle)
     {
-        auto currentSample = 0.0;
+        flnum currentSample = 0.0;
         currentSample += sinWave (wrapAngle (angle * 2)) * p->getSinGain();
         currentSample += squareWave (wrapAngle (angle * 2)) * p->getSquareGain();
         currentSample += sawWave (wrapAngle (angle * 2)) * p->getSawGain();
@@ -309,11 +316,11 @@ public:
     }
 
 private:
-    static constexpr double pi = juce::MathConstants<double>::pi;
+    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 
     const OscillatorParams* const p;
 
-    static double wrapAngle (double angle)
+    static flnum wrapAngle (flnum angle)
     {
         while (angle > 2 * pi)
         {
@@ -322,34 +329,34 @@ private:
         return angle;
     }
 
-    static double sinWave (double angle)
+    static flnum sinWave (flnum angle)
     {
         return std::sin (angle);
     }
 
-    static double squareWave (double angle)
+    static flnum squareWave (flnum angle)
     {
         return angle < pi ? 1.0 : -1.0;
     }
 
-    static double sawWave (double angle)
+    static flnum sawWave (flnum angle)
     {
         return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
     }
 
-    static double noiseWave()
+    static flnum noiseWave()
     {
         static std::random_device seedGen;
-        static std::default_random_engine engine(seedGen());
-        static std::uniform_real_distribution<> dist(0.0, 1.0);
-        return dist(engine);
+        static std::default_random_engine engine (seedGen());
+        static std::uniform_real_distribution<> dist (0.0, 1.0);
+        return dist (engine);
     }
 };
 
 //==============================================================================
 class Envelope
 {
-    using flnum = double;
+    using flnum = float;
 
     enum class State
     {
@@ -458,15 +465,15 @@ private:
 //==============================================================================
 class Filter
 {
-    using flnum = double;
+    using flnum = float;
     struct FilterBuffer
     {
     public:
-        FilterBuffer() : in1 (0.0f), in2 (0.0f), out1 (0.0f), out2 (0.0f) {}
+        FilterBuffer() : in1 (0.0), in2 (0.0), out1 (0.0), out2 (0.0) {}
         ~FilterBuffer() = default;
         ;
-        float in1, in2;
-        float out1, out2;
+        flnum in1, in2;
+        flnum out1, out2;
     };
 
 public:
@@ -478,7 +485,7 @@ public:
     {
     }
 
-    float process (float sample)
+    flnum process (flnum sample)
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
@@ -507,12 +514,12 @@ public:
 
     void setCurrentPlaybackSampleRate (double _sampleRate)
     {
-        sampleRate = _sampleRate;
+        sampleRate = static_cast<flnum> (_sampleRate);
     }
 
 private:
     static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
-    static constexpr double pi = juce::MathConstants<double>::pi;
+    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 
     const FilterParams* const p;
     Envelope& env;
@@ -524,6 +531,7 @@ private:
 //==============================================================================
 struct FancySynthVoice : public juce::SynthesiserVoice
 {
+    using flnum = float;
     FancySynthVoice()
         : env(),
           filter (env)
@@ -542,15 +550,15 @@ struct FancySynthVoice : public juce::SynthesiserVoice
         filter.setCurrentPlaybackSampleRate (newRate);
     }
 
-    void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
+    void startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
         env.noteOn();
 
-        auto adjustOctave = 2.0;
-        auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
-        auto cyclesPerSample = cyclesPerSecond / getSampleRate();
+        flnum adjustOctave = 2.0;
+        flnum cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
+        flnum cyclesPerSample = cyclesPerSecond / getSampleRate();
 
         angleDelta = cyclesPerSample * 2.0 * pi;
     }
@@ -577,7 +585,7 @@ struct FancySynthVoice : public juce::SynthesiserVoice
         {
             while (--numSamples >= 0)
             {
-                auto currentSample = (float) (osc.oscillatorVal (currentAngle) * level * env.getLevel());
+                flnum currentSample = osc.oscillatorVal (currentAngle) * level * env.getLevel();
                 currentSample = filter.process (currentSample);
 
                 for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
@@ -601,9 +609,9 @@ struct FancySynthVoice : public juce::SynthesiserVoice
     }
 
 private:
-    static constexpr double pi = juce::MathConstants<double>::pi;
+    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
     // We use angle in radian
-    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     Oscillator osc;
     Envelope env;
     Filter filter;

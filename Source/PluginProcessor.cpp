@@ -47,34 +47,34 @@ Os251AudioProcessor::Os251AudioProcessor()
     // ---
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
-    juce::NormalisableRange<float> nrange (0.0f, 1.0f, 0.01f);
-    juce::NormalisableRange<float> nrangeSigned (-1.0f, 1.0f, 0.01f);
+    juce::NormalisableRange<float> nrange (0.0, 1.0, 0.01f);
+    juce::NormalisableRange<float> nrangeSigned (-1.0, 1.0, 0.01f);
 
     // Oscillator parameters
     OscillatorParams* const oscillatorParams = synthParams.oscillator();
 
     // Sin gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSinGainPtr (parameters.getRawParameterValue ("sinGain"));
     parameters.addParameterListener ("sinGain", this);
 
     // Square gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("squareGain", "Square", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("squareGain", "Square", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSquareGainPtr (parameters.getRawParameterValue ("squareGain"));
     parameters.addParameterListener ("squareGain", this);
 
     // Saw gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("sawGain", "Saw", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sawGain", "Saw", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSawGainPtr (parameters.getRawParameterValue ("sawGain"));
     parameters.addParameterListener ("sawGain", this);
 
     // Sub square gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("subSquareGain", "SubSquare", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("subSquareGain", "SubSquare", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSubSquareGainPtr (parameters.getRawParameterValue ("subSquareGain"));
     parameters.addParameterListener ("subSquareGain", this);
 
     // Noise gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setNoiseGainPtr(parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
@@ -82,22 +82,22 @@ Os251AudioProcessor::Os251AudioProcessor()
     EnvelopeParams* const envelopeParams = synthParams.envelope();
 
     // Attack
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     envelopeParams->setAttackPtr (parameters.getRawParameterValue ("attack"));
     parameters.addParameterListener ("attack", this);
 
     // Decay
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("decay", "Decay", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     envelopeParams->setDecayPtr (parameters.getRawParameterValue ("decay"));
     parameters.addParameterListener ("decay", this);
 
     // Sustain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sustain", "Sustain", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     envelopeParams->setSustainPtr (parameters.getRawParameterValue ("sustain"));
     parameters.addParameterListener ("sustain", this);
 
     // Release
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     envelopeParams->setReleasePtr (parameters.getRawParameterValue ("release"));
     parameters.addParameterListener ("release", this);
 
@@ -105,17 +105,17 @@ Os251AudioProcessor::Os251AudioProcessor()
     FilterParams* const filterParams = synthParams.filter();
 
     // Filter cutoff frequency
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0f, valueToFreqFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0, valueToFreqFunction, nullptr, true));
     filterParams->setFrequencyPtr (parameters.getRawParameterValue ("frequency"));
     parameters.addParameterListener ("frequency", this);
 
     // Filter resonance
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0f, valueToResFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0, valueToResFunction, nullptr, true));
     filterParams->setResonancePtr (parameters.getRawParameterValue ("resonance"));
     parameters.addParameterListener ("resonance", this);
 
     // Filter envelope
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Filter Env", "", nrangeSigned, 0.0f, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Filter Env", "", nrangeSigned, 0.0, valueToTextFunction, nullptr, true));
     filterParams->setFilterEnvelopePtr (parameters.getRawParameterValue (("filterEnv")));
     parameters.addParameterListener ("filterEnv", this);
     // ---

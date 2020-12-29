@@ -48,7 +48,7 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
     // For debugging
 #ifdef DEBUG
     g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
+    g.setFont (15.0);
     g.drawFittedText ("Build: " __DATE__ " " __TIME__, getLocalBounds(), juce::Justification::bottomRight, 1);
 #endif
 }
