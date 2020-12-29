@@ -280,6 +280,14 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
 void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
 {
+    SynthParams& synthParams (SynthParams::getInstance());
+    OscillatorParams* const oscillatorParams = synthParams.oscillator();
+    EnvelopeParams* const envelopeParams = synthParams.envelope();
+    FilterParams* const filterParams = synthParams.filter();
+    oscillatorParams->parameterChanged();
+    envelopeParams->parameterChanged();
+    filterParams->parameterChanged();
+
 }
 
 //==============================================================================
