@@ -34,7 +34,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
         }
     }
 
-    setSize (600, 350);
+    setSize (750, 350);
 }
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor() = default;

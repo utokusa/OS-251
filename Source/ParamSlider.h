@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-
 #include <utility>
+#include <JuceHeader.h>
 
 class ParamSlider : public juce::Component
 {

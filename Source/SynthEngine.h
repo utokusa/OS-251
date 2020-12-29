@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <random>
 #include <JuceHeader.h>
 
 //==============================================================================
@@ -65,13 +66,23 @@ public:
         subSquareGain = _subSquareGain;
         subSquareGainVal = *subSquareGain;
     }
+    float getNoiseGain() const
+    {
+        auto decibelGain = paramValToDecibel (noiseGainVal);
+        return decibelToLinear (decibelGain);
+    }
+    void setNoiseGainPtr (const std::atomic<float>* _noiseGain)
+    {
+        noiseGain = _noiseGain;
+        noiseGainVal = *noiseGain;
+    }
     void parameterChanged()
     {
         sinGainVal = *sinGain;
         squareGainVal = *squareGain;
         sawGainVal = *sawGain;
         subSquareGainVal = *subSquareGain;
-
+        noiseGainVal = *noiseGain;
     }
 
 private:
@@ -81,12 +92,13 @@ private:
     const std::atomic<float>* squareGain {};
     const std::atomic<float>* sawGain {};
     const std::atomic<float>* subSquareGain {};
+    const std::atomic<float>* noiseGain {};
 
     float sinGainVal = 0.0f;
     float squareGainVal = 0.0f;
     float sawGainVal = 0.0f;
     float subSquareGainVal = 0.0f;
-
+    float noiseGainVal = 0.0f;
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
@@ -179,8 +191,7 @@ public:
     }
     float getControlledFrequency (float controlVal) const
     {
-        // TODO: use std::clamp instead of max(min(...
-        float newFrequency = std::max (std::min (frequencyVal + controlVal, 1.0f), 0.0f);
+        float newFrequency = std::clamp (frequencyVal + controlVal, 0.0f, 1.0f);
         return lowestFreqVal() * pow (freqBaseNumber(), newFrequency);
     }
     void setFrequencyPtr (const std::atomic<float>* _frequency)
@@ -206,7 +217,7 @@ public:
         filterEnvelope = _filterEnvelope;
         filterEnvelopeVal = *filterEnvelope;
     }
-    void parameterChanged ()
+    void parameterChanged()
     {
         frequencyVal = *frequency;
         resonanceVal = *resonance;
@@ -293,6 +304,7 @@ public:
         currentSample += squareWave (wrapAngle (angle * 2)) * p->getSquareGain();
         currentSample += sawWave (wrapAngle (angle * 2)) * p->getSawGain();
         currentSample += squareWave (angle) * p->getSubSquareGain();
+        currentSample += noiseWave() * p->getNoiseGain();
         return currentSample;
     }
 
@@ -323,6 +335,14 @@ private:
     static double sawWave (double angle)
     {
         return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
+    }
+
+    static double noiseWave()
+    {
+        static std::random_device seedGen;
+        static std::default_random_engine engine(seedGen());
+        static std::uniform_real_distribution<> dist(0.0, 1.0);
+        return dist(engine);
     }
 };
 
