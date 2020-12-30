@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "SynthEngine.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 /**

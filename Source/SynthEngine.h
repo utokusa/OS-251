@@ -14,6 +14,19 @@
 #include <random>
 
 //==============================================================================
+class SynthUtil
+{
+    using flnum = float;
+
+public:
+    // Map value [0.0, 1.0] to [-1.0, 1.0].
+    static flnum valMinusOneToOne (flnum valZeroToOne)
+    {
+        return std::clamp<flnum> ((valZeroToOne - 0.5) * 2.0, -1.0, 1.0);
+    }
+};
+
+//==============================================================================
 struct FancySynthSound : public juce::SynthesiserSound
 {
     FancySynthSound() = default;
@@ -122,6 +135,7 @@ private:
 class EnvelopeParams
 {
     using flnum = float;
+
 public:
     flnum getAttack() const
     {
@@ -185,12 +199,92 @@ private:
     flnum releaseVal = 0.0;
 };
 
+//==============================================================================
+class LfoParams
+{
+    using flnum = float;
+
+public:
+    // Returns LFO rate in [Hz].
+    flnum getRate() const
+    {
+        return lowestRateVal() * pow (rateBaseNumber(), rateVal);
+    }
+    void setRatePtr (const std::atomic<flnum>* _rate)
+    {
+        rate = _rate;
+        rateVal = *rate;
+    }
+    flnum getDelay() const
+    {
+        constexpr flnum minVal = 0.995;
+        constexpr flnum maxVal = 0.99999;
+        return minVal + (delayVal) * (maxVal - minVal);
+    }
+    void setDelayPtr (const std::atomic<flnum>* _rate)
+    {
+        delay = _rate;
+        delayVal = *delay;
+    }
+    flnum getPitch() const
+    {
+        return pitchVal;
+    }
+    void setPitchPtr (const std::atomic<flnum>* _pitch)
+    {
+        pitch = _pitch;
+        pitchVal = *pitch;
+    }
+    flnum getFilterFreq() const
+    {
+        return filterFreqVal;
+    }
+    void setFilterFreqPtr (const std::atomic<flnum>* _filterFreq)
+    {
+        filterFreq = _filterFreq;
+        filterFreqVal = *filterFreq;
+    }
+    void parameterChanged()
+    {
+        rateVal = *rate;
+        delayVal = *delay;
+        pitchVal = *pitch;
+        filterFreqVal = *filterFreq;
+    }
+
+    // ---
+    // Parameter converting consts
+    // Frequency
+    static constexpr flnum lowestRateVal()
+    {
+        return 0.1; // [Hz]
+    }
+    static constexpr flnum rateBaseNumber()
+    {
+        return 500.0;
+    }
+
+private:
+    // LFO rate
+    const std::atomic<flnum>* rate {};
+    // LFO delay
+    const std::atomic<flnum>* delay {};
+    // Amount of modulation
+    const std::atomic<flnum>* pitch {};
+    const std::atomic<flnum>* filterFreq {};
+
+    flnum rateVal = 0.0;
+    flnum delayVal = 0.0;
+    flnum pitchVal = 0.0;
+    flnum filterFreqVal = 0.0;
+};
+
 class FilterParams
 {
     using flnum = float;
 
 public:
-    flnum getFrequency() const
+    [[maybe_unused]] flnum getFrequency() const
     {
         return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
     }
@@ -215,7 +309,7 @@ public:
     }
     flnum getFilterEnvelope() const
     {
-        return filterEnvelopeVal;
+        return SynthUtil::valMinusOneToOne (filterEnvelopeVal);
     }
     void setFilterEnvelopePtr (const std::atomic<flnum>* _filterEnvelope)
     {
@@ -234,7 +328,7 @@ public:
     // Frequency
     static constexpr flnum lowestFreqVal()
     {
-        return 20.0;
+        return 20.0; // [Hz]
     }
     static constexpr flnum freqBaseNumber()
     {
@@ -277,6 +371,10 @@ public:
     {
         return &envelopeParams;
     }
+    LfoParams* lfo()
+    {
+        return &lfoParams;
+    }
     FilterParams* filter()
     {
         return &filterParams;
@@ -289,6 +387,7 @@ public:
 private:
     // plugin parameters
     EnvelopeParams envelopeParams;
+    LfoParams lfoParams;
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
     SynthParams() = default;
@@ -463,6 +562,150 @@ private:
 };
 
 //==============================================================================
+class Lfo
+{
+    using flnum = float;
+
+public:
+    // Singleton
+    Lfo (const Lfo&) = delete;
+    Lfo& operator= (Lfo const&) = delete;
+    static Lfo* getInstance()
+    {
+        static Lfo instance;
+        return &instance;
+    }
+
+    void noteOn()
+    {
+        bool firstNote = (numNoteOn == 0);
+        ++numNoteOn;
+        if (firstNote)
+        {
+            constexpr flnum ampNoteStart = MAX_LEVEL * 0.01;
+            amp = ampNoteStart;
+        }
+    }
+
+    void noteOff()
+    {
+        numNoteOn = (--numNoteOn >= 0) ? numNoteOn : 0;
+    }
+
+    void allNoteOff()
+    {
+        numNoteOn = 0;
+    }
+
+    flnum getLevel (int sample)
+    {
+        return buf[sample];
+    }
+
+    void renderLfo (int startSample, int numSamples)
+    {
+        int idx = startSample;
+        while (--numSamples >= 0)
+        {
+            buf[idx++] = lfoWave (currentAngle) * amp;
+            flnum angleDelta = getAngleDelta();
+            currentAngle += angleDelta;
+            if (currentAngle > pi * 2.0)
+            {
+                currentAngle -= pi * 2.0;
+            }
+            updateAmp();
+        }
+    }
+
+    flnum getPitchAmount()
+    {
+        return p->getPitch();
+    }
+
+    flnum getFilterFreqAmount()
+    {
+        return p->getFilterFreq();
+    }
+
+    void setCurrentPlaybackSampleRate (double _sampleRate)
+    {
+        sampleRate = static_cast<flnum> (_sampleRate);
+    }
+
+    void setSamplesPerBlock (int _samplesPerBlock)
+    {
+        samplesPerBlock = _samplesPerBlock;
+        buf.resize (samplesPerBlock);
+    }
+
+private:
+    static constexpr flnum MAX_LEVEL = 1.0;
+    static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
+    static constexpr int DEFAULT_SAMPLES_PER_BLOCK = 512;
+    static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
+    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
+
+    const LfoParams* const p;
+
+    flnum sampleRate;
+    int numNoteOn;
+
+    // ---
+    int samplesPerBlock;
+    std::vector<flnum> buf;
+    flnum currentAngle;
+    flnum amp;
+    // ---
+
+    Lfo()
+        : p (SynthParams::getInstance().lfo()),
+          sampleRate (DEFAULT_SAMPLE_RATE),
+          numNoteOn (0),
+          samplesPerBlock (DEFAULT_SAMPLES_PER_BLOCK),
+          buf (samplesPerBlock),
+          currentAngle (0.0),
+          amp (0.0)
+    {
+    }
+
+    static flnum lfoWave (flnum angle)
+    {
+        return MAX_LEVEL * std::sin (angle);
+    }
+
+    flnum getAngleDelta()
+    {
+        flnum rate = p->getRate();
+        return 2.0 * pi * rate / sampleRate;
+    }
+
+    void updateAmp()
+    {
+        constexpr flnum valFinishDelay = MAX_LEVEL * 0.99;
+        // Value of adjust (getDelay()) is around 0.99
+        amp = amp * MAX_LEVEL / adjust (p->getDelay());
+        if (amp >= valFinishDelay)
+        {
+            amp = MAX_LEVEL;
+        }
+    }
+
+    // Adjust parameter value like attack, decay or release according to the
+    // sampling rate
+    flnum adjust (const flnum val) const
+    {
+        // If no need to adjust
+        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
+        {
+            return val;
+        }
+        flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
+        return val * amount;
+    }
+};
+
+//==============================================================================
 class Filter
 {
     using flnum = float;
@@ -480,16 +723,19 @@ public:
     explicit Filter (Envelope& _env)
         : p (SynthParams::getInstance().filter()),
           env (_env),
+          lfo (Lfo::getInstance()),
           sampleRate (DEFAULT_SAMPLE_RATE),
           fb()
     {
     }
 
-    flnum process (flnum sample)
+    flnum process (flnum sampleVal, int sampleIdx)
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum omega0 = 2.0 * pi * p->getControlledFrequency (env.getLevel() * p->getFilterEnvelope()) / sampleRate;
+        flnum freq = p->getControlledFrequency (env.getLevel() * p->getFilterEnvelope()
+                                                + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
+        flnum omega0 = 2.0 * pi * freq / sampleRate;
         flnum sinw0 = std::sin (omega0);
         flnum cosw0 = std::cos (omega0);
         // sp.getResonance() stands for "Q".
@@ -501,10 +747,10 @@ public:
         flnum b1 = 1 - cosw0;
         flnum b2 = (1 - cosw0) / 2.0;
 
-        flnum out0 = b0 / a0 * sample + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
+        flnum out0 = b0 / a0 * sampleVal + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
                      - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
         fb.in2 = fb.in1;
-        fb.in1 = sample;
+        fb.in1 = sampleVal;
 
         fb.out2 = fb.out1;
         fb.out1 = out0;
@@ -523,6 +769,7 @@ private:
 
     const FilterParams* const p;
     Envelope& env;
+    Lfo* const lfo;
     flnum sampleRate;
     // The length of this vector equals to max number of the channels;
     FilterBuffer fb;
@@ -534,6 +781,7 @@ struct FancySynthVoice : public juce::SynthesiserVoice
     using flnum = float;
     FancySynthVoice()
         : env(),
+          lfo (Lfo::getInstance()),
           filter (env)
     {
     }
@@ -561,6 +809,8 @@ struct FancySynthVoice : public juce::SynthesiserVoice
         flnum cyclesPerSample = cyclesPerSecond / getSampleRate();
 
         angleDelta = cyclesPerSample * 2.0 * pi;
+
+        lfo->noteOn();
     }
 
     void stopNote (float /*velocity*/, bool allowTailOff) override
@@ -574,6 +824,8 @@ struct FancySynthVoice : public juce::SynthesiserVoice
             clearCurrentNote();
             angleDelta = 0.0;
         }
+
+        lfo->noteOff();
     }
 
     void pitchWheelMoved (int) override {}
@@ -581,27 +833,32 @@ struct FancySynthVoice : public juce::SynthesiserVoice
 
     void renderNextBlock (juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
     {
+        int idx = startSample;
         if (angleDelta != 0.0)
         {
             while (--numSamples >= 0)
             {
                 flnum currentSample = osc.oscillatorVal (currentAngle) * level * env.getLevel();
-                currentSample = filter.process (currentSample);
+                currentSample = filter.process (currentSample, idx);
 
                 for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                    outputBuffer.addSample (i, startSample, currentSample);
+                    outputBuffer.addSample (i, idx, currentSample);
 
-                currentAngle += angleDelta;
+                flnum lfoPitchDepth = lfo->getPitchAmount();
+                flnum lfoVal = lfo->getLevel (idx);
+                currentAngle += angleDelta * (1.0 + lfoPitchDepth * lfoVal);
                 if (currentAngle > pi * 2.0)
                 {
                     currentAngle -= pi * 2.0;
                 }
-                ++startSample;
+                ++lfoSampleCnt;
+                ++idx;
                 env.update();
                 if (env.getLevel() < 0.005)
                 {
                     clearCurrentNote();
                     angleDelta = 0.0;
+                    lfoSampleCnt += --numSamples ? numSamples : 0;
                     break;
                 }
             }
@@ -612,9 +869,69 @@ private:
     static constexpr flnum pi = juce::MathConstants<flnum>::pi;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    unsigned long lfoSampleCnt = 0;
     Oscillator osc;
     Envelope env;
+    Lfo* const lfo;
     Filter filter;
+};
+
+//==============================================================================
+class FancySynth : public juce::Synthesiser
+{
+    using flnum = float;
+
+public:
+    FancySynth()
+        : lfo (Lfo::getInstance())
+    {
+    }
+
+    void setCurrentPlaybackSampleRate (double sampleRate) override
+    {
+        lfo->setCurrentPlaybackSampleRate (sampleRate);
+        juce::Synthesiser::setCurrentPlaybackSampleRate (sampleRate);
+    }
+
+    void setSamplesPerBlock (int samplesPerBlock)
+    {
+        lfo->setSamplesPerBlock (samplesPerBlock);
+    }
+
+    void noteOn (int midiChannel,
+                 int midiNoteNumber,
+                 float velocity) override
+    {
+        lfo->noteOn();
+        juce::Synthesiser::noteOn (midiChannel, midiNoteNumber, velocity);
+    }
+
+    void noteOff (int midiChannel,
+                  int midiNoteNumber,
+                  float velocity,
+                  bool allowTailOff) override
+    {
+        lfo->noteOff();
+        juce::Synthesiser::noteOff (midiChannel, midiNoteNumber, velocity, allowTailOff);
+    }
+
+    void allNotesOff (int midiChannel,
+                      bool allowTailOff) override
+    {
+        lfo->allNoteOff();
+        juce::Synthesiser::allNotesOff (midiChannel, allowTailOff);
+    }
+
+private:
+    Lfo* const lfo;
+
+    void renderVoices (juce::AudioBuffer<flnum>& outputAudio,
+                       int startSample,
+                       int numSamples) override
+    {
+        lfo->renderLfo (startSample, numSamples);
+        juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
+    }
 };
 
 //==============================================================================
@@ -629,9 +946,10 @@ public:
         synth.addSound (new FancySynthSound());
     }
 
-    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
+        synth.setSamplesPerBlock(samplesPerBlockExpected);
         midiCollector.reset (sampleRate);
     }
 
@@ -643,6 +961,6 @@ public:
     }
 
 private:
-    juce::Synthesiser synth;
+    FancySynth synth;
     juce::MidiMessageCollector midiCollector;
 };

@@ -48,7 +48,6 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0, 1.0, 0.01f);
-    juce::NormalisableRange<float> nrangeSigned (-1.0, 1.0, 0.01f);
 
     // Oscillator parameters
     OscillatorParams* const oscillatorParams = synthParams.oscillator();
@@ -74,15 +73,15 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("subSquareGain", this);
 
     // Noise gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 1.0, valueToTextFunction, nullptr, true));
-    oscillatorParams->setNoiseGainPtr(parameters.getRawParameterValue ("noiseGain"));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
     // Envelop parameters
     EnvelopeParams* const envelopeParams = synthParams.envelope();
 
     // Attack
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 1.0, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     envelopeParams->setAttackPtr (parameters.getRawParameterValue ("attack"));
     parameters.addParameterListener ("attack", this);
 
@@ -97,9 +96,32 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("sustain", this);
 
     // Release
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 1.0, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("release", "Release", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     envelopeParams->setReleasePtr (parameters.getRawParameterValue ("release"));
     parameters.addParameterListener ("release", this);
+
+    // LFO parameters
+    LfoParams* const lfoParams = synthParams.lfo();
+
+    // LFO rate
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("rate", "LFO Rate", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    lfoParams->setRatePtr (parameters.getRawParameterValue ("rate"));
+    parameters.addParameterListener ("rate", this);
+
+    // LFO delay
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Delay", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    lfoParams->setDelayPtr(parameters.getRawParameterValue ("lfoDelay"));
+    parameters.addParameterListener ("lfoDelay", this);
+
+    // Amount of pitch
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoPitch", "LFO -> Pitch", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    lfoParams->setPitchPtr(parameters.getRawParameterValue ("lfoPitch"));
+    parameters.addParameterListener ("lfoPitch", this);
+
+    // Amount of filter cutoff frequency
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoFilterFreq", "LFO -> Freq", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    lfoParams->setFilterFreqPtr(parameters.getRawParameterValue ("lfoFilterFreq"));
+    parameters.addParameterListener ("lfoFilterFreq", this);
 
     // Filter parameters
     FilterParams* const filterParams = synthParams.filter();
@@ -115,7 +137,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("resonance", this);
 
     // Filter envelope
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Filter Env", "", nrangeSigned, 0.0, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Env -> Filter", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     filterParams->setFilterEnvelopePtr (parameters.getRawParameterValue (("filterEnv")));
     parameters.addParameterListener ("filterEnv", this);
     // ---
@@ -288,11 +310,12 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     SynthParams& synthParams (SynthParams::getInstance());
     OscillatorParams* const oscillatorParams = synthParams.oscillator();
     EnvelopeParams* const envelopeParams = synthParams.envelope();
+    LfoParams* const lfoParams = synthParams.lfo();
     FilterParams* const filterParams = synthParams.filter();
     oscillatorParams->parameterChanged();
     envelopeParams->parameterChanged();
+    lfoParams->parameterChanged();
     filterParams->parameterChanged();
-
 }
 
 //==============================================================================

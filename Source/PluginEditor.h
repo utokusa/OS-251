@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <array>
-#include <JuceHeader.h>
 #include "ParamSlider.h"
 #include "PluginProcessor.h"
+#include <JuceHeader.h>
+#include <array>
 
 //==============================================================================
 /**
@@ -33,13 +33,14 @@ private:
 
     juce::AudioProcessorValueTreeState& parameters;
 
-    static constexpr int numRows = 3;
+    static constexpr int numRows = 4;
     static constexpr int numCols = 5;
     template <class T>
     using SliderMatrix = std::array<std::array<T, numCols>, numRows>;
     SliderMatrix<juce::String> paramIdList { { { "sinGain", "squareGain", "sawGain", "subSquareGain", "noiseGain" },
                                                { "attack", "decay", "sustain", "release", "" },
-                                               { "frequency", "resonance", "filterEnv", "", "" } } };
+                                               { "frequency", "resonance", "filterEnv", "lfoFilterFreq", "" },
+                                               { "rate", "lfoDelay", "lfoPitch", "", "" } } };
     using ParamSliderPtr = std::unique_ptr<ParamSlider>;
     SliderMatrix<ParamSliderPtr> sliderList;
 
