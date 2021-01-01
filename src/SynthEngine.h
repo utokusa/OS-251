@@ -355,18 +355,10 @@ private:
 };
 
 // Synthesizer parameters
-// This class is singleton.
 class SynthParams
 {
 public:
-    // Singleton
-    SynthParams (const SynthParams&) = delete;
-    SynthParams& operator= (SynthParams const&) = delete;
-    static SynthParams& getInstance()
-    {
-        static SynthParams instance;
-        return instance;
-    }
+    SynthParams() = default;
     EnvelopeParams* envelope()
     {
         return &envelopeParams;
@@ -390,7 +382,6 @@ private:
     LfoParams lfoParams;
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
-    SynthParams() = default;
 };
 
 //==============================================================================
@@ -399,7 +390,13 @@ class Oscillator
     using flnum = float;
 
 public:
-    Oscillator() : p (SynthParams::getInstance().oscillator()) {}
+    Oscillator() = delete;
+    Oscillator (SynthParams* const synthParams)
+        : p (synthParams->oscillator()),
+          randEngine (seedGen()),
+          randDist (0.0, 1.0)
+    {
+    }
 
     // Return oscillator voltage value.
     // Angle is in radian.
@@ -418,6 +415,9 @@ private:
     static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 
     const OscillatorParams* const p;
+    std::random_device seedGen;
+    std::default_random_engine randEngine;
+    std::uniform_real_distribution<> randDist;
 
     static flnum wrapAngle (flnum angle)
     {
@@ -443,12 +443,9 @@ private:
         return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
     }
 
-    static flnum noiseWave()
+    flnum noiseWave()
     {
-        static std::random_device seedGen;
-        static std::default_random_engine engine (seedGen());
-        static std::uniform_real_distribution<> dist (0.0, 1.0);
-        return dist (engine);
+        return randDist (randEngine);
     }
 };
 
@@ -467,8 +464,9 @@ class Envelope
     };
 
 public:
-    Envelope()
-        : p (SynthParams::getInstance().envelope()),
+    Envelope() = delete;
+    Envelope (SynthParams* const synthParams)
+        : p (synthParams->envelope()),
           sampleRate (DEFAULT_SAMPLE_RATE),
           state (State::OFF),
           level (0.0)
@@ -567,13 +565,16 @@ class Lfo
     using flnum = float;
 
 public:
-    // Singleton
-    Lfo (const Lfo&) = delete;
-    Lfo& operator= (Lfo const&) = delete;
-    static Lfo* getInstance()
+    Lfo() = delete;
+    Lfo (SynthParams* const synthParams)
+        : p (synthParams->lfo()),
+          sampleRate (DEFAULT_SAMPLE_RATE),
+          numNoteOn (0),
+          samplesPerBlock (DEFAULT_SAMPLES_PER_BLOCK),
+          buf (samplesPerBlock),
+          currentAngle (0.0),
+          amp (0.0)
     {
-        static Lfo instance;
-        return &instance;
     }
 
     void noteOn()
@@ -658,17 +659,6 @@ private:
     flnum amp;
     // ---
 
-    Lfo()
-        : p (SynthParams::getInstance().lfo()),
-          sampleRate (DEFAULT_SAMPLE_RATE),
-          numNoteOn (0),
-          samplesPerBlock (DEFAULT_SAMPLES_PER_BLOCK),
-          buf (samplesPerBlock),
-          currentAngle (0.0),
-          amp (0.0)
-    {
-    }
-
     static flnum lfoWave (flnum angle)
     {
         return MAX_LEVEL * std::sin (angle);
@@ -720,10 +710,11 @@ class Filter
     };
 
 public:
-    explicit Filter (Envelope& _env)
-        : p (SynthParams::getInstance().filter()),
+    Filter() = delete;
+    Filter (SynthParams* const synthParams, Envelope* const _env, Lfo* const _lfo)
+        : p (synthParams->filter()),
           env (_env),
-          lfo (Lfo::getInstance()),
+          lfo (_lfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
           fb()
     {
@@ -733,7 +724,7 @@ public:
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum freq = p->getControlledFrequency (env.getLevel() * p->getFilterEnvelope()
+        flnum freq = p->getControlledFrequency (env->getLevel() * p->getFilterEnvelope()
                                                 + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
         flnum omega0 = 2.0 * pi * freq / sampleRate;
         flnum sinw0 = std::sin (omega0);
@@ -768,7 +759,7 @@ private:
     static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 
     const FilterParams* const p;
-    Envelope& env;
+    Envelope* const env;
     Lfo* const lfo;
     flnum sampleRate;
     // The length of this vector equals to max number of the channels;
@@ -776,13 +767,17 @@ private:
 };
 
 //==============================================================================
-struct FancySynthVoice : public juce::SynthesiserVoice
+class FancySynthVoice : public juce::SynthesiserVoice
 {
     using flnum = float;
-    FancySynthVoice()
-        : env(),
-          lfo (Lfo::getInstance()),
-          filter (env)
+
+public:
+    FancySynthVoice() = delete;
+    FancySynthVoice (SynthParams* const synthParams, Lfo* const _lfo)
+        : osc (synthParams),
+          env (synthParams),
+          lfo (_lfo),
+          filter (synthParams, &env, lfo)
     {
     }
 
@@ -882,8 +877,9 @@ class FancySynth : public juce::Synthesiser
     using flnum = float;
 
 public:
-    FancySynth()
-        : lfo (Lfo::getInstance())
+    FancySynth() = delete;
+    FancySynth (Lfo* const _lfo)
+        : lfo (_lfo)
     {
     }
 
@@ -938,10 +934,14 @@ private:
 class SynthEngine
 {
 public:
-    SynthEngine()
+    SynthEngine() = delete;
+    SynthEngine (SynthParams* const _synthParams)
+        : synthParams (_synthParams),
+          lfo (synthParams),
+          synth (&lfo)
     {
         for (auto i = 0; i < 4; ++i)
-            synth.addVoice (new FancySynthVoice());
+            synth.addVoice (new FancySynthVoice (synthParams, &lfo));
 
         synth.addSound (new FancySynthSound());
     }
@@ -949,7 +949,7 @@ public:
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
-        synth.setSamplesPerBlock(samplesPerBlockExpected);
+        synth.setSamplesPerBlock (samplesPerBlockExpected);
         midiCollector.reset (sampleRate);
     }
 
@@ -961,6 +961,8 @@ public:
     }
 
 private:
+    SynthParams* const synthParams;
+    Lfo lfo;
     FancySynth synth;
     juce::MidiMessageCollector midiCollector;
 };

@@ -22,10 +22,9 @@ Os251AudioProcessor::Os251AudioProcessor()
                           ),
 #endif
       parameters (*this, nullptr),
-      synthEngine()
+      synthParams(),
+      synthEngine (&synthParams)
 {
-    SynthParams& synthParams (SynthParams::getInstance());
-
     // ---
     // Parameter value conversion from [0, 1.0] float to juce::String.
 
@@ -110,17 +109,17 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // LFO delay
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Delay", "", nrange, 0.5, valueToTextFunction, nullptr, true));
-    lfoParams->setDelayPtr(parameters.getRawParameterValue ("lfoDelay"));
+    lfoParams->setDelayPtr (parameters.getRawParameterValue ("lfoDelay"));
     parameters.addParameterListener ("lfoDelay", this);
 
     // Amount of pitch
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoPitch", "LFO -> Pitch", "", nrange, 0.0, valueToTextFunction, nullptr, true));
-    lfoParams->setPitchPtr(parameters.getRawParameterValue ("lfoPitch"));
+    lfoParams->setPitchPtr (parameters.getRawParameterValue ("lfoPitch"));
     parameters.addParameterListener ("lfoPitch", this);
 
     // Amount of filter cutoff frequency
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoFilterFreq", "LFO -> Freq", "", nrange, 0.0, valueToTextFunction, nullptr, true));
-    lfoParams->setFilterFreqPtr(parameters.getRawParameterValue ("lfoFilterFreq"));
+    lfoParams->setFilterFreqPtr (parameters.getRawParameterValue ("lfoFilterFreq"));
     parameters.addParameterListener ("lfoFilterFreq", this);
 
     // Filter parameters
@@ -307,7 +306,6 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
 void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
 {
-    SynthParams& synthParams (SynthParams::getInstance());
     OscillatorParams* const oscillatorParams = synthParams.oscillator();
     EnvelopeParams* const envelopeParams = synthParams.envelope();
     LfoParams* const lfoParams = synthParams.lfo();

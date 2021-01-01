@@ -43,6 +43,7 @@ constexpr int VEL_OFF = 0x00;
 class SynthEngineFixture : public benchmark::Fixture
 {
 public:
+    SynthEngineFixture() : synthParams(), synthEngine (&synthParams) {}
     void SetUp (::benchmark::State& state) override
     {
         // Oscillator parameters
@@ -85,8 +86,8 @@ public:
     //==============================================================================
 private:
     // Private member variables
+    SynthParams synthParams;
     SynthEngine synthEngine;
-    SynthParams& synthParams = { SynthParams::getInstance() };
 
     std::atomic<float> sinGain = { 0.5f };
     std::atomic<float> squareGain = { 0.5f };
@@ -142,10 +143,10 @@ private:
 BENCHMARK_F (SynthEngineFixture, render)
 (benchmark::State& state)
 {
-for (auto _ : state)
-{
-render();
-}
+    for (auto _ : state)
+    {
+        render();
+    }
 }
 
 BENCHMARK_MAIN();

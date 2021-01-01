@@ -57,6 +57,7 @@ public:
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
+    SynthParams synthParams;
     SynthEngine synthEngine;
 
     //==============================================================================
