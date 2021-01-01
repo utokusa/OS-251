@@ -9,7 +9,7 @@ juce_add_console_app(Os251_Benchmark
         PLUGIN_MANUFACTURER_CODE htMi               # A four-character manufacturer id with at least one upper-case character
         # DESCRIPTION "" # We don't use it. If set, the plug-in name in Pro Tools will be this value.
         MICROPHONE_PERMISSION_ENABLED TRUE
-        MICROPHONE_PERMISSION_TEXT "This applicaion requires a permission to use an audio input device of your computer. By Default, Built-In microphone will be used."
+        MICROPHONE_PERMISSION_TEXT "This application requires a permission to use an audio input device of your computer. By Default, Built-In microphone will be used."
 
         PRODUCT_NAME "OS-251-benchmark")        # The name of the final
 
