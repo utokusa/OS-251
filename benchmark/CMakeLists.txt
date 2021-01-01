@@ -15,12 +15,6 @@ juce_add_console_app(Os251_Benchmark
 
 target_compile_features(Os251_Benchmark PUBLIC cxx_std_17)
 
-target_include_directories(Os251_Benchmark PUBLIC
-        "../lib/benchmark/include")
-
-target_link_directories(Os251_Benchmark PUBLIC
-        "../lib/benchmark/")
-
 target_link_libraries(Os251_Benchmark PUBLIC
         benchmark)
 
