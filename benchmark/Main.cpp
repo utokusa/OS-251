@@ -1,16 +1,14 @@
 /*
   ==============================================================================
-
     Benchmark for synthesizer engine
-
   ==============================================================================
 */
-
-#include "../../../Source/SynthEngine.h"
 
 #include <JuceHeader.h>
 #include <algorithm>
 #include <benchmark/benchmark.h>
+
+#include "../src/SynthEngine.h"
 
 //==============================================================================
 // Constants
@@ -144,10 +142,10 @@ private:
 BENCHMARK_F (SynthEngineFixture, render)
 (benchmark::State& state)
 {
-    for (auto _ : state)
-    {
-        render();
-    }
+for (auto _ : state)
+{
+render();
+}
 }
 
 BENCHMARK_MAIN();
