@@ -13,6 +13,8 @@
 //==============================================================================
 // Constants
 
+using flnum = float;
+
 constexpr double SAMPLE_RATE = 44100.0;
 constexpr double MAX_TIME_SEC = 2.0;
 constexpr int NUM_SAMPLE = static_cast<int> (SAMPLE_RATE) * static_cast<int> (MAX_TIME_SEC);
@@ -52,6 +54,7 @@ public:
         oscillatorParams->setSquareGainPtr (&squareGain);
         oscillatorParams->setSawGainPtr (&sawGain);
         oscillatorParams->setSubSquareGainPtr (&subSquareGain);
+        oscillatorParams->setNoiseGainPtr (&noiseGain);
 
         // Envelop parameters
         EnvelopeParams* const envelopeParams = synthParams.envelope();
@@ -60,13 +63,20 @@ public:
         envelopeParams->setSustainPtr (&sustain);
         envelopeParams->setReleasePtr (&release);
 
+        // LFO parameters
+        LfoParams* const lfoParams = synthParams.lfo();
+        lfoParams->setRatePtr (&rate);
+        lfoParams->setDelayPtr (&delay);
+        lfoParams->setPitchPtr (&pitch);
+        lfoParams->setFilterFreqPtr (&filterFreq);
+
         // Filter parameters
         FilterParams* const filterParams = synthParams.filter();
         filterParams->setFrequencyPtr (&frequency);
         filterParams->setResonancePtr (&resonance);
         filterParams->setFilterEnvelopePtr (&filterEnvelope);
 
-        synthEngine.prepareToPlay (0, SAMPLE_RATE);
+        synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
 
         for (const auto& note : notes)
         {
@@ -89,21 +99,27 @@ private:
     SynthParams synthParams;
     SynthEngine synthEngine;
 
-    std::atomic<float> sinGain = { 0.5f };
-    std::atomic<float> squareGain = { 0.5f };
-    std::atomic<float> sawGain = { 0.5f };
-    std::atomic<float> subSquareGain = { 0.5f };
+    std::atomic<flnum> sinGain = { 0.5f };
+    std::atomic<flnum> squareGain = { 0.5f };
+    std::atomic<flnum> sawGain = { 0.5f };
+    std::atomic<flnum> subSquareGain = { 0.5f };
+    std::atomic<flnum> noiseGain = { 0.5f };
 
-    std::atomic<float> attack = { 0.5f };
-    std::atomic<float> decay = { 0.5f };
-    std::atomic<float> sustain = { 0.5f };
-    std::atomic<float> release = { 0.5f };
+    std::atomic<flnum> attack = { 0.5f };
+    std::atomic<flnum> decay = { 0.5f };
+    std::atomic<flnum> sustain = { 0.5f };
+    std::atomic<flnum> release = { 0.5f };
 
-    std::atomic<float> frequency = { 0.5f };
-    std::atomic<float> resonance = { 0.5f };
-    std::atomic<float> filterEnvelope = { 0.5f };
+    std::atomic<flnum> rate = { 0.5f }; // LFO rate
+    std::atomic<flnum> delay = { 0.5f }; // LFO delay
+    std::atomic<flnum> pitch = { 0.5f }; // Amount of modulation
+    std::atomic<flnum> filterFreq = { 0.5f }; // Amount of modulation
 
-    juce::AudioBuffer<float> outputAudio = { NUM_CHANNEL, NUM_SAMPLE };
+    std::atomic<flnum> frequency = { 0.5f };
+    std::atomic<flnum> resonance = { 0.5f };
+    std::atomic<flnum> filterEnvelope = { 0.5f };
+
+    juce::AudioBuffer<flnum> outputAudio = { NUM_CHANNEL, NUM_SAMPLE };
 
     // juce::MidiMessage
     // MidiMessage (int byte1, int byte2, int byte3, double timeStamp = 0) noexcept;
@@ -132,7 +148,7 @@ private:
     //==============================================================================
     // Private method
 
-    static int timeSecToSample (double timeSec, double sampleRate, int numSample)
+    static int timeSecToSample (flnum timeSec, double sampleRate, int numSample)
     {
         int ret = static_cast<int> (timeSec * sampleRate);
         ret = std::clamp (ret, 0, numSample);
