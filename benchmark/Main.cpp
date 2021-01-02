@@ -91,8 +91,6 @@ public:
     void render()
     {
         synthEngine.renderNextBlock (outputAudio, inputMidiBuffer, 0, NUM_SAMPLE);
-        // Fail on purpose to check if the GitHub Actions workflow works correctly.
-        throw std::exception();
     }
 
     //==============================================================================
