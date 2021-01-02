@@ -1,0 +1,24 @@
+name: Test
+on: [ push ]
+jobs:
+  test:
+    env:
+      BUILD_DIRECTORY: cmake-build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Build
+        run: |
+          cmake -B ${BUILD_DIRECTORY} -G Ninja -DCMAKE_BUILD_TYPE=Release
+          ninja -C ${BUILD_DIRECTORY} Os251_All -j 4
+          ninja -C ${BUILD_DIRECTORY} Os251_Benchmark -j 4
+      - name: Test
+        # Use benchmark as test
+        run: ./${BUILD_DIRECTORY}/benchmark/Os251_Benchmark_artefacts/Release/Os251_Benchmark
