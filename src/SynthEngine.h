@@ -600,6 +600,7 @@ public:
 
     flnum getLevel (int sample)
     {
+        assert (sample < buf.size());
         return buf[sample];
     }
 
@@ -608,6 +609,7 @@ public:
         int idx = startSample;
         while (--numSamples >= 0)
         {
+            assert (idx < buf.size());
             buf[idx++] = lfoWave (currentAngle) * amp;
             flnum angleDelta = getAngleDelta();
             currentAngle += angleDelta;
