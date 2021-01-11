@@ -2,6 +2,18 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/_deps/googlebenchmark-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/_deps/googletest-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/googlebenchmark-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/googletest-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release/_deps/googlebenchmark-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release/_deps/googletest-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build/_deps/googlebenchmark-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build/_deps/googletest-src" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/JUCE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint/blueprint/yoga" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint/blueprint/yoga/lib/gtest/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint/ext/juce" vcs="Git" />
   </component>
 </project>

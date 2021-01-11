@@ -3,3 +3,6 @@
 	url = https://github.com/juce-framework/JUCE
 	branch = juce6
 
+[submodule "lib/blueprint"]
+	path = lib/blueprint
+	url = https://github.com/nick-thompson/blueprint
