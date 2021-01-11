@@ -11,7 +11,7 @@ class App extends Component {
       <View {...styles.container}>
         <View {...styles.content}>
           <Text {...styles.text}>
-            Hello from React.js!
+            Hello from React.js!!!
           </Text>
         </View>
       </View>
@@ -23,17 +23,17 @@ const styles = {
   container: {
     'width': '100%',
     'height': '100%',
-    'background-color': 'ff17191f',
+    'background-color': '00ffffff',
   },
   content: {
     'flex': 1.0,
-    'justify-content': 'center',
+    'justify-content': 'flex-end',
     'align-items': 'center',
   },
   text: {
     'font-size': 18.0,
     'line-spacing': 1.6,
-    'color': 'ff626262',
+    'color': 'ffaaaaaa',
   },
 };
 
