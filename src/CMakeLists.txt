@@ -53,6 +53,7 @@ target_compile_features(Os251 PUBLIC cxx_std_17)
 
 target_compile_definitions(Os251
         PUBLIC
+        OS251_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
@@ -70,6 +71,11 @@ target_sources(Os251 PRIVATE
         PluginProcessor.cpp
         )
 
+# Add an explicit include path here so that Blueprint's EcmascriptEngine can find
+# the included Duktape source. You can optionally point this elsewhere if you'd like to
+# include a custom Duktape build.
+target_include_directories(Os251 PRIVATE blueprint/)
+
 target_link_libraries(Os251 PUBLIC
 #        Os251Binaries
         juce::juce_audio_basics
@@ -85,6 +91,7 @@ target_link_libraries(Os251 PUBLIC
         juce::juce_graphics
         juce::juce_gui_basics
         juce::juce_gui_extra
+        blueprint
         )
 
 juce_generate_juce_header(Os251)

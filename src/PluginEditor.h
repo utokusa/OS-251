@@ -43,6 +43,7 @@ private:
                                                { "rate", "lfoDelay", "lfoPitch", "", "" } } };
     using ParamSliderPtr = std::unique_ptr<ParamSlider>;
     SliderMatrix<ParamSliderPtr> sliderList;
+    blueprint::ReactApplicationRoot appRoot;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };
