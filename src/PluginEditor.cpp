@@ -18,6 +18,12 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
+    File sourceDir = File(OS251_SOURCE_DIR);
+    File bundle = sourceDir.getChildFile("jsui/build/js/main.js");
+
+    addAndMakeVisible(appRoot);
+    appRoot.evaluate(bundle);
+
     for (int i = 0; i < numRows; i++)
     {
         for (int j = 0; j < numCols; j++)
@@ -33,12 +39,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
             }
         }
     }
-
-    File sourceDir = File(OS251_SOURCE_DIR);
-    File bundle = sourceDir.getChildFile("jsui/build/js/main.js");
-
-    addAndMakeVisible(appRoot);
-    appRoot.evaluate(bundle);
 
     setSize (750, 500);
 }
@@ -64,6 +64,8 @@ void Os251AudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
+    appRoot.setBounds(getLocalBounds());
+
     // Lay out parameters
     int deltaX = 0;
     int deltaY = 0;
@@ -84,5 +86,5 @@ void Os251AudioProcessorEditor::resized()
             }
         }
     }
-    appRoot.setBounds(getLocalBounds());
+
 }
