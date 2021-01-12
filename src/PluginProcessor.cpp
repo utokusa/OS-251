@@ -287,7 +287,18 @@ bool Os251AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
-    return new Os251AudioProcessorEditor (*this, parameters);
+    File sourceDir = File(OS251_SOURCE_DIR);
+    File bundle = sourceDir.getChildFile("jsui/build/js/main.js");
+
+    auto* editor = new blueprint::BlueprintGenericEditor(*this, bundle);
+
+//    editor->setResizable(true, true);
+//    editor->setResizeLimits(400, 240, 400 * 2, 240 * 2);
+//    editor->getConstrainer()->setFixedAspectRatio(400.0 / 240.0);
+//    editor->setSize (400, 240);
+    editor->setSize (800, 480);
+
+    return editor;
 }
 
 //==============================================================================
