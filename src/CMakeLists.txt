@@ -67,7 +67,6 @@ target_compile_definitions(Os251
 #        )
 
 target_sources(Os251 PRIVATE
-        PluginEditor.cpp
         PluginProcessor.cpp
         )
 

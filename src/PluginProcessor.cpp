@@ -7,7 +7,6 @@
 */
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
 
 //==============================================================================
 Os251AudioProcessor::Os251AudioProcessor()
