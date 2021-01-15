@@ -73,7 +73,7 @@ target_sources(Os251 PRIVATE
 # Add an explicit include path here so that Blueprint's EcmascriptEngine can find
 # the included Duktape source. You can optionally point this elsewhere if you'd like to
 # include a custom Duktape build.
-target_include_directories(Os251 PRIVATE blueprint/)
+target_include_directories(Os251 PRIVATE react_juce/)
 
 target_link_libraries(Os251 PUBLIC
 #        Os251Binaries
@@ -90,7 +90,7 @@ target_link_libraries(Os251 PUBLIC
         juce::juce_graphics
         juce::juce_gui_basics
         juce::juce_gui_extra
-        blueprint
+        react_juce
         )
 
 juce_generate_juce_header(Os251)

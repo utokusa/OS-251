@@ -34,7 +34,7 @@ FetchContent_MakeAvailable(
 add_subdirectory(lib/JUCE)
 
 # Adding any custom modules you might have:
-juce_add_module(lib/blueprint/blueprint)
+juce_add_module(lib/blueprint/react_juce)
 
 add_subdirectory(src)
 add_subdirectory(benchmark)
