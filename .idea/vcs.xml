@@ -15,5 +15,7 @@
     <mapping directory="$PROJECT_DIR$/lib/blueprint/blueprint/yoga" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/blueprint/blueprint/yoga/lib/gtest/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/blueprint/ext/juce" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint/react_juce/yoga" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/blueprint/react_juce/yoga/lib/gtest/googletest" vcs="Git" />
   </component>
 </project>

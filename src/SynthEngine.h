@@ -825,7 +825,11 @@ public:
         lfo->noteOff();
     }
 
-    void pitchWheelMoved (int) override {}
+    void pitchWheelMoved (int newPitchWheelValue) override
+    {
+
+    }
+
     void controllerMoved (int, int) override {}
 
     void renderNextBlock (juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
@@ -848,14 +852,12 @@ public:
                 {
                     currentAngle -= pi * 2.0;
                 }
-                ++lfoSampleCnt;
                 ++idx;
                 env.update();
                 if (env.getLevel() < 0.005)
                 {
                     clearCurrentNote();
                     angleDelta = 0.0;
-                    lfoSampleCnt += --numSamples ? numSamples : 0;
                     break;
                 }
             }
@@ -866,7 +868,6 @@ private:
     static constexpr flnum pi = juce::MathConstants<flnum>::pi;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
-    unsigned long lfoSampleCnt = 0;
     Oscillator osc;
     Envelope env;
     Lfo* const lfo;
