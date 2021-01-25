@@ -795,8 +795,10 @@ public:
         filter.setCurrentPlaybackSampleRate (newRate);
     }
 
-    void startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
+    void startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int currentPitchWheelPosition) override
     {
+        setPitchBend(currentPitchWheelPosition);
+
         currentAngle = 0.0;
         level = velocity * 0.15;
         env.noteOn();
@@ -827,7 +829,7 @@ public:
 
     void pitchWheelMoved (int newPitchWheelValue) override
     {
-
+        setPitchBend(newPitchWheelValue);
     }
 
     void controllerMoved (int, int) override {}
@@ -847,7 +849,7 @@ public:
 
                 flnum lfoPitchDepth = lfo->getPitchAmount();
                 flnum lfoVal = lfo->getLevel (idx);
-                currentAngle += angleDelta * (1.0 + lfoPitchDepth * lfoVal);
+                currentAngle += angleDelta * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
                 if (currentAngle > pi * 2.0)
                 {
                     currentAngle -= pi * 2.0;
@@ -865,9 +867,29 @@ public:
     }
 
 private:
+    void setPitchBend(int pitchWheelValue)
+    {
+        // `newPitchWheelValue` is integer from 0 to 16383 (0x3fff).
+        // 8192 -> no pitch bend
+        if (pitchWheelValue > 8192)
+        {
+            pitchBend = 1.0 + (pitchBendMax - 1.0) * (static_cast<flnum>(pitchWheelValue) - 8192.0) / 8191.0; // 16383 - 8192 = 8191
+        }
+        else if (pitchWheelValue == 8192)
+        {
+            pitchBend = 1.0;
+        }
+        else
+        {
+            pitchBend = 1.0 / (1.0 + (pitchBendMax - 1.0) * (8192.0 - static_cast<flnum>(pitchWheelValue)) / 8192.0);
+        }
+    }
+
     static constexpr flnum pi = juce::MathConstants<flnum>::pi;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    flnum pitchBend = 1.0;
+    flnum pitchBendMax = 2.0;
     Oscillator osc;
     Envelope env;
     Lfo* const lfo;
