@@ -49,7 +49,7 @@ public:
     void SetUp (::benchmark::State& state) override
     {
         // Oscillator parameters
-        OscillatorParams* const oscillatorParams = synthParams.oscillator();
+        onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
         oscillatorParams->setSinGainPtr (&sinGain);
         oscillatorParams->setSquareGainPtr (&squareGain);
         oscillatorParams->setSawGainPtr (&sawGain);
@@ -57,27 +57,27 @@ public:
         oscillatorParams->setNoiseGainPtr (&noiseGain);
 
         // Envelop parameters
-        EnvelopeParams* const envelopeParams = synthParams.envelope();
+        onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
         envelopeParams->setAttackPtr (&attack);
         envelopeParams->setDecayPtr (&decay);
         envelopeParams->setSustainPtr (&sustain);
         envelopeParams->setReleasePtr (&release);
 
         // LFO parameters
-        LfoParams* const lfoParams = synthParams.lfo();
+        onsen::LfoParams* const lfoParams = synthParams.lfo();
         lfoParams->setRatePtr (&rate);
         lfoParams->setDelayPtr (&delay);
         lfoParams->setPitchPtr (&pitch);
         lfoParams->setFilterFreqPtr (&filterFreq);
 
         // Filter parameters
-        FilterParams* const filterParams = synthParams.filter();
+        onsen::FilterParams* const filterParams = synthParams.filter();
         filterParams->setFrequencyPtr (&frequency);
         filterParams->setResonancePtr (&resonance);
         filterParams->setFilterEnvelopePtr (&filterEnvelope);
 
         // Chorus parameters
-        ChorusParams* const chorusParams = synthParams.chorus();
+        onsen::ChorusParams* const chorusParams = synthParams.chorus();
         chorusParams->setChorusOnPtr(&chorusOn);
 
         synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
@@ -100,8 +100,8 @@ public:
     //==============================================================================
 private:
     // Private member variables
-    SynthParams synthParams;
-    SynthEngine synthEngine;
+    onsen::SynthParams synthParams;
+    onsen::SynthEngine synthEngine;
 
     std::atomic<flnum> sinGain = { 0.5f };
     std::atomic<flnum> squareGain = { 0.5f };

@@ -57,8 +57,8 @@ public:
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
-    SynthParams synthParams;
-    SynthEngine synthEngine;
+    onsen::SynthParams synthParams;
+    onsen::SynthEngine synthEngine;
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;

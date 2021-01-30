@@ -32,13 +32,13 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
 
     // Frequency
-    constexpr float lowestFreqVal = FilterParams::lowestFreqVal();
-    constexpr float freqBaseNumber = FilterParams::freqBaseNumber();
+    constexpr float lowestFreqVal = onsen::FilterParams::lowestFreqVal();
+    constexpr float freqBaseNumber = onsen::FilterParams::freqBaseNumber();
     auto valueToFreqFunction = [] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
 
     // Resonance
-    constexpr float lowestResVal = FilterParams::lowestResVal();
-    constexpr float resBaseNumber = FilterParams::resBaseNumber();
+    constexpr float lowestResVal = onsen::FilterParams::lowestResVal();
+    constexpr float resBaseNumber = onsen::FilterParams::resBaseNumber();
     auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
 
     // ON / OFF
@@ -51,7 +51,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     juce::NormalisableRange<float> nrange (0.0, 1.0, 0.01f);
 
     // Oscillator parameters
-    OscillatorParams* const oscillatorParams = synthParams.oscillator();
+    onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
 
     // Sin gain
     parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0, valueToTextFunction, nullptr, true));
@@ -79,7 +79,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("noiseGain", this);
 
     // Envelop parameters
-    EnvelopeParams* const envelopeParams = synthParams.envelope();
+    onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
 
     // Attack
     parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 0.5, valueToTextFunction, nullptr, true));
@@ -102,7 +102,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("release", this);
 
     // LFO parameters
-    LfoParams* const lfoParams = synthParams.lfo();
+    onsen::LfoParams* const lfoParams = synthParams.lfo();
 
     // LFO rate
     parameters.createAndAddParameter (std::make_unique<Parameter> ("rate", "LFO Rate", "", nrange, 0.0, valueToTextFunction, nullptr, true));
@@ -125,7 +125,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("lfoFilterFreq", this);
 
     // Filter parameters
-    FilterParams* const filterParams = synthParams.filter();
+    onsen::FilterParams* const filterParams = synthParams.filter();
 
     // Filter cutoff frequency
     parameters.createAndAddParameter (std::make_unique<Parameter> ("frequency", "Frequency", "", nrange, 1.0, valueToFreqFunction, nullptr, true));
@@ -143,7 +143,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("filterEnv", this);
 
     // Chorus parameters
-    ChorusParams* const chorusParams = synthParams.chorus();
+    onsen::ChorusParams* const chorusParams = synthParams.chorus();
 
     // Chorus ON
     parameters.createAndAddParameter (std::make_unique<Parameter> ("chorusOn", "Chorus", "", nrange, 0.0, valueToOnOff, nullptr, true));
@@ -328,11 +328,12 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
 void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
 {
-    OscillatorParams* const oscillatorParams = synthParams.oscillator();
-    EnvelopeParams* const envelopeParams = synthParams.envelope();
-    LfoParams* const lfoParams = synthParams.lfo();
-    FilterParams* const filterParams = synthParams.filter();
-    ChorusParams* const chorusParams = synthParams.chorus();
+    // TODO: extract as SynthParams class's method
+    onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
+    onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
+    onsen::LfoParams* const lfoParams = synthParams.lfo();
+    onsen::FilterParams* const filterParams = synthParams.filter();
+    onsen::ChorusParams* const chorusParams = synthParams.chorus();
     oscillatorParams->parameterChanged();
     envelopeParams->parameterChanged();
     lfoParams->parameterChanged();

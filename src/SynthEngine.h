@@ -13,6 +13,8 @@
 #include <JuceHeader.h>
 #include <random>
 
+namespace onsen
+{
 //==============================================================================
 class SynthUtil
 {
@@ -24,15 +26,6 @@ public:
     {
         return std::clamp<flnum> ((valZeroToOne - 0.5) * 2.0, -1.0, 1.0);
     }
-};
-
-//==============================================================================
-struct FancySynthSound : public juce::SynthesiserSound
-{
-    FancySynthSound() = default;
-
-    bool appliesToNote (int) override { return true; }
-    bool appliesToChannel (int) override { return true; }
 };
 
 //==============================================================================
@@ -350,7 +343,6 @@ private:
     const std::atomic<flnum>* resonance {};
     const std::atomic<flnum>* filterEnvelope {};
 
-
     flnum frequencyVal = 0.0;
     flnum resonanceVal = 0.0;
     flnum filterEnvelopeVal = 0.0;
@@ -359,6 +351,7 @@ private:
 class ChorusParams
 {
     using flnum = float;
+
 public:
     bool getChorusOn() const
     {
@@ -373,6 +366,7 @@ public:
     {
         chorusOnVal = *chorusOn;
     }
+
 private:
     const std::atomic<flnum>* chorusOn {};
     flnum chorusOnVal = 0.0;
@@ -411,6 +405,15 @@ private:
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
     ChorusParams chorusParams;
+};
+
+//==============================================================================
+struct FancySynthSound : public juce::SynthesiserSound
+{
+    FancySynthSound() = default;
+
+    bool appliesToNote (int) override { return true; }
+    bool appliesToChannel (int) override { return true; }
 };
 
 //==============================================================================
@@ -934,7 +937,7 @@ class Chorus
     public:
         flnum val()
         {
-            return sinWave(currentAngle);
+            return sinWave (currentAngle);
         }
         void update()
         {
@@ -942,6 +945,7 @@ class Chorus
             if (currentAngle > 2.0 * pi)
                 currentAngle -= 2.0 * pi;
         }
+
     private:
         flnum angleDelta()
         {
@@ -951,24 +955,24 @@ class Chorus
         {
             return std::sin (angle);
         }
+
     public:
         flnum currentAngle;
         flnum freq;
-        const flnum &sampleRate;
+        const flnum& sampleRate;
     };
 
 public:
     Chorus()
-        :
-          sampleRate (DEFAULT_SAMPLE_RATE),
+        : sampleRate (DEFAULT_SAMPLE_RATE),
           delayTime_msec (15.0),
-          feedback(0.3),
+          feedback (0.3),
           maxDelayTime_msec (20.0),
           writePointer (0),
-          lfo({0.0, 0.75, sampleRate}),
-          depth(0.1),
-          dryLevel(0.4),
-          wetLevel(0.3)
+          lfo ({ 0.0, 0.75, sampleRate }),
+          depth (0.1),
+          dryLevel (0.4),
+          wetLevel (0.3)
     {
         prepare();
     };
@@ -986,8 +990,8 @@ public:
             }
             monoInputVal /= outputAudio.getNumChannels();
 
-            const flnum delayVal = buf.at(readIdx());
-            buf.at(writePointer) = monoInputVal + delayVal * feedback;
+            const flnum delayVal = buf.at (readIdx());
+            buf.at (writePointer) = monoInputVal + delayVal * feedback;
             flnum outputVal = monoInputVal * dryLevel + delayVal * wetLevel;
             for (auto i = outputAudio.getNumChannels(); --i >= 0;)
             {
@@ -1050,9 +1054,9 @@ class FancySynth : public juce::Synthesiser
 public:
     FancySynth() = delete;
     FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
-        : params(synthParams),
+        : params (synthParams),
           lfo (_lfo),
-          chorus ()
+          chorus()
     {
     }
 
@@ -1093,7 +1097,7 @@ public:
     }
 
 private:
-    SynthParams * const params;
+    SynthParams* const params;
     Lfo* const lfo;
     Chorus chorus;
 
@@ -1104,7 +1108,7 @@ private:
         lfo->renderLfo (startSample, numSamples);
         juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
         if (params->chorus()->getChorusOn())
-            chorus.render(outputAudio, startSample, numSamples);
+            chorus.render (outputAudio, startSample, numSamples);
     }
 };
 
@@ -1144,3 +1148,4 @@ private:
     FancySynth synth;
     juce::MidiMessageCollector midiCollector;
 };
+} // namespace onsen
