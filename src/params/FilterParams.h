@@ -41,7 +41,7 @@ public:
     }
     flnum getFilterEnvelope() const
     {
-        return SynthUtil::valMinusOneToOne (filterEnvelopeVal);
+        return DspUtil::valMinusOneToOne (filterEnvelopeVal);
     }
     void setFilterEnvelopePtr (const std::atomic<flnum>* _filterEnvelope)
     {

@@ -16,8 +16,7 @@ static constexpr int DEFAULT_SAMPLES_PER_BLOCK = 512;
 static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 //==============================================================================
-// TODO: rename to Util
-class SynthUtil
+class DspUtil
 {
 public:
     // Map value [0.0, 1.0] to [-1.0, 1.0].
