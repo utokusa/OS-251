@@ -58,7 +58,7 @@ private:
         {
             return val;
         }
-        flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
+        const flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
         return val * amount;
     }
 };

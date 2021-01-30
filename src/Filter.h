@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "DspCommon.h"
 #include "SynthParams.h"
+#include "Envelope.h"
 #include "Lfo.h"
 
 namespace onsen
@@ -44,21 +45,21 @@ public:
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum freq = p->getControlledFrequency (env->getLevel() * p->getFilterEnvelope()
+        const flnum freq = p->getControlledFrequency (env->getLevel() * p->getFilterEnvelope()
                                                     + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
-        flnum omega0 = 2.0 * pi * freq / sampleRate;
-        flnum sinw0 = std::sin (omega0);
-        flnum cosw0 = std::cos (omega0);
+        const flnum omega0 = 2.0 * pi * freq / sampleRate;
+        const flnum sinw0 = std::sin (omega0);
+        const flnum cosw0 = std::cos (omega0);
         // sp.getResonance() stands for "Q".
-        flnum alpha = sinw0 / 2.0 / p->getResonance();
-        flnum a0 = 1.0 + alpha;
-        flnum a1 = -2.0 * cosw0;
-        flnum a2 = 1.0 - alpha;
-        flnum b0 = (1 - cosw0) / 2.0;
-        flnum b1 = 1 - cosw0;
-        flnum b2 = (1 - cosw0) / 2.0;
+        const flnum alpha = sinw0 / 2.0 / p->getResonance();
+        const flnum a0 = 1.0 + alpha;
+        const flnum a1 = -2.0 * cosw0;
+        const flnum a2 = 1.0 - alpha;
+        const flnum b0 = (1 - cosw0) / 2.0;
+        const flnum b1 = 1 - cosw0;
+        const flnum b2 = (1 - cosw0) / 2.0;
 
-        flnum out0 = b0 / a0 * sampleVal + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
+        const flnum out0 = b0 / a0 * sampleVal + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
             - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
         fb.in2 = fb.in1;
         fb.in1 = sampleVal;
@@ -75,9 +76,6 @@ public:
     }
 
 private:
-    static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
-    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
-
     const FilterParams* const p;
     Envelope* const env;
     Lfo* const lfo;

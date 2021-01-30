@@ -40,7 +40,7 @@ void Envelope::update()
     {
         // Value of sp.getDecay() is around 0.99
         level = level * adjust (p->getDecay());
-        flnum sustain = p->getSustain();
+        const flnum sustain = p->getSustain();
         if (level <= sustain)
         {
             level = sustain;

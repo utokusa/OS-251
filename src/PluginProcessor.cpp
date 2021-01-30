@@ -303,10 +303,6 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 
     auto* editor = new blueprint::BlueprintGenericEditor(*this, bundle);
 
-//    editor->setResizable(true, true);
-//    editor->setResizeLimits(400, 240, 400 * 2, 240 * 2);
-//    editor->getConstrainer()->setFixedAspectRatio(400.0 / 240.0);
-//    editor->setSize (400, 240);
     editor->setSize (800, 480);
 
     return editor;
@@ -328,7 +324,7 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
 void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
 {
-    // TODO: extract as SynthParams class's method
+    // TODO: Update parameters in an efficient way
     onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
     onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
     onsen::LfoParams* const lfoParams = synthParams.lfo();

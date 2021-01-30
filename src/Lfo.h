@@ -32,7 +32,7 @@ public:
 
     void noteOn()
     {
-        bool firstNote = (numNoteOn == 0);
+        const bool firstNote = (numNoteOn == 0);
         ++numNoteOn;
         if (firstNote)
         {
@@ -51,7 +51,7 @@ public:
         numNoteOn = 0;
     }
 
-    flnum getLevel (int sample)
+    flnum getLevel (int sample) const
     {
         assert (sample < buf.size());
         return buf[sample];
@@ -64,7 +64,7 @@ public:
         {
             assert (idx < buf.size());
             buf[idx++] = lfoWave (currentAngle) * amp;
-            flnum angleDelta = getAngleDelta();
+            const flnum angleDelta = getAngleDelta();
             currentAngle += angleDelta;
             if (currentAngle > pi * 2.0)
             {
@@ -74,12 +74,12 @@ public:
         }
     }
 
-    flnum getPitchAmount()
+    flnum getPitchAmount() const
     {
         return p->getPitch();
     }
 
-    flnum getFilterFreqAmount()
+    flnum getFilterFreqAmount() const
     {
         return p->getFilterFreq();
     }
@@ -115,9 +115,9 @@ private:
         return MAX_LEVEL * std::sin (angle);
     }
 
-    flnum getAngleDelta()
+    flnum getAngleDelta() const
     {
-        flnum rate = p->getRate();
+        const flnum rate = p->getRate();
         return 2.0 * pi * rate / sampleRate;
     }
 
@@ -141,7 +141,7 @@ private:
         {
             return val;
         }
-        flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
+        const flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
         return val * amount;
     }
 };

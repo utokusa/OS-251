@@ -19,10 +19,11 @@ class Chorus
     struct ChorusLfo
     {
     public:
-        flnum val()
+        flnum val() const
         {
             return sinWave (currentAngle);
         }
+
         void update()
         {
             currentAngle += angleDelta();
@@ -31,10 +32,11 @@ class Chorus
         }
 
     private:
-        flnum angleDelta()
+        flnum angleDelta() const
         {
             return 2.0 * pi * freq / sampleRate;
         }
+
         static flnum sinWave (flnum angle)
         {
             return std::sin (angle);
@@ -65,21 +67,6 @@ public:
     void setCurrentPlaybackSampleRate (double _sampleRate);
 
 private:
-    void prepare();
-
-    inline int delay_sample()
-    {
-        return static_cast<int> (delayTime_msec * (1.0 + depth * lfo.val()) / 1000.0 * sampleRate);
-    }
-
-    inline int readIdx()
-    {
-        int idx = writePointer - delay_sample();
-        return idx >= 0 ? idx : idx + buf.size();
-    }
-
-    //==============================================================================
-
     flnum sampleRate;
     flnum delayTime_msec;
     flnum feedback;
@@ -90,5 +77,19 @@ private:
     flnum depth;
     flnum dryLevel;
     flnum wetLevel;
+
+    //==============================================================================
+    void prepare();
+
+    inline int delay_sample()
+    {
+        return static_cast<int> (delayTime_msec * (1.0 + depth * lfo.val()) / 1000.0 * sampleRate);
+    }
+
+    inline int readIdx()
+    {
+        const int idx = writePointer - delay_sample();
+        return idx >= 0 ? idx : idx + static_cast<int>(buf.size());
+    }
 };
 }

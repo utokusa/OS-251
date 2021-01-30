@@ -12,7 +12,6 @@
 #include "DspCommon.h"
 #include "SynthParams.h"
 #include "SynthSound.h"
-#include "Envelope.h"
 #include "Filter.h"
 #include "Oscillator.h"
 
@@ -43,8 +42,6 @@ public:
 
 private:
     void setPitchBend (int pitchWheelValue);
-
-    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     flnum pitchBend = 1.0;
