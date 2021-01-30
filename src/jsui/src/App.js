@@ -1,5 +1,6 @@
 import Label from './Label';
 import ParameterSlider from './ParameterSlider'
+import ParameterToggleButton from './ParameterToggleButton'
 
 import React, { Component } from 'react';
 
@@ -9,21 +10,22 @@ import {
   Slider,
 } from 'react-juce';
 
-class Param extends Component {
+class SliderModule extends Component {
   constructor(props) {
     super(props);
   }
+
   render() {
-    const sliderFillColor  = 'ff66fdcf';
+    const sliderFillColor = 'ff66fdcf';
     const sliderTrackColor = 'ff626262';
 
     return (
-      <View {...styles.param}>
+      <View {...styles.param_module}>
         <ParameterSlider
-            paramId={this.props.paramId}
-            onDraw={Slider.drawRotary(sliderTrackColor, sliderFillColor)}
-            mapDragGestureToValue={Slider.rotaryGestureMap}
-            {...styles.knob}
+          paramId={this.props.paramId}
+          onDraw={Slider.drawRotary(sliderTrackColor, sliderFillColor)}
+          mapDragGestureToValue={Slider.rotaryGestureMap}
+          {...styles.knob}
         >
           <Label paramId={this.props.paramId} {...styles.label} />
         </ParameterSlider>
@@ -33,15 +35,56 @@ class Param extends Component {
   }
 }
 
-class DummyParam extends Component {
+class ButtonModule extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    return (<View {...styles.param}/>)
+    const buttonBorderColor = this.props.isOn ? 'ff66FDCF' : "ff626262";
+    const buttonTextColor = this.props.isOn ? 'ff66FDCF' : 'ffCBCBCB';
+
+    return (
+      <View
+        {...styles.param_module}
+      >
+        <ParameterToggleButton
+          paramId={this.props.paramId}
+          onToggled={this.props.onToggled}
+          background-color="ff17191f"
+          borderColor={buttonBorderColor}
+          {...styles.button}
+        >
+          <Text color={buttonTextColor} {...styles.button_text}>
+            {this.props.paramLabel}
+          </Text>
+        </ParameterToggleButton>
+      </View>
+    )
+  }
+}
+
+class DummyModule extends Component {
+  render() {
+    return (<View {...styles.param_module} />)
   }
 }
 
 class App extends Component {
   constructor(props) {
     super(props);
+
+    this._onChorusToggled = this._onChorusToggled.bind(this);
+
+    this.state = {
+      isChorusOn: false
+    }
+  }
+
+  _onChorusToggled(toggled) {
+    this.setState({
+      isChorusOn: toggled
+    });
   }
 
   render() {
@@ -50,80 +93,85 @@ class App extends Component {
       <View {...styles.container}>
         <View {...styles.content}>
           <View {...styles.param_row}>
-            <Param
-                paramId="sinGain"
-                paramLabel="Sin"
+            <SliderModule
+              paramId="sinGain"
+              paramLabel="Sin"
             />
-            <Param
-                paramId="squareGain"
-                paramLabel="Square"
+            <SliderModule
+              paramId="squareGain"
+              paramLabel="Square"
             />
-            <Param
-                paramId="sawGain"
-                paramLabel="Saw"
+            <SliderModule
+              paramId="sawGain"
+              paramLabel="Saw"
             />
-            <Param
-                paramId="subSquareGain"
-                paramLabel="Sub Square"
+            <SliderModule
+              paramId="subSquareGain"
+              paramLabel="Sub Square"
             />
-            <Param
-                paramId="noiseGain"
-                paramLabel="Noise"
+            <SliderModule
+              paramId="noiseGain"
+              paramLabel="Noise"
             />
           </View>
           <View {...styles.param_row}>
-            <Param
-                paramId="attack"
-                paramLabel="Attack"
+            <SliderModule
+              paramId="attack"
+              paramLabel="Attack"
             />
-            <Param
-                paramId="decay"
-                paramLabel="Decay"
+            <SliderModule
+              paramId="decay"
+              paramLabel="Decay"
             />
-            <Param
-                paramId="sustain"
-                paramLabel="Sustain"
+            <SliderModule
+              paramId="sustain"
+              paramLabel="Sustain"
             />
-            <Param
-                paramId="release"
-                paramLabel="Release"
+            <SliderModule
+              paramId="release"
+              paramLabel="Release"
             />
-            <DummyParam/>
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
-            <Param
-                paramId="frequency"
-                paramLabel="Frequency"
+            <SliderModule
+              paramId="frequency"
+              paramLabel="Frequency"
             />
-            <Param
-                paramId="resonance"
-                paramLabel="Resonance"
+            <SliderModule
+              paramId="resonance"
+              paramLabel="Resonance"
             />
-            <Param
-                paramId="filterEnv"
-                paramLabel="Env -> Filter"
+            <SliderModule
+              paramId="filterEnv"
+              paramLabel="Env -> Filter"
             />
-            <Param
-                paramId="lfoFilterFreq"
-                paramLabel="LFO -> Freq"
+            <SliderModule
+              paramId="lfoFilterFreq"
+              paramLabel="LFO -> Freq"
             />
-            <DummyParam/>
+            <ButtonModule
+              paramId="chorusOn"
+              paramLabel="Chorus"
+              onToggled={this._onChorusToggled}
+              isOn={this.state.isChorusOn}
+            />
           </View>
           <View {...styles.param_row}>
-            <Param
-                paramId="rate"
-                paramLabel="Rate"
+            <SliderModule
+              paramId="rate"
+              paramLabel="Rate"
             />
-            <Param
-                paramId="lfoDelay"
-                paramLabel="LFO Delay"
+            <SliderModule
+              paramId="lfoDelay"
+              paramLabel="LFO Delay"
             />
-            <Param
-                paramId="lfoPitch"
-                paramLabel="LFO -> Pitch"
+            <SliderModule
+              paramId="lfoPitch"
+              paramLabel="LFO -> Pitch"
             />
-            <DummyParam/>
-            <DummyParam/>
+            <DummyModule />
+            <DummyModule />
           </View>
         </View>
       </View>
@@ -162,7 +210,7 @@ const styles = {
     borderWidth: 3,
     marginBottom: 4,
   },
-  param: {
+  param_module: {
     minWidth: 100,
     minHeight: 100,
     flex: 1.0,
@@ -194,6 +242,20 @@ const styles = {
     fontSize: 15.0,
     minHeight: 18,
     color: 'ffcbcbcb',
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5.0,
+    borderWidth: 5.0,
+    minWidth: 30.0,
+    minHeight: 30.0,
+    width: '80%',
+    height: '17.5%',
+  },
+  button_text: {
+    fontSize: 15.0,
+    lineSpacing: 1.6,
   },
 };
 

@@ -316,6 +316,7 @@ public:
         filterEnvelope = _filterEnvelope;
         filterEnvelopeVal = *filterEnvelope;
     }
+
     void parameterChanged()
     {
         frequencyVal = *frequency;
@@ -349,9 +350,32 @@ private:
     const std::atomic<flnum>* resonance {};
     const std::atomic<flnum>* filterEnvelope {};
 
+
     flnum frequencyVal = 0.0;
     flnum resonanceVal = 0.0;
     flnum filterEnvelopeVal = 0.0;
+};
+
+class ChorusParams
+{
+    using flnum = float;
+public:
+    bool getChorusOn() const
+    {
+        return chorusOnVal > 0.5;
+    }
+    void setChorusOnPtr (const std::atomic<flnum>* _chorusOn)
+    {
+        chorusOn = _chorusOn;
+        chorusOnVal = *chorusOn;
+    }
+    void parameterChanged()
+    {
+        chorusOnVal = *chorusOn;
+    }
+private:
+    const std::atomic<flnum>* chorusOn {};
+    flnum chorusOnVal = 0.0;
 };
 
 // Synthesizer parameters
@@ -375,6 +399,10 @@ public:
     {
         return &oscillatorParams;
     }
+    ChorusParams* chorus()
+    {
+        return &chorusParams;
+    }
 
 private:
     // plugin parameters
@@ -382,6 +410,7 @@ private:
     LfoParams lfoParams;
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
+    ChorusParams chorusParams;
 };
 
 //==============================================================================
@@ -797,7 +826,7 @@ public:
 
     void startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int currentPitchWheelPosition) override
     {
-        setPitchBend(currentPitchWheelPosition);
+        setPitchBend (currentPitchWheelPosition);
 
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -829,7 +858,7 @@ public:
 
     void pitchWheelMoved (int newPitchWheelValue) override
     {
-        setPitchBend(newPitchWheelValue);
+        setPitchBend (newPitchWheelValue);
     }
 
     void controllerMoved (int, int) override {}
@@ -867,13 +896,13 @@ public:
     }
 
 private:
-    void setPitchBend(int pitchWheelValue)
+    void setPitchBend (int pitchWheelValue)
     {
         // `newPitchWheelValue` is integer from 0 to 16383 (0x3fff).
         // 8192 -> no pitch bend
         if (pitchWheelValue > 8192)
         {
-            pitchBend = 1.0 + (pitchBendMax - 1.0) * (static_cast<flnum>(pitchWheelValue) - 8192.0) / 8191.0; // 16383 - 8192 = 8191
+            pitchBend = 1.0 + (pitchBendMax - 1.0) * (static_cast<flnum> (pitchWheelValue) - 8192.0) / 8191.0; // 16383 - 8192 = 8191
         }
         else if (pitchWheelValue == 8192)
         {
@@ -881,7 +910,7 @@ private:
         }
         else
         {
-            pitchBend = 1.0 / (1.0 + (pitchBendMax - 1.0) * (8192.0 - static_cast<flnum>(pitchWheelValue)) / 8192.0);
+            pitchBend = 1.0 / (1.0 + (pitchBendMax - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
         }
     }
 
@@ -897,20 +926,140 @@ private:
 };
 
 //==============================================================================
+class Chorus
+{
+    using flnum = float;
+    struct ChorusLfo
+    {
+    public:
+        flnum val()
+        {
+            return sinWave(currentAngle);
+        }
+        void update()
+        {
+            currentAngle += angleDelta();
+            if (currentAngle > 2.0 * pi)
+                currentAngle -= 2.0 * pi;
+        }
+    private:
+        flnum angleDelta()
+        {
+            return 2.0 * pi * freq / sampleRate;
+        }
+        static flnum sinWave (flnum angle)
+        {
+            return std::sin (angle);
+        }
+    public:
+        flnum currentAngle;
+        flnum freq;
+        const flnum &sampleRate;
+    };
+
+public:
+    Chorus()
+        :
+          sampleRate (DEFAULT_SAMPLE_RATE),
+          delayTime_msec (15.0),
+          feedback(0.3),
+          maxDelayTime_msec (20.0),
+          writePointer (0),
+          lfo({0.0, 0.75, sampleRate}),
+          depth(0.1),
+          dryLevel(0.4),
+          wetLevel(0.3)
+    {
+        prepare();
+    };
+
+    void render (juce::AudioBuffer<flnum>& outputAudio, int startSample, int numSamples)
+    {
+        int idx = startSample;
+        while (--numSamples >= 0)
+        {
+            // Convert input to mono
+            flnum monoInputVal = 0.0;
+            for (auto i = outputAudio.getNumChannels(); --i >= 0;)
+            {
+                monoInputVal += outputAudio.getSample (i, idx);
+            }
+            monoInputVal /= outputAudio.getNumChannels();
+
+            const flnum delayVal = buf.at(readIdx());
+            buf.at(writePointer) = monoInputVal + delayVal * feedback;
+            flnum outputVal = monoInputVal * dryLevel + delayVal * wetLevel;
+            for (auto i = outputAudio.getNumChannels(); --i >= 0;)
+            {
+                outputAudio.addSample (i, idx, outputVal);
+            }
+
+            // Update variables
+            lfo.update();
+            idx++;
+            writePointer = (writePointer + 1) % buf.size();
+        }
+    }
+
+    void setCurrentPlaybackSampleRate (double _sampleRate)
+    {
+        sampleRate = _sampleRate;
+        prepare();
+    }
+
+private:
+    void prepare()
+    {
+        const auto bufSize = static_cast<int> (sampleRate * maxDelayTime_msec / 1000.0);
+        buf.resize (bufSize, 0.0);
+        writePointer = 0;
+    }
+
+    int delay_sample()
+    {
+        return static_cast<int> (delayTime_msec * (1.0 + depth * lfo.val()) / 1000.0 * sampleRate);
+    }
+
+    int readIdx()
+    {
+        int idx = writePointer - delay_sample();
+        return idx >= 0 ? idx : idx + buf.size();
+    }
+
+    //==============================================================================
+    static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
+    static constexpr flnum pi = juce::MathConstants<flnum>::pi;
+
+    flnum sampleRate;
+    flnum delayTime_msec;
+    flnum feedback;
+    flnum maxDelayTime_msec;
+    std::vector<flnum> buf;
+    int writePointer;
+    ChorusLfo lfo;
+    flnum depth;
+    flnum dryLevel;
+    flnum wetLevel;
+};
+
+//==============================================================================
 class FancySynth : public juce::Synthesiser
 {
     using flnum = float;
 
 public:
     FancySynth() = delete;
-    FancySynth (Lfo* const _lfo)
-        : lfo (_lfo)
+    FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
+        : params(synthParams),
+          lfo (_lfo),
+          chorus ()
     {
     }
 
     void setCurrentPlaybackSampleRate (double sampleRate) override
     {
         lfo->setCurrentPlaybackSampleRate (sampleRate);
+        chorus.setCurrentPlaybackSampleRate (sampleRate);
         juce::Synthesiser::setCurrentPlaybackSampleRate (sampleRate);
     }
 
@@ -944,7 +1093,9 @@ public:
     }
 
 private:
+    SynthParams * const params;
     Lfo* const lfo;
+    Chorus chorus;
 
     void renderVoices (juce::AudioBuffer<flnum>& outputAudio,
                        int startSample,
@@ -952,6 +1103,8 @@ private:
     {
         lfo->renderLfo (startSample, numSamples);
         juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
+        if (params->chorus()->getChorusOn())
+            chorus.render(outputAudio, startSample, numSamples);
     }
 };
 
@@ -963,7 +1116,7 @@ public:
     SynthEngine (SynthParams* const _synthParams)
         : synthParams (_synthParams),
           lfo (synthParams),
-          synth (&lfo)
+          synth (synthParams, &lfo)
     {
         for (auto i = 0; i < 4; ++i)
             synth.addVoice (new FancySynthVoice (synthParams, &lfo));

@@ -1,5 +1,5 @@
 # OS-251
-OS-251 is a synthesizer plugin (vst3, vst, au) made with C++ and JUCE.
+OS-251 is a synthesizer plugin (vst3, au) made with C++ , JUCE and react-juce.
 
 This plugin is currently under development.
 

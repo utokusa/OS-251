@@ -76,6 +76,10 @@ public:
         filterParams->setResonancePtr (&resonance);
         filterParams->setFilterEnvelopePtr (&filterEnvelope);
 
+        // Chorus parameters
+        ChorusParams* const chorusParams = synthParams.chorus();
+        chorusParams->setChorusOnPtr(&chorusOn);
+
         synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
 
         for (const auto& note : notes)
@@ -118,6 +122,8 @@ private:
     std::atomic<flnum> frequency = { 0.5f };
     std::atomic<flnum> resonance = { 0.5f };
     std::atomic<flnum> filterEnvelope = { 0.5f };
+
+    std::atomic<flnum> chorusOn = { 1.0f };
 
     juce::AudioBuffer<flnum> outputAudio = { NUM_CHANNEL, NUM_SAMPLE };
 

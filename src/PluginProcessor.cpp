@@ -40,6 +40,9 @@ Os251AudioProcessor::Os251AudioProcessor()
     constexpr float lowestResVal = FilterParams::lowestResVal();
     constexpr float resBaseNumber = FilterParams::resBaseNumber();
     auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
+
+    // ON / OFF
+    auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String("ON") : juce::String("OFF"); };
     // ---
 
     // ---
@@ -107,7 +110,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("rate", this);
 
     // LFO delay
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Delay", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Chorus", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     lfoParams->setDelayPtr (parameters.getRawParameterValue ("lfoDelay"));
     parameters.addParameterListener ("lfoDelay", this);
 
@@ -138,6 +141,15 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("filterEnv", "Env -> Filter", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     filterParams->setFilterEnvelopePtr (parameters.getRawParameterValue (("filterEnv")));
     parameters.addParameterListener ("filterEnv", this);
+
+    // Chorus parameters
+    ChorusParams* const chorusParams = synthParams.chorus();
+
+    // Chorus ON
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("chorusOn", "Chorus", "", nrange, 0.0, valueToOnOff, nullptr, true));
+    chorusParams->setChorusOnPtr (parameters.getRawParameterValue (("chorusOn")));
+    parameters.addParameterListener ("chorusOn", this);
+
     // ---
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
@@ -320,10 +332,12 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     EnvelopeParams* const envelopeParams = synthParams.envelope();
     LfoParams* const lfoParams = synthParams.lfo();
     FilterParams* const filterParams = synthParams.filter();
+    ChorusParams* const chorusParams = synthParams.chorus();
     oscillatorParams->parameterChanged();
     envelopeParams->parameterChanged();
     lfoParams->parameterChanged();
     filterParams->parameterChanged();
+    chorusParams->parameterChanged();
 }
 
 //==============================================================================
