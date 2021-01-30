@@ -33,6 +33,10 @@ target_compile_definitions(Os251_Benchmark
 
 target_sources(Os251_Benchmark PRIVATE
         Main.cpp
+        ../src/Chorus.cpp
+        ../src/Envelope.cpp
+        ../src/SynthEngine.cpp
+        ../src/SynthVoice.cpp
         )
 
 target_link_libraries(Os251_Benchmark PUBLIC

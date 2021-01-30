@@ -68,6 +68,10 @@ target_compile_definitions(Os251
 
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp
+        Chorus.cpp
+        Envelope.cpp
+        SynthEngine.cpp
+        SynthVoice.cpp
         )
 
 # Add an explicit include path here so that Blueprint's EcmascriptEngine can find
