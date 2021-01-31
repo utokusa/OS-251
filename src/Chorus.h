@@ -55,10 +55,10 @@ public:
           feedback (0.3),
           maxDelayTime_msec (20.0),
           writePointer (0),
-          lfo ({ 0.0, 0.75, sampleRate }),
+          lfo ({ 0.0, 0.5, sampleRate }),
           depth (0.1),
-          dryLevel (0.4),
-          wetLevel (0.3)
+          dryLevel (1.0),
+          wetLevel (1.0)
     {
         prepare();
     };

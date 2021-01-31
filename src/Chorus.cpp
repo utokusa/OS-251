@@ -29,7 +29,7 @@ void Chorus::render (juce::AudioBuffer<flnum>& outputAudio, int startSample, int
         flnum outputVal = monoInputVal * dryLevel + delayVal * wetLevel;
         for (auto i = outputAudio.getNumChannels(); --i >= 0;)
         {
-            outputAudio.addSample (i, idx, outputVal);
+            outputAudio.setSample (i, idx, outputVal);
         }
 
         // Update variables
