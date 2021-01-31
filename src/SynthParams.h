@@ -13,6 +13,7 @@
 #include "params/EnvelopeParams.h"
 #include "params/FilterParams.h"
 #include "params/LfoParams.h"
+#include "params/MasterParams.h"
 #include "params/OscillatorParams.h"
 
 namespace onsen
@@ -42,6 +43,10 @@ public:
     {
         return &chorusParams;
     }
+    MasterParams* master()
+    {
+        return &masterParams;
+    }
 
 private:
     // plugin parameters
@@ -50,5 +55,6 @@ private:
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
     ChorusParams chorusParams;
+    MasterParams masterParams;
 };
 }

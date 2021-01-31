@@ -150,6 +150,14 @@ Os251AudioProcessor::Os251AudioProcessor()
     chorusParams->setChorusOnPtr (parameters.getRawParameterValue (("chorusOn")));
     parameters.addParameterListener ("chorusOn", this);
 
+    // Master parameters
+    onsen::MasterParams* const masterParams = synthParams.master();
+
+    // Master volume
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    masterParams->setMasterVolumePtr(parameters.getRawParameterValue (("masterVolume")));
+    parameters.addParameterListener ("masterVolume", this);
+
     // ---
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
@@ -330,11 +338,13 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     onsen::LfoParams* const lfoParams = synthParams.lfo();
     onsen::FilterParams* const filterParams = synthParams.filter();
     onsen::ChorusParams* const chorusParams = synthParams.chorus();
+    onsen::MasterParams* const master = synthParams.master();
     oscillatorParams->parameterChanged();
     envelopeParams->parameterChanged();
     lfoParams->parameterChanged();
     filterParams->parameterChanged();
     chorusParams->parameterChanged();
+    master->parameterChanged();
 }
 
 //==============================================================================

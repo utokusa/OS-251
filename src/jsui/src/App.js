@@ -150,12 +150,7 @@ class App extends Component {
               paramId="lfoFilterFreq"
               paramLabel="LFO -> Freq"
             />
-            <ButtonModule
-              paramId="chorusOn"
-              paramLabel="Chorus"
-              onToggled={this._onChorusToggled}
-              isOn={this.state.isChorusOn}
-            />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -170,8 +165,16 @@ class App extends Component {
               paramId="lfoPitch"
               paramLabel="LFO -> Pitch"
             />
-            <DummyModule />
-            <DummyModule />
+            <ButtonModule
+              paramId="chorusOn"
+              paramLabel="Chorus"
+              onToggled={this._onChorusToggled}
+              isOn={this.state.isChorusOn}
+            />
+            <SliderModule
+              paramId="masterVolume"
+              paramLabel="Master Vol"
+            />
           </View>
         </View>
       </View>

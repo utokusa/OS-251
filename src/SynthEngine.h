@@ -13,6 +13,7 @@
 #include "SynthParams.h"
 #include "Chorus.h"
 #include "Lfo.h"
+#include "MasterVolume.h"
 #include "SynthVoice.h"
 
 namespace onsen
@@ -27,7 +28,8 @@ public:
     FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
         : params (synthParams),
           lfo (_lfo),
-          chorus()
+          chorus(),
+          masterVolume(synthParams)
     {
     }
 
@@ -47,6 +49,7 @@ private:
     SynthParams* const params;
     Lfo* const lfo;
     Chorus chorus;
+    MasterVolume masterVolume;
 
     void renderVoices (juce::AudioBuffer<flnum>& outputAudio,
                        int startSample,

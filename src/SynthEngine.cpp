@@ -56,6 +56,7 @@ void FancySynth::renderVoices (juce::AudioBuffer<flnum>& outputAudio,
     juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
     if (params->chorus()->getChorusOn())
         chorus.render (outputAudio, startSample, numSamples);
+    masterVolume.render (outputAudio, startSample, numSamples);
 }
 
 } // namespace onsen
