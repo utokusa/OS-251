@@ -19,8 +19,7 @@ include(FetchContent)
 
 # Externally provided libraries
 FetchContent_Declare(googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG v1.10.x)
+        GIT_REPOSITORY https://github.com/google/googletest.git)
 
 FetchContent_Declare(googlebenchmark
         GIT_REPOSITORY https://github.com/google/benchmark.git
