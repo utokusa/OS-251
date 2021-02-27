@@ -66,6 +66,14 @@ public:
         noiseGain = _noiseGain;
         noiseGainVal = *noiseGain;
     }
+    flnum getShape()
+    {
+        return shapeVal.get();
+    }
+    void setShapePtr (const std::atomic<flnum>* _shape)
+    {
+        shape = _shape;
+    }
     void parameterChanged()
     {
         sinGainVal = *sinGain;
@@ -73,6 +81,11 @@ public:
         sawGainVal = *sawGain;
         subSquareGainVal = *subSquareGain;
         noiseGainVal = *noiseGain;
+        shapeVal.set (*shape);
+    }
+    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
+    {
+        shapeVal.prepareToPlay(sampleRate);
     }
 
 private:
@@ -83,12 +96,14 @@ private:
     const std::atomic<flnum>* sawGain {};
     const std::atomic<flnum>* subSquareGain {};
     const std::atomic<flnum>* noiseGain {};
+    const std::atomic<flnum>* shape {};
 
     flnum sinGainVal = 0.0;
     flnum squareGainVal = 0.0;
     flnum sawGainVal = 0.0;
     flnum subSquareGainVal = 0.0;
     flnum noiseGainVal = 0.0;
+    SmoothFlnum shapeVal = { 0.0, 0.995 };
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
@@ -105,4 +120,4 @@ private:
         return std::pow (10.0, decibelGain / 20.0);
     }
 };
-}
+} // namespace onsen

@@ -48,6 +48,11 @@ public:
         return &masterParams;
     }
 
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
+    {
+        oscillatorParams.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    }
+
 private:
     // plugin parameters
     EnvelopeParams envelopeParams;

@@ -131,7 +131,10 @@ class App extends Component {
               paramId="release"
               paramLabel="Release"
             />
-            <DummyModule />
+            <SliderModule
+              paramId="shape"
+              paramLabel="Osc shape"
+            />
           </View>
           <View {...styles.param_row}>
             <SliderModule

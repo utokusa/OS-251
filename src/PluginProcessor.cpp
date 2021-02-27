@@ -42,7 +42,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
 
     // ON / OFF
-    auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String("ON") : juce::String("OFF"); };
+    auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
     // ---
 
     // ---
@@ -77,6 +77,10 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
+
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("shape", "Shape", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    oscillatorParams->setShapePtr (parameters.getRawParameterValue ("shape"));
+    parameters.addParameterListener ("shape", this);
 
     // Envelop parameters
     onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
@@ -155,7 +159,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Master volume
     parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, 0.5, valueToTextFunction, nullptr, true));
-    masterParams->setMasterVolumePtr(parameters.getRawParameterValue (("masterVolume")));
+    masterParams->setMasterVolumePtr (parameters.getRawParameterValue (("masterVolume")));
     parameters.addParameterListener ("masterVolume", this);
 
     // ---
@@ -233,6 +237,7 @@ void Os251AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     synthEngine.prepareToPlay (samplesPerBlock, sampleRate);
+    synthParams.prepareToPlay (samplesPerBlock, sampleRate);
 }
 
 void Os251AudioProcessor::releaseResources()
@@ -306,10 +311,10 @@ bool Os251AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
-    File sourceDir = File(OS251_SOURCE_DIR);
-    File bundle = sourceDir.getChildFile("jsui/build/js/main.js");
+    File sourceDir = File (OS251_SOURCE_DIR);
+    File bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
 
-    auto* editor = new blueprint::BlueprintGenericEditor(*this, bundle);
+    auto* editor = new blueprint::BlueprintGenericEditor (*this, bundle);
 
     editor->setSize (800, 480);
 
