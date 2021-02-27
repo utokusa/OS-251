@@ -13,13 +13,14 @@ namespace onsen
 //==============================================================================
 void Envelope::noteOn()
 {
+    sampleCnt = 0;
     state = State::ATTACK;
-    constexpr flnum levelNoteStart = MAX_LEVEL * 0.01;
-    level = levelNoteStart;
 }
 
 void Envelope::noteOFf()
 {
+    sampleCnt = 0;
+    noteOffLevel = level;
     state = State::RELEASE;
 }
 
@@ -27,34 +28,40 @@ void Envelope::update()
 {
     if (state == State::ATTACK)
     {
-        constexpr flnum valFinishAttack = MAX_LEVEL * 0.99;
-        // Value of sp.getAttack() is around 0.99
-        level = level * MAX_LEVEL / adjust (p->getAttack());
-        if (level >= valFinishAttack)
+        const flnum attackSec = p->getAttack();
+        level = attackCurve(toTimeSec(sampleCnt++), attackSec);
+        if (sampleCnt >= toSample(attackSec))
         {
-            level = MAX_LEVEL;
+            sampleCnt = 0;
             state = State::DECAY;
         }
     }
     else if (state == State::DECAY)
     {
-        // Value of sp.getDecay() is around 0.99
-        level = level * adjust (p->getDecay());
+        const flnum decaySec = p->getDecay();
         const flnum sustain = p->getSustain();
-        if (level <= sustain)
+        level = sustain + (MAX_LEVEL - sustain)
+                * decayCurve(toTimeSec(sampleCnt++), decaySec);
+        if (sampleCnt >= toSample(decaySec))
         {
+            sampleCnt = 0;
             level = sustain;
             state = State::SUSTAIN;
         }
     }
     else if (state == State::SUSTAIN)
     {
-        // Nothing to do here
+        level = p->getSustain();
     }
     else if (state == State::RELEASE)
     {
-        // Value of sp.getRelease() is around 0.99
-        level = level * adjust (p->getRelease());
+        const flnum releaseSec = p->getRelease();
+        level = noteOffLevel * releaseCurve(toTimeSec(sampleCnt++), releaseSec);
+        if (sampleCnt >= toSample(releaseSec))
+        {
+            sampleCnt = 0;
+            level = 0;   
+        }
     }
     else
     {

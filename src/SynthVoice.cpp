@@ -82,7 +82,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             }
             ++idx;
             env.update();
-            if (env.getLevel() < 0.005)
+            if (env.isEnvOff())
             {
                 clearCurrentNote();
                 angleDelta = 0.0;
