@@ -1,0 +1,52 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.cmake-tools",
+            "twxs.cmake",
+            "llvm-vs-code-extensions.vscode-clangd",
+            "vadimcn.vscode-lldb"
+        ]
+    },
+    "settings": {
+        "C_Cpp.intelliSenseEngine": "Disabled",
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "git.ignoreLimitWarning": true,
+        "clangd.arguments": [
+            "-clang-tidy",
+            "-background-index",
+            "-compile-commands-dir=${workspaceFolder}/build",
+            "-header-insertion=never",
+            "--query-driver=\"/usr/bin/clang++\""
+        ],
+        "cmake.ctestArgs": [
+            "--verbose"
+        ],
+        "cmake.configureArgs": [
+            // if you want to build AAX, set PATH for SDK here.
+            //  "-DAAX_SDK_PATH="
+            // if you want to build AudioPluginHost to Test VST Plugin, uncomment this.
+            // "-DJUCE_BUILD_EXTRAS=ON"
+        ],
+        "cmake.preferredGenerators": [
+            "Ninja",
+            "Unix Makefiles"
+        ],
+    },
+    "launch": {
+        "configurations": [
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "CMake Debug",
+                "program": "${command:cmake.launchTargetPath}",
+                "args": [],
+                "cwd": "${workspaceFolder}"
+            },
+        ]
+    }
+}
