@@ -2,7 +2,9 @@
 	path = lib/JUCE
 	url = https://github.com/juce-framework/JUCE
 	branch = juce6
+	ignore = dirty
 
 [submodule "lib/blueprint"]
 	path = lib/blueprint
 	url = https://github.com/nick-thompson/blueprint
+	ignore = dirty
