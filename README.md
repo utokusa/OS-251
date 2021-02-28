@@ -24,6 +24,10 @@ This plugin is currently under development.
   Maybe "Sync ON" button and "Phase" knob will be added.
 - [ ] (Optional) Tempo LFO re-triggered by MIDI notes ("retring").
   Maybe "Tempo ON" button and "Phase" knob will be added.
+- [ ] Allow to change number of voices
+- [ ] Unison
+- [ ] Portamento
+- [ ] "ENV or GATE" switch for VCA
 ### Tools
 
 - [ ] Add lint tool for javascript
