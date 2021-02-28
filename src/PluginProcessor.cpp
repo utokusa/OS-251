@@ -48,7 +48,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // ---
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
-    juce::NormalisableRange<float> nrange (0.0, 1.0, 0.01f);
+    juce::NormalisableRange<float> nrange (0.0, 1.0);
 
     // Oscillator parameters
     onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
