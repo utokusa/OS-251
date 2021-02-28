@@ -27,6 +27,26 @@ public:
     {
         return std::clamp<flnum> ((valZeroToOne - 0.5) * 2.0, -1.0, 1.0);
     }
+
+    // Convert parameter value (linear) to gain ([db])
+    // in order to make UX better.
+    static flnum paramValToDecibel (flnum paramVal, flnum dynamicRange)
+    {
+        // e.g.
+        // paramVal: 1.0 ---> gain: 0 [db] (max)
+        // paramVal: 0.0 ---> gain: -dynamicRange [db] (min)
+        return dynamicRange * (paramVal - 1.0);
+    }
+
+    static flnum decibelToParamVal (flnum decibelGain, flnum dynamicRange)
+    {
+        return decibelGain / dynamicRange + 1.0;
+    }
+
+    static flnum decibelToLinear (flnum decibelGain)
+    {
+        return std::pow (10.0, decibelGain / 20.0);
+    }
 };
 
 class SmoothFlnum
@@ -37,13 +57,13 @@ public:
           target (val),
           cur (val),
           smoothness (_smoothness),
-          adjustedSmoothness(_smoothness) {}
+          adjustedSmoothness (_smoothness) {}
     flnum get() { return cur = adjustedSmoothness * cur + (1 - adjustedSmoothness) * target; }
     void set (flnum val) { target = val; }
     void prepareToPlay (double _sampleRate)
     {
         sampleRate = _sampleRate;
-        adjustedSmoothness = adjust(smoothness);
+        adjustedSmoothness = adjust (smoothness);
     }
 
 private:
@@ -64,7 +84,7 @@ private:
         }
         const flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
         return val * amount;
-}
+    }
 };
 
 } // namespace onsen

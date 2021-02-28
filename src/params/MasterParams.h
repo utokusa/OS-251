@@ -16,9 +16,13 @@ namespace onsen
 class MasterParams
 {
 public:
+    static constexpr int dynamicRange = 48;
+
+    //==============================================================================
     flnum getMasterVolume() const
     {
-        return masterVolumeVal;
+        auto decibelGain = DspUtil::paramValToDecibel (masterVolumeVal, dynamicRange);
+        return DspUtil::decibelToLinear (decibelGain);
     }
     void setMasterVolumePtr (const std::atomic<flnum>* _masterVolume)
     {
@@ -34,4 +38,4 @@ private:
     const std::atomic<flnum>* masterVolume {};
     flnum masterVolumeVal = 0.5;
 };
-}
+} // namespace onsen
