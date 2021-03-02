@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "DspCommon.h"
-#include "SynthParams.h"
-#include "SynthSound.h"
 #include "Filter.h"
 #include "Oscillator.h"
+#include "SynthParams.h"
+#include "SynthSound.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -25,7 +25,8 @@ class FancySynthVoice : public juce::SynthesiserVoice
 public:
     FancySynthVoice() = delete;
     FancySynthVoice (SynthParams* const synthParams, Lfo* const _lfo)
-        : osc (synthParams),
+        : p (synthParams->master()),
+          osc (synthParams),
           env (synthParams),
           lfo (_lfo),
           filter (synthParams, &env, lfo)
@@ -41,7 +42,7 @@ public:
     void renderNextBlock (juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
 
 private:
-    void setPitchBend (int pitchWheelValue);
+    MasterParams* const p;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     flnum pitchBend = 1.0;
@@ -50,5 +51,7 @@ private:
     Envelope env;
     Lfo* const lfo;
     Filter filter;
+
+    void setPitchBend (int pitchWheelValue);
 };
-}
+} // namespace onsen

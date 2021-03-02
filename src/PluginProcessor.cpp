@@ -30,6 +30,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
+    auto valueToMinusOneToOneFunction = [] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne(value), numDecimal); };
 
     // Oscillator gain
     constexpr int numGainDecimal = 1;
@@ -51,10 +52,16 @@ Os251AudioProcessor::Os251AudioProcessor()
     // ON / OFF
     auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
 
+    // Master octave tuning
+    auto masterOctaveTuningValToStr = [] (float value) { return juce::String (
+                                                             onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxOctaveTuneVal, onsen::MasterParams::maxOctaveTuneVal)); };
+    auto masterSemitoneTuningValToStr = [] (float value) { return juce::String (
+                                                                      onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxSemitoneTuneVal, onsen::MasterParams::maxSemitoneTuneVal))
+                                                                  + juce::String (" st"); };
+
     // Master gain
-    auto mastertGainValToDecibelFunction = [] (float value) { return juce::String (onsen::DspUtil::paramValToDecibel (
-                                                                                       value, onsen::MasterParams::dynamicRange),
-                                                                                   numGainDecimal)
+    auto mastertGainValToDecibelFunction = [] (float value) { return juce::String (
+                                                                         onsen::DspUtil::paramValToDecibel (value, onsen::MasterParams::dynamicRange), numGainDecimal)
                                                                      + juce::String (" dB"); };
 
     // ---
@@ -170,6 +177,21 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Master parameters
     onsen::MasterParams* const masterParams = synthParams.master();
+
+    // Master octave tuning
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterOctaveTune", "Octave", "", nrange, 0.5, masterOctaveTuningValToStr, nullptr, true));
+    masterParams->setMasterOctaveTunePtr (parameters.getRawParameterValue (("masterOctaveTune")));
+    parameters.addParameterListener ("masterOctaveTune", this);
+
+    // Master semitone tuning
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterSemitoneTune", "Semi", "", nrange, 0.5, masterSemitoneTuningValToStr, nullptr, true));
+    masterParams->setMasterSemitoneTunePtr (parameters.getRawParameterValue (("masterSemitoneTune")));
+    parameters.addParameterListener ("masterSemitoneTune", this);
+
+    // Master fine tuning
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterFineTune", "Fine Tune", "", nrange, 0.5, valueToMinusOneToOneFunction, nullptr, true));
+    masterParams->setMasterFineTunePtr (parameters.getRawParameterValue (("masterFineTune")));
+    parameters.addParameterListener ("masterFineTune", this);
 
     // Master volume
     parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, onsen::DspUtil::decibelToParamVal (-3.0, onsen::MasterParams::dynamicRange), mastertGainValToDecibelFunction, nullptr, true));

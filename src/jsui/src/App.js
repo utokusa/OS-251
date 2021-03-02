@@ -184,14 +184,23 @@ class App extends Component {
               paramId="lfoPitch"
               paramLabel="LFO -> Pitch"
             />
-            <DummyModule />
-            <DummyModule />
-            <DummyModule />
             <ButtonModule
               paramId="chorusOn"
               paramLabel="Chorus"
               onToggled={this._onChorusToggled}
               isOn={this.state.isChorusOn}
+            />
+            <SliderModule
+              paramId="masterOctaveTune"
+              paramLabel="Octave"
+            />
+            <SliderModule
+              paramId="masterSemitoneTune"
+              paramLabel="Semi"
+            />
+            <SliderModule
+              paramId="masterFineTune"
+              paramLabel="Fine Tune"
             />
             <SliderModule
               paramId="masterVolume"

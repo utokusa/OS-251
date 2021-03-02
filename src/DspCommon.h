@@ -47,6 +47,16 @@ public:
     {
         return std::pow (10.0, decibelGain / 20.0);
     }
+
+    static int mapFlnumToInt (flnum fval, flnum fmin, flnum fmax, int imin, int imax)
+    {
+        // fmin ---> mininum number of floating point number
+        // imax ---> maximum number of integer
+        assert (fval >= fmin);
+        assert (fmax > fmin);
+        assert (imax > imin);
+        return static_cast<int> ((fval - fmin) / (fmax - fmin) * (imax - imin) + 0.5) + imin;
+    }
 };
 
 class SmoothFlnum

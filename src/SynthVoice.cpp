@@ -75,7 +75,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
 
             flnum lfoPitchDepth = lfo->getPitchAmount();
             flnum lfoVal = lfo->getLevel (idx);
-            currentAngle += angleDelta * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
+            currentAngle += angleDelta * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
             if (currentAngle > pi * 2.0)
             {
                 currentAngle -= pi * 2.0;
@@ -110,4 +110,4 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
         pitchBend = 1.0 / (1.0 + (pitchBendMax - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
     }
 }
-}
+} // namespace onsen
