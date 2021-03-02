@@ -91,6 +91,13 @@ class App extends Component {
 
     return (
       <View {...styles.container}>
+        <View {...styles.menu}>
+          <View {...styles.logo}>
+            <Text {...styles.logo_text}>
+              OS-251
+            </Text>
+          </View>
+        </View>
         <View {...styles.content}>
           <View {...styles.param_row}>
             <SliderModule
@@ -113,6 +120,12 @@ class App extends Component {
               paramId="noiseGain"
               paramLabel="Noise"
             />
+            <SliderModule
+              paramId="shape"
+              paramLabel="Osc shape"
+            />
+            <DummyModule />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -131,10 +144,10 @@ class App extends Component {
               paramId="release"
               paramLabel="Release"
             />
-            <SliderModule
-              paramId="shape"
-              paramLabel="Osc shape"
-            />
+            <DummyModule />
+            <DummyModule />
+            <DummyModule />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -154,6 +167,9 @@ class App extends Component {
               paramLabel="LFO -> Freq"
             />
             <DummyModule />
+            <DummyModule />
+            <DummyModule />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -168,6 +184,9 @@ class App extends Component {
               paramId="lfoPitch"
               paramLabel="LFO -> Pitch"
             />
+            <DummyModule />
+            <DummyModule />
+            <DummyModule />
             <ButtonModule
               paramId="chorusOn"
               paramLabel="Chorus"
@@ -189,7 +208,9 @@ const styles = {
   container: {
     width: '100%',
     height: '100%',
+    flexDirection: 'column',
     backgroundColor: 'ff17191f',
+    // backgroundColor: 'ff00ff00',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
@@ -198,18 +219,53 @@ const styles = {
     borderWidth: 10,
   },
   content: {
+    height: '95%',
+    width: '100%',
     flex: 1.0,
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'flex-start',
     padding: 12.0,
-    maxWidth: 800,
-    aspectRatio: 400.0 / 240.0,
+    // maxWidth: 800,
+    // aspectRatio: 800.0 / 480.0,
+  },
+  menu: {
+    // height: 24,
+    width: '100%',
+    flex: 1.0,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    // backgroundColor: 'ff00ff00',
+    // alignItems: 'flex-start',
+    // marginTop: 16,
+    marginBottom: -16,
+    paddingLeft: 12.0,
+    paddingRight: 12.0,
+    // maxWidth: 800,
+    // aspectRatio: 800.0 / 120.0,
+    borderWidth: 4,
+    // borderColor: 'ffff0000',
+  },
+  logo: {
+    marginLeft: 25,
+    // height: 60,
+    // flex: 1.0,
+    // flexDirection: 'column',
+    // justifyContent: 'space-around',
+    // backgroundColor: 'ff00ff00',
+    // alignItems: 'flex-start',
+    // marginTop: 16,
+    // padding: 12.0,
+    // maxWidth: 800,
+    // aspectRatio: 800.0 / 120.0,
+    // borderWidth: 4,
+    // borderColor: 'ffff0000',
   },
   param_row: {
     flex: 1.0,
     width: '100%',
     flexDirection: 'row',
+    // backgroundColor: 'ff00ff00',
     borderRadius: 12,
     borderStyle: 'solid',
     borderColor: 'ff626262',
@@ -225,8 +281,8 @@ const styles = {
     alignItems: 'center',
     marginTop: 4,
     marginBottom: 4,
-    marginLeft: 12,
-    marginRight: 12,
+    marginLeft: 2,
+    marginRight: 2,
   },
   knob: {
     minWidth: 20.0,
@@ -243,6 +299,13 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     interceptClickEvents: false,
+  },
+  logo_text: {
+    // marginTop: -6, // ??
+    fontSize: 20.0,
+    // minHeight: 18,
+    color: 'ff626262',
+    // backgroundColor: 'ffff0000',
   },
   param_text: {
     fontSize: 15.0,

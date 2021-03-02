@@ -330,7 +330,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 
     auto* editor = new blueprint::BlueprintGenericEditor (*this, bundle);
 
-    editor->setSize (800, 480);
+    editor->setSize (960, 480 + 40);
 
     return editor;
 }

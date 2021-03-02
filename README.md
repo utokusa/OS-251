@@ -17,7 +17,7 @@ This plugin is currently under development.
 - [ ] Add "About" to UI
 - [ ] One knob HPF
 - [ ] LFO -> Shape parameter
-- [ ] Master pitch setting
+- [ ] Master pitch setting (3 knobs)
 - [ ] Pitchbend width setting
 - [ ] Presets
 - [ ] (Optional) Make LFO sync with the host's tempo.
