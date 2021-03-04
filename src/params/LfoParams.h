@@ -55,12 +55,22 @@ public:
         filterFreq = _filterFreq;
         filterFreqVal = *filterFreq;
     }
+    flnum getShape() const
+    {
+        return shapeVal;
+    }
+    void setShapePtr (const std::atomic<flnum>* _shape)
+    {
+        shape = _shape;
+        shapeVal = *shape;
+    }
     void parameterChanged()
     {
         rateVal = *rate;
         delayVal = *delay;
         pitchVal = *pitch;
         filterFreqVal = *filterFreq;
+        shapeVal = *shape;
     }
 
     // ---
@@ -83,10 +93,12 @@ private:
     // Amount of modulation
     const std::atomic<flnum>* pitch {};
     const std::atomic<flnum>* filterFreq {};
+    const std::atomic<flnum>* shape {};
 
     flnum rateVal = 0.0;
     flnum delayVal = 0.0;
     flnum pitchVal = 0.0;
     flnum filterFreqVal = 0.0;
+    flnum shapeVal = 0.0;
 };
-}
+} // namespace onsen

@@ -16,7 +16,7 @@ This plugin is currently under development.
 
 - [ ] Add "About" to UI
 - [ ] One knob HPF
-- [ ] LFO -> Shape parameter
+- [x] LFO -> Shape parameter
 - [x] Master pitch setting (3 knobs)
 - [x] Pitchbend width setting
 - [ ] Presets

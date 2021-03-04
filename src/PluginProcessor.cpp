@@ -142,15 +142,20 @@ Os251AudioProcessor::Os251AudioProcessor()
     lfoParams->setDelayPtr (parameters.getRawParameterValue ("lfoDelay"));
     parameters.addParameterListener ("lfoDelay", this);
 
-    // Amount of pitch
+    // Amount of LFO pitch
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoPitch", "LFO -> Pitch", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     lfoParams->setPitchPtr (parameters.getRawParameterValue ("lfoPitch"));
     parameters.addParameterListener ("lfoPitch", this);
 
-    // Amount of filter cutoff frequency
+    // Amount of LFO filter cutoff frequency
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoFilterFreq", "LFO -> Freq", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     lfoParams->setFilterFreqPtr (parameters.getRawParameterValue ("lfoFilterFreq"));
     parameters.addParameterListener ("lfoFilterFreq", this);
+
+    // Amount of LFO oscillator shape
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoShape", "LFO -> Shape", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    lfoParams->setShapePtr (parameters.getRawParameterValue ("lfoShape"));
+    parameters.addParameterListener ("lfoShape", this);
 
     // Filter parameters
     onsen::FilterParams* const filterParams = synthParams.filter();

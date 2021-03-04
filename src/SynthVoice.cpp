@@ -67,7 +67,9 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
     {
         while (--numSamples >= 0)
         {
-            flnum currentSample = osc.oscillatorVal (currentAngle) * level * env.getLevel();
+            flnum currentSample = osc.oscillatorVal (
+                                      currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount())
+                                  * level * env.getLevel();
             currentSample = filter.process (currentSample, idx);
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)

@@ -124,7 +124,10 @@ class App extends Component {
               paramId="shape"
               paramLabel="Osc shape"
             />
-            <DummyModule />
+            <SliderModule
+              paramId="lfoShape"
+              paramLabel="LFO -> Shape"
+            />
             <DummyModule />
           </View>
           <View {...styles.param_row}>

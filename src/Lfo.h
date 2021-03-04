@@ -84,6 +84,11 @@ public:
         return p->getFilterFreq();
     }
 
+    flnum getShapeAmount() const
+    {
+        return p->getShape();
+    }
+
     void setCurrentPlaybackSampleRate (double _sampleRate)
     {
         sampleRate = static_cast<flnum> (_sampleRate);

@@ -31,10 +31,10 @@ public:
 
     // Return oscillator voltage value.
     // Angle is in radian.
-    flnum oscillatorVal (flnum angle)
+    flnum oscillatorVal (flnum angle, flnum shapeModulationAmount)
     {
         const flnum firstAngle = angle;
-        const flnum secondAngle = shapePhase (angle * 2);
+        const flnum secondAngle = shapePhase (angle * 2, shapeModulationAmount);
 
         flnum currentSample = 0.0;
         currentSample += sinWave (secondAngle) * p->getSinGain();
@@ -83,10 +83,10 @@ private:
         return randDist (randEngine);
     }
 
-    flnum shapePhase (flnum angle)
+    flnum shapePhase (flnum angle, flnum shapeModulationAmount)
     {
         angle = wrapAngle (angle);
-        flnum shape = p->getShape();
+        flnum shape = std::clamp<flnum> (p->getShape() + shapeModulationAmount, 0.0, 1.0);
         flnum normalizedAngle = std::clamp (angle / (2.0 * pi), 0.0, 1.0);
         flnum shaped = 2.0 * pi * (shape * map (normalizedAngle) + (1.0 - shape) * normalizedAngle);
         return shaped;
