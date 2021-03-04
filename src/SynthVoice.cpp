@@ -99,7 +99,7 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
     // 8192 -> no pitch bend
     if (pitchWheelValue > 8192)
     {
-        pitchBend = 1.0 + (pitchBendMax - 1.0) * (static_cast<flnum> (pitchWheelValue) - 8192.0) / 8191.0; // 16383 - 8192 = 8191
+        pitchBend = 1.0 + (p->getPitchBendWidthInFreqRatio() - 1.0) * (static_cast<flnum> (pitchWheelValue) - 8192.0) / 8191.0; // 16383 - 8192 = 8191
     }
     else if (pitchWheelValue == 8192)
     {
@@ -107,7 +107,7 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
     }
     else
     {
-        pitchBend = 1.0 / (1.0 + (pitchBendMax - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
+        pitchBend = 1.0 / (1.0 + (p->getPitchBendWidthInFreqRatio() - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
     }
 }
 } // namespace onsen

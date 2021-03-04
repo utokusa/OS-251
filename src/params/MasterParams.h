@@ -16,11 +16,21 @@ namespace onsen
 class MasterParams
 {
 public:
+    static constexpr int maxPitchBendWidth = 24; // unit is [semitone] or [st]
     static constexpr int dynamicRange = 48;
     static const int maxOctaveTuneVal = 3; // unit is [octave]
     static const int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
 
     //==============================================================================
+    flnum getPitchBendWidth() const
+    {
+        return DspUtil::mapFlnumToInt(pitchBendWidthVal, 0.0, 1.0, 0, maxPitchBendWidth);
+    }
+    void setPitchBendWidthPtr (const std::atomic<flnum>* _piatchBendWidth)
+    {
+        pitchBendWidth = _piatchBendWidth;
+        pitchBendWidthVal = *pitchBendWidth;
+    }
     flnum getMasterOctaveTune() const
     {
         return DspUtil::mapFlnumToInt (masterOctaveTuneVal, 0.0, 1.0, -maxOctaveTuneVal, maxOctaveTuneVal);
@@ -60,24 +70,34 @@ public:
     }
     void parameterChanged()
     {
+        pitchBendWidthVal = *pitchBendWidth;
         masterOctaveTuneVal = *masterOctaveTune;
         masterSemitoneTuneVal = *masterSemitoneTune;
         masterFineTuneVal = *masterFineTune;
         masterVolumeVal = *masterVolume;
     }
+    flnum getPitchBendWidthInFreqRatio () const
+    {
+        // pitchBendWidthVal is in [semitone].
+        // return it in frequency ratio.
+        return std::pow (2.0, getPitchBendWidth() / 12.0);
+    }
     flnum getFreqRatio()
     {
+        // Return frequency ratio of pitch tuning
         return std::pow (
             2.0,
             getMasterOctaveTune() + (getMasterSemitoneTune() + getMasterFineTune()) / 12.0);
     }
 
 private:
+    const std::atomic<flnum>* pitchBendWidth {};
     const std::atomic<flnum>* masterOctaveTune {};
     const std::atomic<flnum>* masterSemitoneTune {};
     const std::atomic<flnum>* masterFineTune {};
     const std::atomic<flnum>* masterVolume {};
 
+    flnum pitchBendWidthVal = 12; // Unit is [semitone]
     flnum masterOctaveTuneVal = 0.5;
     flnum masterSemitoneTuneVal = 0.5;
     flnum masterFineTuneVal = 0.5;

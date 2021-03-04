@@ -18,7 +18,7 @@ This plugin is currently under development.
 - [ ] One knob HPF
 - [ ] LFO -> Shape parameter
 - [x] Master pitch setting (3 knobs)
-- [ ] Pitchbend width setting
+- [x] Pitchbend width setting
 - [ ] Presets
 - [ ] (Optional) Make LFO sync with the host's tempo.
   Maybe "Sync ON" button and "Phase" knob will be added.

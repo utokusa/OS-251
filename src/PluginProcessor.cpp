@@ -30,7 +30,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
     auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
-    auto valueToMinusOneToOneFunction = [] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne(value), numDecimal); };
+    auto valueToMinusOneToOneFunction = [] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
 
     // Oscillator gain
     constexpr int numGainDecimal = 1;
@@ -53,6 +53,9 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
 
     // Master octave tuning
+    auto pitchBendWidtValToStr = [] (float value) { return juce::String (
+                                                        onsen::DspUtil::mapFlnumToInt (
+                                                            value, 0.0, 1.0, 0, onsen::MasterParams::maxPitchBendWidth)); };
     auto masterOctaveTuningValToStr = [] (float value) { return juce::String (
                                                              onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxOctaveTuneVal, onsen::MasterParams::maxOctaveTuneVal)); };
     auto masterSemitoneTuningValToStr = [] (float value) { return juce::String (
@@ -177,6 +180,11 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Master parameters
     onsen::MasterParams* const masterParams = synthParams.master();
+
+    // Pitch bend width
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("pitchBendWidth", "Pitch Bend", "", nrange, 0.5, pitchBendWidtValToStr, nullptr, true));
+    masterParams->setPitchBendWidthPtr (parameters.getRawParameterValue (("pitchBendWidth")));
+    parameters.addParameterListener ("pitchBendWidth", this);
 
     // Master octave tuning
     parameters.createAndAddParameter (std::make_unique<Parameter> ("masterOctaveTune", "Octave", "", nrange, 0.5, masterOctaveTuningValToStr, nullptr, true));

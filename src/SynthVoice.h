@@ -46,7 +46,6 @@ private:
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     flnum pitchBend = 1.0;
-    flnum pitchBendMax = 2.0;
     Oscillator osc;
     Envelope env;
     Lfo* const lfo;

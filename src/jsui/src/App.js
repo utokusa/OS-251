@@ -169,7 +169,12 @@ class App extends Component {
             <DummyModule />
             <DummyModule />
             <DummyModule />
-            <DummyModule />
+            <ButtonModule
+              paramId="chorusOn"
+              paramLabel="Chorus"
+              onToggled={this._onChorusToggled}
+              isOn={this.state.isChorusOn}
+            />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -184,11 +189,9 @@ class App extends Component {
               paramId="lfoPitch"
               paramLabel="LFO -> Pitch"
             />
-            <ButtonModule
-              paramId="chorusOn"
-              paramLabel="Chorus"
-              onToggled={this._onChorusToggled}
-              isOn={this.state.isChorusOn}
+            <SliderModule
+              paramId="pitchBendWidth"
+              paramLabel="Pitch Bend"
             />
             <SliderModule
               paramId="masterOctaveTune"
