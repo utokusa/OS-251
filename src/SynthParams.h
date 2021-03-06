@@ -12,6 +12,7 @@
 #include "params/ChorusParams.h"
 #include "params/EnvelopeParams.h"
 #include "params/FilterParams.h"
+#include "params/HpfParams.h"
 #include "params/LfoParams.h"
 #include "params/MasterParams.h"
 #include "params/OscillatorParams.h"
@@ -43,6 +44,10 @@ public:
     {
         return &chorusParams;
     }
+    HpfParams* hpf()
+    {
+        return &hpfParams;
+    }
     MasterParams* master()
     {
         return &masterParams;
@@ -50,7 +55,7 @@ public:
 
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
     {
-        oscillatorParams.prepareToPlay(samplesPerBlockExpected, sampleRate);
+        oscillatorParams.prepareToPlay (samplesPerBlockExpected, sampleRate);
     }
 
 private:
@@ -60,6 +65,7 @@ private:
     FilterParams filterParams;
     OscillatorParams oscillatorParams;
     ChorusParams chorusParams;
+    HpfParams hpfParams;
     MasterParams masterParams;
 };
-}
+} // namespace onsen

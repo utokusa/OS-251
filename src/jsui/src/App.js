@@ -169,7 +169,10 @@ class App extends Component {
               paramId="lfoFilterFreq"
               paramLabel="LFO -> Freq"
             />
-            <DummyModule />
+            <SliderModule
+              paramId="hpfFreq"
+              paramLabel="HPF Freq"
+            />
             <DummyModule />
             <DummyModule />
             <ButtonModule

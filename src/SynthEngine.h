@@ -8,13 +8,14 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-#include "DspCommon.h"
-#include "SynthParams.h"
 #include "Chorus.h"
+#include "DspCommon.h"
+#include "Hpf.h"
 #include "Lfo.h"
 #include "MasterVolume.h"
+#include "SynthParams.h"
 #include "SynthVoice.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -28,8 +29,9 @@ public:
     FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
         : params (synthParams),
           lfo (_lfo),
+          hpf (params, 2),
           chorus(),
-          masterVolume(synthParams)
+          masterVolume (synthParams)
     {
     }
 
@@ -48,13 +50,13 @@ public:
 private:
     SynthParams* const params;
     Lfo* const lfo;
+    Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
 
     void renderVoices (juce::AudioBuffer<flnum>& outputAudio,
                        int startSample,
                        int numSamples) override;
-
 };
 
 //==============================================================================

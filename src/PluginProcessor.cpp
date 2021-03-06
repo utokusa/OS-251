@@ -175,6 +175,12 @@ Os251AudioProcessor::Os251AudioProcessor()
     filterParams->setFilterEnvelopePtr (parameters.getRawParameterValue (("filterEnv")));
     parameters.addParameterListener ("filterEnv", this);
 
+    // HPF parameters
+    onsen::HpfParams* const hpfParams = synthParams.hpf();
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("hpfFreq", "HPF Freq", "", nrange, 0.0, valueToFreqFunction, nullptr, true));
+    hpfParams->setFrequencyPtr (parameters.getRawParameterValue ("hpfFreq"));
+    parameters.addParameterListener ("hpfFreq", this);
+
     // Chorus parameters
     onsen::ChorusParams* const chorusParams = synthParams.chorus();
 
@@ -392,12 +398,14 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     onsen::LfoParams* const lfoParams = synthParams.lfo();
     onsen::FilterParams* const filterParams = synthParams.filter();
     onsen::ChorusParams* const chorusParams = synthParams.chorus();
+    onsen::HpfParams* const hpfParams = synthParams.hpf();
     onsen::MasterParams* const master = synthParams.master();
     oscillatorParams->parameterChanged();
     envelopeParams->parameterChanged();
     lfoParams->parameterChanged();
     filterParams->parameterChanged();
     chorusParams->parameterChanged();
+    hpfParams->parameterChanged();
     master->parameterChanged();
 }
 
