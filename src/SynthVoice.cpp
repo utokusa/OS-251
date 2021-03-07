@@ -19,7 +19,7 @@ bool FancySynthVoice::canPlaySound (juce::SynthesiserSound* sound)
 void FancySynthVoice::setCurrentPlaybackSampleRate (const double newRate)
 {
     juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
-    env.setCurrentPlaybackSampleRate (newRate);
+    envManager.setCurrentPlaybackSampleRate(newRate);
     filter.setCurrentPlaybackSampleRate (newRate);
 }
 
@@ -29,7 +29,7 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
 
     currentAngle = 0.0;
     level = velocity * 0.15;
-    env.noteOn();
+    envManager.noteOn();
 
     flnum adjustOctave = 2.0;
     flnum cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
@@ -44,7 +44,7 @@ void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
 {
     if (allowTailOff)
     {
-        env.noteOFf();
+        envManager.noteOFf();
     }
     else
     {
@@ -67,9 +67,10 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
     {
         while (--numSamples >= 0)
         {
+            envManager.switchTarget(p->getEnvForAmpOn());
             flnum currentSample = osc.oscillatorVal (
                                       currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount())
-                                  * level * env.getLevel();
+                                  * level * envManager.getLevel();
             currentSample = filter.process (currentSample, idx);
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
@@ -83,8 +84,8 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
                 currentAngle -= pi * 2.0;
             }
             ++idx;
-            env.update();
-            if (env.isEnvOff())
+            envManager.update();
+            if (envManager.isEnvOff())
             {
                 clearCurrentNote();
                 angleDelta = 0.0;

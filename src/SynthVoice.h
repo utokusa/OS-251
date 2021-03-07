@@ -28,6 +28,8 @@ public:
         : p (synthParams->master()),
           osc (synthParams),
           env (synthParams),
+          gate(),
+          envManager (&env, &gate),
           lfo (_lfo),
           filter (synthParams, &env, lfo)
     {
@@ -48,6 +50,8 @@ private:
     flnum pitchBend = 1.0;
     Oscillator osc;
     Envelope env;
+    Gate gate;
+    EnvManager envManager;
     Lfo* const lfo;
     Filter filter;
 

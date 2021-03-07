@@ -27,7 +27,7 @@ This plugin is currently under development.
 - [ ] Allow to change number of voices
 - [ ] Unison
 - [ ] Portamento
-- [ ] "ENV or GATE" switch for VCA
+- [x] "ENV or GATE" switch for VCA
 ### Tools
 
 - [ ] Add lint tool for javascript

@@ -77,7 +77,7 @@ public:
 
 private:
     const FilterParams* const p;
-    Envelope* const env;
+    IEnvelope* const env;
     Lfo* const lfo;
     flnum sampleRate;
     // The length of this vector equals to max number of the channels;

@@ -26,11 +26,14 @@ void Envelope::noteOFf()
 
 void Envelope::update()
 {
+    if (state == State::OFF)
+        return;
+
     if (state == State::ATTACK)
     {
         const flnum attackSec = p->getAttack();
-        level = attackCurve(toTimeSec(sampleCnt++), attackSec);
-        if (sampleCnt >= toSample(attackSec))
+        level = attackCurve (toTimeSec (sampleCnt++), attackSec);
+        if (sampleCnt >= toSample (attackSec))
         {
             sampleCnt = 0;
             state = State::DECAY;
@@ -40,9 +43,8 @@ void Envelope::update()
     {
         const flnum decaySec = p->getDecay();
         const flnum sustain = p->getSustain();
-        level = sustain + (MAX_LEVEL - sustain)
-                * decayCurve(toTimeSec(sampleCnt++), decaySec);
-        if (sampleCnt >= toSample(decaySec))
+        level = sustain + (MAX_LEVEL - sustain) * decayCurve (toTimeSec (sampleCnt++), decaySec);
+        if (sampleCnt >= toSample (decaySec))
         {
             sampleCnt = 0;
             level = sustain;
@@ -56,11 +58,11 @@ void Envelope::update()
     else if (state == State::RELEASE)
     {
         const flnum releaseSec = p->getRelease();
-        level = noteOffLevel * releaseCurve(toTimeSec(sampleCnt++), releaseSec);
-        if (sampleCnt >= toSample(releaseSec))
+        level = noteOffLevel * releaseCurve (toTimeSec (sampleCnt++), releaseSec);
+        if (sampleCnt >= toSample (releaseSec))
         {
             sampleCnt = 0;
-            level = 0;   
+            level = 0;
         }
     }
     else
@@ -68,4 +70,51 @@ void Envelope::update()
         assert (false && "Unknown state of envelope");
     }
 }
+
+//==============================================================================
+void Gate::noteOn()
+{
+    sampleCnt = 0;
+    state = State::ATTACK;
 }
+
+void Gate::noteOFf()
+{
+    sampleCnt = 0;
+    noteOffLevel = level;
+    state = State::RELEASE;
+}
+
+void Gate::update()
+{
+    if (state == State::OFF)
+        return;
+
+    if (state == State::ATTACK)
+    {
+        level = attackCurve (toTimeSec (sampleCnt++), attackSec);
+        if (sampleCnt >= toSample (attackSec))
+        {
+            sampleCnt = 0;
+            state = State::SUSTAIN;
+        }
+    }
+    else if (state == State::SUSTAIN)
+    {
+        level = MAX_LEVEL;
+    }
+    else if (state == State::RELEASE)
+    {
+        level = noteOffLevel * releaseCurve (toTimeSec (sampleCnt++), releaseSec);
+        if (sampleCnt >= toSample (releaseSec))
+        {
+            sampleCnt = 0;
+            level = 0;
+        }
+    }
+    else
+    {
+        assert (false && "Unknown state of gate");
+    }
+}
+} // namespace onsen

@@ -22,6 +22,15 @@ public:
     static const int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
 
     //==============================================================================
+    bool getEnvForAmpOn() const
+    {
+        return envForAmpOnVal;
+    }
+    void setEnvForAmpOnPtr (const std::atomic<flnum>* _envForAmpOn)
+    {
+        envForAmpOn = _envForAmpOn;
+        envForAmpOnVal = *_envForAmpOn;
+    }
     flnum getPitchBendWidth() const
     {
         return DspUtil::mapFlnumToInt(pitchBendWidthVal, 0.0, 1.0, 0, maxPitchBendWidth);
@@ -70,6 +79,7 @@ public:
     }
     void parameterChanged()
     {
+        envForAmpOnVal = *envForAmpOn;
         pitchBendWidthVal = *pitchBendWidth;
         masterOctaveTuneVal = *masterOctaveTune;
         masterSemitoneTuneVal = *masterSemitoneTune;
@@ -91,12 +101,14 @@ public:
     }
 
 private:
+    const std::atomic<flnum>* envForAmpOn {};
     const std::atomic<flnum>* pitchBendWidth {};
     const std::atomic<flnum>* masterOctaveTune {};
     const std::atomic<flnum>* masterSemitoneTune {};
     const std::atomic<flnum>* masterFineTune {};
     const std::atomic<flnum>* masterVolume {};
 
+    flnum envForAmpOnVal = 1.0;
     flnum pitchBendWidthVal = 12; // Unit is [semitone]
     flnum masterOctaveTuneVal = 0.5;
     flnum masterSemitoneTuneVal = 0.5;

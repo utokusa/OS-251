@@ -192,6 +192,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Master parameters
     onsen::MasterParams* const masterParams = synthParams.master();
 
+    // Env/Gate switch for amplitude
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("envForAmpOn", "Env -> Amp", "", nrange, 1.0, valueToOnOff, nullptr, true));
+    masterParams->setEnvForAmpOnPtr (parameters.getRawParameterValue (("envForAmpOn")));
+    parameters.addParameterListener ("envForAmpOn", this);
+
     // Pitch bend width
     parameters.createAndAddParameter (std::make_unique<Parameter> ("pitchBendWidth", "Pitch Bend", "", nrange, 0.5, pitchBendWidtValToStr, nullptr, true));
     masterParams->setPitchBendWidthPtr (parameters.getRawParameterValue (("pitchBendWidth")));

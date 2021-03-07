@@ -74,11 +74,19 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this);
     this._onChorusToggled = this._onChorusToggled.bind(this);
 
     this.state = {
+      isEnvForAmpOn: true,
       isChorusOn: false
     }
+  }
+
+  _onEnvForAmpToggled(toggled) {
+    this.setState({
+      isEnvForAmpOn: toggled
+    });
   }
 
   _onChorusToggled(toggled) {
@@ -147,7 +155,12 @@ class App extends Component {
               paramId="release"
               paramLabel="Release"
             />
-            <DummyModule />
+            <ButtonModule
+              paramId="envForAmpOn"
+              paramLabel="Env -> Amp"
+              onToggled={this._onEnvForAmpToggled}
+              isOn={this.state.isEnvForAmpOn}
+            />
             <DummyModule />
             <DummyModule />
             <DummyModule />
