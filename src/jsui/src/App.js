@@ -136,7 +136,10 @@ class App extends Component {
               paramId="lfoShape"
               paramLabel="LFO -> Shape"
             />
-            <DummyModule />
+            <SliderModule
+              paramId="numVoices"
+              paramLabel="Num Voices"
+            />
           </View>
           <View {...styles.param_row}>
             <SliderModule

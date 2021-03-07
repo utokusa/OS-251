@@ -67,6 +67,10 @@ Os251AudioProcessor::Os251AudioProcessor()
                                                                          onsen::DspUtil::paramValToDecibel (value, onsen::MasterParams::dynamicRange), numGainDecimal)
                                                                      + juce::String (" dB"); };
 
+    // Number of voices
+    auto numVoicesToStr = [] (float value) { return juce::String (
+                                                 onsen::DspUtil::mapFlnumToInt (
+                                                     value, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices)); };
     // ---
 
     // ---
@@ -223,6 +227,14 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("masterVolume", this);
 
     // ---
+
+    // Parameters used with callback
+
+    // Number of voices
+    // TODO: We need a smarter way to set the initial value.
+    constexpr float defaultFlnumNumVoices = 0.3; // The number will be converted to 4. OS-251 has 4 voices as default.
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
+    parameters.addParameterListener ("numVoices", this);
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 }
@@ -412,6 +424,12 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     chorusParams->parameterChanged();
     hpfParams->parameterChanged();
     master->parameterChanged();
+
+    if (parameterID == "numVoices")
+    {
+        const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices);
+        synthEngine.changeNumberOfVoices(num);
+    }
 }
 
 //==============================================================================

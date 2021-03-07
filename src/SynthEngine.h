@@ -89,10 +89,37 @@ public:
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
     }
 
+    void changeNumberOfVoices (int num)
+    {
+        int numVoices = synth.getNumVoices();
+        if (num == numVoices)
+            return;
+        if (num > numVoices)
+            addNumberOfVoices (num - numVoices);
+        else
+            subNumberOfVoices (numVoices - num);
+        
+        assert(num == synth.getNumVoices());
+    }
+
 private:
     SynthParams* const synthParams;
     Lfo lfo;
     FancySynth synth;
     juce::MidiMessageCollector midiCollector;
+
+    void addNumberOfVoices (int num)
+    {
+        for (auto i = 0; i < num; ++i)
+            synth.addVoice (new FancySynthVoice (synthParams, &lfo));
+    }
+
+    void subNumberOfVoices (int num)
+    {
+        int numVoices = synth.getNumVoices();
+        assert (numVoices >= num);
+        for (auto i = 0; i < num; ++i)
+            synth.removeVoice (numVoices - 1 - i);
+    }
 };
 } // namespace onsen

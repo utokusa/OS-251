@@ -18,8 +18,9 @@ class MasterParams
 public:
     static constexpr int maxPitchBendWidth = 24; // unit is [semitone] or [st]
     static constexpr int dynamicRange = 48;
-    static const int maxOctaveTuneVal = 3; // unit is [octave]
-    static const int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
+    static constexpr int maxOctaveTuneVal = 3; // unit is [octave]
+    static constexpr int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
+    static constexpr int maxNumVoices = 10; 
 
     //==============================================================================
     bool getEnvForAmpOn() const
