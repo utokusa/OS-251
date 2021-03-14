@@ -70,6 +70,16 @@ public:
           adjustedSmoothness (_smoothness) {}
     flnum get() { return cur = adjustedSmoothness * cur + (1 - adjustedSmoothness) * target; }
     void set (flnum val) { target = val; }
+    void reset (flnum val)
+    {
+        target = val;
+        cur = val;
+    }
+    void setSmoothness (flnum val)
+    {
+        smoothness = val;
+        adjustedSmoothness = adjust (smoothness);
+    }
     void prepareToPlay (double _sampleRate)
     {
         sampleRate = _sampleRate;
@@ -80,7 +90,7 @@ private:
     flnum sampleRate;
     flnum target;
     flnum cur;
-    flnum smoothness; // TODO: Adjust when sample rate changes
+    flnum smoothness;
     flnum adjustedSmoothness;
 
     // Adjust parameter value like attack, decay or release according to the

@@ -221,6 +221,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     masterParams->setMasterFineTunePtr (parameters.getRawParameterValue (("masterFineTune")));
     parameters.addParameterListener ("masterFineTune", this);
 
+    // Portamento
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("portamento", "Portamento", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    masterParams->setPortamentoPtr (parameters.getRawParameterValue (("portamento")));
+    parameters.addParameterListener ("portamento", this);
+
     // Master volume
     parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, onsen::DspUtil::decibelToParamVal (-3.0, onsen::MasterParams::dynamicRange), mastertGainValToDecibelFunction, nullptr, true));
     masterParams->setMasterVolumePtr (parameters.getRawParameterValue (("masterVolume")));
@@ -428,7 +433,7 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     if (parameterID == "numVoices")
     {
         const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices);
-        synthEngine.changeNumberOfVoices(num);
+        synthEngine.changeNumberOfVoices (num);
     }
 }
 

@@ -19,7 +19,7 @@ bool FancySynthVoice::canPlaySound (juce::SynthesiserSound* sound)
 void FancySynthVoice::setCurrentPlaybackSampleRate (const double newRate)
 {
     juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
-    envManager.setCurrentPlaybackSampleRate(newRate);
+    envManager.setCurrentPlaybackSampleRate (newRate);
     filter.setCurrentPlaybackSampleRate (newRate);
 }
 
@@ -36,23 +36,37 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
     flnum cyclesPerSample = cyclesPerSecond / getSampleRate();
 
     angleDelta = cyclesPerSample * 2.0 * pi;
+    if (isNoteOverlapped)
+    {
+        smoothedAngleDelta.set (angleDelta);
+    }
+    else
+    {
+        smoothedAngleDelta.reset (angleDelta);
+    }
 
     lfo->noteOn();
+    isNoteOn = true;
 }
 
 void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
 {
     if (allowTailOff)
     {
+        // Change state to RELEASE
         envManager.noteOFf();
+        isNoteOverlapped = false;
     }
     else
     {
+        // Change note immediatelly
         clearCurrentNote();
         angleDelta = 0.0;
+        isNoteOverlapped = isNoteOn;
     }
 
     lfo->noteOff();
+    isNoteOn = false;
 }
 
 void FancySynthVoice::pitchWheelMoved (int newPitchWheelValue)
@@ -67,7 +81,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
     {
         while (--numSamples >= 0)
         {
-            envManager.switchTarget(p->getEnvForAmpOn());
+            envManager.switchTarget (p->getEnvForAmpOn());
             flnum currentSample = osc.oscillatorVal (
                                       currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount())
                                   * level * envManager.getLevel();
@@ -78,7 +92,8 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
 
             flnum lfoPitchDepth = lfo->getPitchAmount();
             flnum lfoVal = lfo->getLevel (idx);
-            currentAngle += angleDelta * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
+            smoothedAngleDelta.setSmoothness (p->getPortamento());
+            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
             if (currentAngle > pi * 2.0)
             {
                 currentAngle -= pi * 2.0;
@@ -89,6 +104,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             {
                 clearCurrentNote();
                 angleDelta = 0.0;
+                smoothedAngleDelta.reset (angleDelta);
                 break;
             }
         }

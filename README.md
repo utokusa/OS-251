@@ -26,8 +26,9 @@ This plugin is currently under development.
   Maybe "Tempo ON" button and "Phase" knob will be added.
 - [x] Allow to change number of voices
 - [ ] Unison
-- [ ] Portamento
+- [x] Portamento
 - [x] "ENV or GATE" switch for VCA
+
 ### Tools
 
 - [ ] Add lint tool for javascript

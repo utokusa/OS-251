@@ -20,7 +20,7 @@ public:
     static constexpr int dynamicRange = 48;
     static constexpr int maxOctaveTuneVal = 3; // unit is [octave]
     static constexpr int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
-    static constexpr int maxNumVoices = 10; 
+    static constexpr int maxNumVoices = 10;
 
     //==============================================================================
     bool getEnvForAmpOn() const
@@ -34,7 +34,7 @@ public:
     }
     flnum getPitchBendWidth() const
     {
-        return DspUtil::mapFlnumToInt(pitchBendWidthVal, 0.0, 1.0, 0, maxPitchBendWidth);
+        return DspUtil::mapFlnumToInt (pitchBendWidthVal, 0.0, 1.0, 0, maxPitchBendWidth);
     }
     void setPitchBendWidthPtr (const std::atomic<flnum>* _piatchBendWidth)
     {
@@ -68,6 +68,22 @@ public:
         masterFineTune = _masterFineTune;
         masterFineTuneVal = *masterFineTune;
     }
+    flnum getPortamento() const
+    {
+        // Whwn knob value is 0, portamento is OFF
+        if (portamentoVal == 0.0)
+        {
+            return 0.0;
+        }
+
+        constexpr flnum minPortament = 0.999;
+        return minPortament + portamentoVal * (1.0 - minPortament);
+    }
+    void setPortamentoPtr (const std::atomic<flnum>* _portamento)
+    {
+        portamento = _portamento;
+        portamentoVal = *portamento;
+    }
     flnum getMasterVolume() const
     {
         auto decibelGain = DspUtil::paramValToDecibel (masterVolumeVal, dynamicRange);
@@ -85,9 +101,10 @@ public:
         masterOctaveTuneVal = *masterOctaveTune;
         masterSemitoneTuneVal = *masterSemitoneTune;
         masterFineTuneVal = *masterFineTune;
+        portamentoVal = *portamento;
         masterVolumeVal = *masterVolume;
     }
-    flnum getPitchBendWidthInFreqRatio () const
+    flnum getPitchBendWidthInFreqRatio() const
     {
         // pitchBendWidthVal is in [semitone].
         // return it in frequency ratio.
@@ -107,6 +124,7 @@ private:
     const std::atomic<flnum>* masterOctaveTune {};
     const std::atomic<flnum>* masterSemitoneTune {};
     const std::atomic<flnum>* masterFineTune {};
+    const std::atomic<flnum>* portamento {};
     const std::atomic<flnum>* masterVolume {};
 
     flnum envForAmpOnVal = 1.0;
@@ -114,6 +132,7 @@ private:
     flnum masterOctaveTuneVal = 0.5;
     flnum masterSemitoneTuneVal = 0.5;
     flnum masterFineTuneVal = 0.5;
+    flnum portamentoVal = 0.0;
     flnum masterVolumeVal = 0.5;
 };
 } // namespace onsen

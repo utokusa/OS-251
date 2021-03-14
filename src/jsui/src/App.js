@@ -190,7 +190,10 @@ class App extends Component {
               paramLabel="HPF Freq"
             />
             <DummyModule />
-            <DummyModule />
+            <SliderModule
+              paramId="portamento"
+              paramLabel="Portamento"
+            />
             <ButtonModule
               paramId="chorusOn"
               paramLabel="Chorus"

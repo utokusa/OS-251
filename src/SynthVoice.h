@@ -26,12 +26,15 @@ public:
     FancySynthVoice() = delete;
     FancySynthVoice (SynthParams* const synthParams, Lfo* const _lfo)
         : p (synthParams->master()),
+          smoothedAngleDelta (0.0, 0.0),
           osc (synthParams),
           env (synthParams),
           gate(),
           envManager (&env, &gate),
           lfo (_lfo),
-          filter (synthParams, &env, lfo)
+          filter (synthParams, &env, lfo),
+          isNoteOn (false),
+          isNoteOverlapped (false)
     {
     }
 
@@ -47,6 +50,7 @@ private:
     MasterParams* const p;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    SmoothFlnum smoothedAngleDelta;
     flnum pitchBend = 1.0;
     Oscillator osc;
     Envelope env;
@@ -54,6 +58,8 @@ private:
     EnvManager envManager;
     Lfo* const lfo;
     Filter filter;
+    bool isNoteOn;
+    bool isNoteOverlapped;
 
     void setPitchBend (int pitchWheelValue);
 };
