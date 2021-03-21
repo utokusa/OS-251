@@ -173,14 +173,8 @@ class App extends Component {
               isOn={this.state.isEnvForAmpOn}
             />
             <DummyModule />
-            <SliderModule
-              paramId="lfoPitch"
-              paramLabel="LFO -> Pitch"
-            />
-            <SliderModule
-              paramId="pitchBendWidth"
-              paramLabel="Pitch Bend"
-            />
+            <DummyModule />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -204,16 +198,8 @@ class App extends Component {
               paramLabel="HPF Freq"
             />
             <DummyModule />
-            <SliderModule
-              paramId="portamento"
-              paramLabel="Portamento"
-            />
-            <ButtonModule
-              paramId="chorusOn"
-              paramLabel="Chorus"
-              onToggled={this._onChorusToggled}
-              isOn={this.state.isChorusOn}
-            />
+            <DummyModule />
+            <DummyModule />
           </View>
           <View {...styles.param_row}>
             <ButtonModule
@@ -231,8 +217,34 @@ class App extends Component {
               paramLabel="Synced Rate"
             />
             <SliderModule
+              paramId="lfoPhase"
+              paramLabel="LFO Phase"
+            />
+            <SliderModule
               paramId="lfoDelay"
               paramLabel="LFO Delay"
+            />
+            <DummyModule />
+            <DummyModule />
+            <ButtonModule
+              paramId="chorusOn"
+              paramLabel="Chorus"
+              onToggled={this._onChorusToggled}
+              isOn={this.state.isChorusOn}
+            />
+          </View>
+          <View {...styles.param_row}>
+            <SliderModule
+              paramId="lfoPitch"
+              paramLabel="LFO -> Pitch"
+            />
+            <SliderModule
+              paramId="pitchBendWidth"
+              paramLabel="Pitch Bend"
+            />
+            <SliderModule
+              paramId="portamento"
+              paramLabel="Portamento"
             />
             <SliderModule
               paramId="masterOctaveTune"
@@ -246,6 +258,7 @@ class App extends Component {
               paramId="masterFineTune"
               paramLabel="Fine Tune"
             />
+            <DummyModule />
             <SliderModule
               paramId="masterVolume"
               paramLabel="Master Vol"

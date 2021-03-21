@@ -20,10 +20,10 @@ This plugin is currently under development.
 - [x] Master pitch setting (3 knobs)
 - [x] Pitchbend width setting
 - [ ] Presets
-- [ ] (Optional) Make LFO sync with the host's tempo.
+- [x] (Optional) Make LFO sync with the host's tempo.
   Maybe "Sync ON" button and "Phase" knob will be added.
-- [ ] (Optional) Tempo LFO re-triggered by MIDI notes ("retring").
-  Maybe "Tempo ON" button and "Phase" knob will be added.
+- [ ] ~~(Optional) Tempo LFO re-triggered by MIDI notes ("retring").~~
+  ~~Maybe "Tempo ON" button and "Phase" knob will be added.~~
 - [x] Allow to change number of voices
 - [ ] Unison
 - [x] Portamento

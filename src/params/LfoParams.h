@@ -39,6 +39,17 @@ public:
         rateSync = _rateSync;
         rateSyncVal = *rateSync;
     }
+    flnum getPhase() const
+    {
+        constexpr flnum minVal = 0.0;
+        constexpr flnum maxVal = 2 * pi;
+        return minVal + (phaseVal) * (maxVal - minVal);
+    }
+    void setPhasePtr (const std::atomic<flnum>* _phase)
+    {
+        phase = _phase;
+        phaseVal = *phase;
+    }
     flnum getDelay() const
     {
         constexpr flnum minVal = 0.995;
@@ -90,6 +101,7 @@ public:
     {
         rateVal = *rate;
         rateSyncVal = *rateSync;
+        phaseVal = *phase;
         delayVal = *delay;
         syncOnVal = *syncOn;
         pitchVal = *pitch;
@@ -127,6 +139,8 @@ private:
     // LFO rate
     const std::atomic<flnum>* rate {};
     const std::atomic<flnum>* rateSync {};
+    // LFO phase
+    const std::atomic<flnum>* phase {};
     // LFO delay
     const std::atomic<flnum>* delay {};
     // Sync On
@@ -138,6 +152,7 @@ private:
 
     flnum rateVal = 0.0;
     flnum rateSyncVal = 0.0;
+    flnum phaseVal = 0.0;
     flnum delayVal = 0.0;
     flnum syncOnVal = 0.0;
     flnum pitchVal = 0.0;

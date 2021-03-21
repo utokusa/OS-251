@@ -48,6 +48,9 @@ public:
             constexpr flnum ampNoteStart = MAX_LEVEL * 0.01;
             amp = ampNoteStart;
             ampSync = ampNoteStart;
+            const flnum phase = p->getPhase();
+            currentAngle = 0.0 + phase;
+            currentAngleSync = 0.0 + phase;
         }
     }
 

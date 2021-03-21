@@ -112,6 +112,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
+    // Noise shape
     parameters.createAndAddParameter (std::make_unique<Parameter> ("shape", "Shape", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setShapePtr (parameters.getRawParameterValue ("shape"));
     parameters.addParameterListener ("shape", this);
@@ -151,6 +152,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("rateSync", "Synced LFO Rate", "", nrange, 0.0, syncedRateTextFunction, nullptr, true));
     lfoParams->setRateSyncPtr (parameters.getRawParameterValue ("rateSync"));
     parameters.addParameterListener ("rateSync", this);
+
+    // Lfo phase
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoPhase", "LFO Phase", "", nrange, 0.0, valueToTextFunction, nullptr, true));
+    lfoParams->setPhasePtr (parameters.getRawParameterValue (("lfoPhase")));
+    parameters.addParameterListener ("lfoPhase", this);
 
     // LFO delay
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Chorus", "", nrange, 0.5, valueToTextFunction, nullptr, true));
@@ -418,7 +424,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 
     auto* editor = new blueprint::BlueprintGenericEditor (*this, bundle);
 
-    editor->setSize (960, 480 + 40);
+    editor->setSize (960, 600 + 40);
 
     return editor;
 }
