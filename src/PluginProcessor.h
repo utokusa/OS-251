@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "SynthEngine.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 /**
@@ -59,6 +59,7 @@ private:
     juce::AudioProcessorValueTreeState parameters;
     onsen::SynthParams synthParams;
     onsen::SynthEngine synthEngine;
+    juce::AudioPlayHead::CurrentPositionInfo positionInfo;
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;

@@ -62,11 +62,14 @@ private:
 //==============================================================================
 class SynthEngine
 {
+    using CurrentPositionInfo = juce::AudioPlayHead::CurrentPositionInfo;
+
 public:
     SynthEngine() = delete;
     SynthEngine (SynthParams* const _synthParams)
         : synthParams (_synthParams),
-          lfo (synthParams),
+          positionInfo(),
+          lfo (synthParams, positionInfo),
           synth (synthParams, &lfo)
     {
         for (auto i = 0; i < 4; ++i)
@@ -98,12 +101,18 @@ public:
             addNumberOfVoices (num - numVoices);
         else
             subNumberOfVoices (numVoices - num);
-        
-        assert(num == synth.getNumVoices());
+
+        assert (num == synth.getNumVoices());
+    }
+
+    void setPositionInfo (CurrentPositionInfo _positionInfo)
+    {
+        positionInfo = _positionInfo;
     }
 
 private:
     SynthParams* const synthParams;
+    CurrentPositionInfo positionInfo;
     Lfo lfo;
     FancySynth synth;
     juce::MidiMessageCollector midiCollector;

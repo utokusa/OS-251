@@ -75,10 +75,12 @@ class App extends Component {
     super(props);
 
     this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this);
+    this._onSyncToggled = this._onSyncToggled.bind(this);
     this._onChorusToggled = this._onChorusToggled.bind(this);
 
     this.state = {
       isEnvForAmpOn: true,
+      isSyncOn: false,
       isChorusOn: false
     }
   }
@@ -87,6 +89,12 @@ class App extends Component {
     this.setState({
       isEnvForAmpOn: toggled
     });
+  }
+
+  _onSyncToggled(toggled) {
+    this.setState({
+      isSyncOn: toggled
+    })
   }
 
   _onChorusToggled(toggled) {
@@ -165,8 +173,14 @@ class App extends Component {
               isOn={this.state.isEnvForAmpOn}
             />
             <DummyModule />
-            <DummyModule />
-            <DummyModule />
+            <SliderModule
+              paramId="lfoPitch"
+              paramLabel="LFO -> Pitch"
+            />
+            <SliderModule
+              paramId="pitchBendWidth"
+              paramLabel="Pitch Bend"
+            />
           </View>
           <View {...styles.param_row}>
             <SliderModule
@@ -202,21 +216,23 @@ class App extends Component {
             />
           </View>
           <View {...styles.param_row}>
+            <ButtonModule
+              paramId="syncOn"
+              paramLabel="LFO Sync"
+              onToggled={this._onSyncToggled}
+              isOn={this.state.isSyncOn}
+            />
             <SliderModule
               paramId="rate"
               paramLabel="Rate"
             />
             <SliderModule
+              paramId="rateSync"
+              paramLabel="Synced Rate"
+            />
+            <SliderModule
               paramId="lfoDelay"
               paramLabel="LFO Delay"
-            />
-            <SliderModule
-              paramId="lfoPitch"
-              paramLabel="LFO -> Pitch"
-            />
-            <SliderModule
-              paramId="pitchBendWidth"
-              paramLabel="Pitch Bend"
             />
             <SliderModule
               paramId="masterOctaveTune"

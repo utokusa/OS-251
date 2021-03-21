@@ -39,6 +39,12 @@ Os251AudioProcessor::Os251AudioProcessor()
                                                                                numGainDecimal)
                                                                  + juce::String (" dB"); };
 
+    // Synced Rate
+    auto syncedRateTextFunction = [] (float value) { return juce::String (
+                                                                onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal()))
+                                                            + juce::String ("/")
+                                                            + juce::String (onsen::LfoParams::rateSyncDenominatorVal()); };
+
     // Frequency
     constexpr float lowestFreqVal = onsen::FilterParams::lowestFreqVal();
     constexpr float freqBaseNumber = onsen::FilterParams::freqBaseNumber();
@@ -141,10 +147,20 @@ Os251AudioProcessor::Os251AudioProcessor()
     lfoParams->setRatePtr (parameters.getRawParameterValue ("rate"));
     parameters.addParameterListener ("rate", this);
 
+    // LFO rateSync
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("rateSync", "Synced LFO Rate", "", nrange, 0.0, syncedRateTextFunction, nullptr, true));
+    lfoParams->setRateSyncPtr (parameters.getRawParameterValue ("rateSync"));
+    parameters.addParameterListener ("rateSync", this);
+
     // LFO delay
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoDelay", "LFO Chorus", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     lfoParams->setDelayPtr (parameters.getRawParameterValue ("lfoDelay"));
     parameters.addParameterListener ("lfoDelay", this);
+
+    // Sync On
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("syncOn", "Sync", "", nrange, 0.0, valueToOnOff, nullptr, true));
+    lfoParams->setSyncOnPtr (parameters.getRawParameterValue (("syncOn")));
+    parameters.addParameterListener ("syncOn", this);
 
     // Amount of LFO pitch
     parameters.createAndAddParameter (std::make_unique<Parameter> ("lfoPitch", "LFO -> Pitch", "", nrange, 0.0, valueToTextFunction, nullptr, true));
@@ -350,6 +366,15 @@ bool Os251AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 
 void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    // Host inforrmation
+    auto playHead = getPlayHead();
+    if (playHead)
+    {
+        playHead->getCurrentPosition (positionInfo);
+        synthEngine.setPositionInfo (positionInfo);
+    }
+
+    // Audio
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

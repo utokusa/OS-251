@@ -53,6 +53,7 @@ void FancySynth::renderVoices (juce::AudioBuffer<flnum>& outputAudio,
                                int numSamples)
 {
     lfo->renderLfo (startSample, numSamples);
+    lfo->renderLfoSync (startSample, numSamples);
     juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
     hpf.render (outputAudio, startSample, numSamples);
     if (params->chorus()->getChorusOn())

@@ -8,25 +8,34 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "DspCommon.h"
 #include "SynthParams.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
 //==============================================================================
 class Lfo
 {
+    using CurrentPositionInfo = juce::AudioPlayHead::CurrentPositionInfo;
+
 public:
     Lfo() = delete;
-    Lfo (SynthParams* const synthParams)
+    Lfo (SynthParams* const synthParams, const CurrentPositionInfo& _positionInfo)
         : p (synthParams->lfo()),
+          positionInfo (_positionInfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
           numNoteOn (0),
           samplesPerBlock (DEFAULT_SAMPLES_PER_BLOCK),
           buf (samplesPerBlock),
+          bufSync (samplesPerBlock),
           currentAngle (0.0),
-          amp (0.0)
+          currentAngleSync (0.0),
+          amp (0.0),
+          ampSync (0.0),
+          isPlaying (false),
+          basePosistionInQuarterNote (0.0),
+          baseAngle (0.0)
     {
     }
 
@@ -38,6 +47,7 @@ public:
         {
             constexpr flnum ampNoteStart = MAX_LEVEL * 0.01;
             amp = ampNoteStart;
+            ampSync = ampNoteStart;
         }
     }
 
@@ -53,6 +63,11 @@ public:
 
     flnum getLevel (int sample) const
     {
+        if (p->getSyncOn())
+        {
+            assert (sample < bufSync.size());
+            return bufSync[sample];
+        }
         assert (sample < buf.size());
         return buf[sample];
     }
@@ -71,6 +86,75 @@ public:
                 currentAngle -= pi * 2.0;
             }
             updateAmp();
+        }
+    }
+
+    void renderLfoSync (int startSample, int numSamples)
+    {
+        int idx = startSample;
+        const flnum bpm = positionInfo.bpm;
+        if (bpm == 0.0)
+        {
+            // bpm is 0 or we don't have host with tempo functionality
+            // (When we don't have host, bpm should be 0.)
+            return;
+        }
+
+        if (! isPlaying && positionInfo.isPlaying)
+        {
+            // When DAW starts to play
+            isPlaying = true;
+            basePosistionInQuarterNote = positionInfo.ppqPosition;
+            baseAngle = currentAngle;
+        }
+
+        if (isPlaying && ! positionInfo.isPlaying)
+        {
+            // When DAW stop playing
+            isPlaying = false;
+        }
+
+        const flnum beatsPerSec = positionInfo.bpm / 60.0; // [quarter note / sec]
+        const flnum quarterNotesFromBaseToStartIdx = positionInfo.ppqPosition - basePosistionInQuarterNote; // [quarter note]
+        while (--numSamples >= 0)
+        {
+            // LFO angle from the time DAW starts to play.
+            flnum angleFromBase = 0.0; // initialize
+            if (isPlaying)
+            {
+                assert (idx < bufSync.size());
+                const flnum timeFromBufStartToIdx = (idx - startSample) / sampleRate; // [sec]
+                const flnum quarterNotesFromBaseToIdx = quarterNotesFromBaseToStartIdx
+                                                        + beatsPerSec * timeFromBufStartToIdx; // [quarter note]
+                const flnum barFromBaseToIdx = quarterNotesFromBaseToIdx / 4;
+                angleFromBase = barFromBaseToIdx / p->getRateSync() * 2 * pi - baseAngle;
+            }
+
+            const flnum angleAccumulated = currentAngleSync + angleDelta (bpm);
+
+            // In general we want to use angleFromBase because it's
+            // more accurate than angleAccumulated.
+            // However, we cannot use use angleFromBase in some cases.
+            // e.g. DAW stops playing. Or DAW uses audio play with loop.
+            // In such cases, angleFromBase might be much different from true value,
+            // so we use angleAccumulated instead.
+            if (isPlaying && std::abs (angleFromBase - angleAccumulated) < 0.1)
+            {
+                currentAngleSync = angleFromBase;
+            }
+            else
+            {
+                currentAngleSync = angleAccumulated;
+            }
+
+            bufSync[idx++] = lfoWave (currentAngleSync) * ampSync;
+
+            if (currentAngleSync > pi * 2.0)
+            {
+                currentAngleSync -= pi * 2.0;
+            }
+
+            updateAmpSync();
         }
     }
 
@@ -98,12 +182,14 @@ public:
     {
         samplesPerBlock = _samplesPerBlock;
         buf.resize (samplesPerBlock);
+        bufSync.resize (samplesPerBlock);
     }
 
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
 
     const LfoParams* const p;
+    const CurrentPositionInfo& positionInfo;
 
     flnum sampleRate;
     int numNoteOn;
@@ -111,8 +197,20 @@ private:
     // ---
     int samplesPerBlock;
     std::vector<flnum> buf;
+    std::vector<flnum> bufSync;
     flnum currentAngle;
+    flnum currentAngleSync;
     flnum amp;
+    flnum ampSync;
+
+    // ---
+    // For tempo on
+    bool isPlaying;
+    // DAW postion when play starts
+    flnum basePosistionInQuarterNote;
+    // DAW angle when play starts
+    flnum baseAngle;
+
     // ---
 
     static flnum lfoWave (flnum angle)
@@ -126,6 +224,15 @@ private:
         return 2.0 * pi * rate / sampleRate;
     }
 
+    flnum angleDelta (flnum bpm) const
+    {
+        const flnum barInSec = 1.0 / bpm /*[min / quarter note]*/ * 60.0 * 4; // [sec]
+        const flnum deltaTime = 1.0 / sampleRate; // [sec]
+        const flnum period = p->getRateSync() * barInSec; // [bar] * [sec / bar] = [sec]
+        const flnum deltaAngle = 2.0 * pi * deltaTime / period; // [rad]
+        return deltaAngle;
+    }
+
     void updateAmp()
     {
         constexpr flnum valFinishDelay = MAX_LEVEL * 0.99;
@@ -134,6 +241,17 @@ private:
         if (amp >= valFinishDelay)
         {
             amp = MAX_LEVEL;
+        }
+    }
+
+    void updateAmpSync()
+    {
+        constexpr flnum valFinishDelay = MAX_LEVEL * 0.99;
+        // Value of adjust (getDelay()) is around 0.99
+        ampSync = ampSync * MAX_LEVEL / adjust (p->getDelay());
+        if (ampSync >= valFinishDelay)
+        {
+            ampSync = MAX_LEVEL;
         }
     }
 
@@ -150,4 +268,4 @@ private:
         return val * amount;
     }
 };
-}
+} // namespace onsen
