@@ -34,4 +34,4 @@ private:
     const std::atomic<flnum>* chorusOn {};
     flnum chorusOnVal = 0.0;
 };
-}
+} // namespace onsen

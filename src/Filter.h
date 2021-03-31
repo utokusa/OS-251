@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "DspCommon.h"
-#include "SynthParams.h"
 #include "Envelope.h"
 #include "Lfo.h"
+#include "SynthParams.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -46,7 +46,7 @@ public:
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
         const flnum freq = p->getControlledFrequency (env->getLevel() * p->getFilterEnvelope()
-                                                    + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
+                                                      + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
         const flnum omega0 = 2.0 * pi * freq / sampleRate;
         const flnum sinw0 = std::sin (omega0);
         const flnum cosw0 = std::cos (omega0);
@@ -60,7 +60,7 @@ public:
         const flnum b2 = (1 - cosw0) / 2.0;
 
         const flnum out0 = b0 / a0 * sampleVal + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
-            - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
+                           - a1 / a0 * fb.out1 - a2 / a0 * fb.out2;
         fb.in2 = fb.in1;
         fb.in1 = sampleVal;
 
@@ -83,4 +83,4 @@ private:
     // The length of this vector equals to max number of the channels;
     FilterBuffer fb;
 };
-}
+} // namespace onsen

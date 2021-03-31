@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "DspCommon.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -89,7 +89,7 @@ private:
     inline int readIdx()
     {
         const int idx = writePointer - delay_sample();
-        return idx >= 0 ? idx : idx + static_cast<int>(buf.size());
+        return idx >= 0 ? idx : idx + static_cast<int> (buf.size());
     }
 };
-}
+} // namespace onsen

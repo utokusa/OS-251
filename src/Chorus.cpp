@@ -51,4 +51,4 @@ void Chorus::prepare()
     buf.resize (bufSize, 0.0);
     writePointer = 0;
 }
-}
+} // namespace onsen

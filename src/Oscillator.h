@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <random>
-#include <JuceHeader.h>
 #include "DspCommon.h"
 #include "SynthParams.h"
+#include <JuceHeader.h>
+#include <random>
 
 namespace onsen
 {

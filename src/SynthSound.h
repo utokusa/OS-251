@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "DspCommon.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -21,4 +21,4 @@ struct FancySynthSound : public juce::SynthesiserSound
     bool appliesToNote (int) override { return true; }
     bool appliesToChannel (int) override { return true; }
 };
-}
+} // namespace onsen

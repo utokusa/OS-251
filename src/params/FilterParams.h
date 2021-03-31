@@ -86,4 +86,4 @@ private:
     flnum resonanceVal = 0.0;
     flnum filterEnvelopeVal = 0.0;
 };
-}
+} // namespace onsen

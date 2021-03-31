@@ -20,7 +20,7 @@ public:
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 4.0;
-        return minValSec + attackTimeCurve(attackVal) * (maxValSec - minValSec);
+        return minValSec + attackTimeCurve (attackVal) * (maxValSec - minValSec);
     }
     void setAttackPtr (const std::atomic<flnum>* _attack)
     {
@@ -31,7 +31,7 @@ public:
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 1.0;
-        return minValSec + decayTimeCurve(decayVal) * (maxValSec - minValSec);
+        return minValSec + decayTimeCurve (decayVal) * (maxValSec - minValSec);
     }
     void setDecayPtr (const std::atomic<flnum>* _decay)
     {
@@ -51,7 +51,7 @@ public:
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 4.0;
-        return minValSec + releaseTimeCurve(releaseVal) * (maxValSec - minValSec);
+        return minValSec + releaseTimeCurve (releaseVal) * (maxValSec - minValSec);
     }
     void setReleasePtr (const std::atomic<flnum>* _release)
     {
@@ -78,23 +78,22 @@ private:
     flnum releaseVal = 0.0;
 
     // Map flnum value [0, 1] to [0, 1]
-    flnum attackTimeCurve(flnum val0to1) const
+    flnum attackTimeCurve (flnum val0to1) const
     {
         // return std::pow(val0to1, 1.0 / 10.0);
         return val0to1;
     }
 
     // Map flnum value [0, 1] to [0, 1]
-    flnum decayTimeCurve(flnum val0to1) const
+    flnum decayTimeCurve (flnum val0to1) const
     {
         return val0to1;
     }
 
     // Map flnum value [0, 1] to [0, 1]
-    flnum releaseTimeCurve(flnum val0to1) const
+    flnum releaseTimeCurve (flnum val0to1) const
     {
         return val0to1;
     }
-    
 };
-}
+} // namespace onsen
