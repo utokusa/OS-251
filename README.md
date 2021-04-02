@@ -5,6 +5,30 @@ This plugin is currently under development.
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
+## Lint
+
+### Mac
+
+```bash
+# Fix C++ code formatting
+$ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i
+
+# Check C++ code formatting (dry run)
+$ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
+```
+
+### Linux
+
+```bash
+# Fix C++ code formatting
+$ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i
+
+# Check C++ code formatting (dry run)
+$ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
+```
+
+
+
 ## TODO
 
 ### Quality
