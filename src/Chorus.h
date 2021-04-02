@@ -21,7 +21,7 @@ class Chorus
     public:
         flnum val() const
         {
-            return sinWave (currentAngle);
+            return sinWave(currentAngle);
         }
 
         void update()
