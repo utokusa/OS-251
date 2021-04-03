@@ -4,7 +4,7 @@
 	branch = juce6
 	ignore = dirty
 
-[submodule "lib/blueprint"]
-	path = lib/blueprint
-	url = https://github.com/nick-thompson/blueprint
+[submodule "lib/react-juce"]
+	path = lib/react-juce
+	url = https://github.com/nick-thompson/react-juce
 	ignore = dirty

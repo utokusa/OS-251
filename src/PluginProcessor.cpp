@@ -422,7 +422,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
     File sourceDir = File (OS251_SOURCE_DIR);
     File bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
 
-    auto* editor = new blueprint::BlueprintGenericEditor (*this, bundle);
+    auto* editor = new reactjuce::GenericEditor(*this, bundle);
 
     editor->setSize (960, 600 + 40);
 

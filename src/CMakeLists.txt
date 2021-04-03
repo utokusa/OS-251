@@ -74,7 +74,7 @@ target_sources(Os251 PRIVATE
         SynthVoice.cpp
         )
 
-# Add an explicit include path here so that Blueprint's EcmascriptEngine can find
+# Add an explicit include path here so that react-juce's EcmascriptEngine can find
 # the included Duktape source. You can optionally point this elsewhere if you'd like to
 # include a custom Duktape build.
 target_include_directories(Os251 PRIVATE react_juce/)
