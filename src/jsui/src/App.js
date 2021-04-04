@@ -1,74 +1,13 @@
-import Label from './Label';
-import ParameterSlider from './ParameterSlider'
-import ParameterToggleButton from './ParameterToggleButton'
+import SliderModule from './SliderModule'
+import ButtonModule from './ButtonModule'
+import DummyModule from './DummyModule'
 
 import React, { Component } from 'react';
 
 import {
   Text,
   View,
-  Slider,
 } from 'react-juce';
-
-class SliderModule extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const sliderFillColor = 'ff66fdcf';
-    const sliderTrackColor = 'ff626262';
-
-    return (
-      <View {...styles.param_module}>
-        <ParameterSlider
-          paramId={this.props.paramId}
-          onDraw={Slider.drawRotary(sliderTrackColor, sliderFillColor)}
-          mapDragGestureToValue={Slider.rotaryGestureMap}
-          {...styles.knob}
-        >
-          <Label paramId={this.props.paramId} {...styles.label} />
-        </ParameterSlider>
-        <Text {...styles.param_text}>{this.props.paramLabel}</Text>
-      </View>
-    )
-  }
-}
-
-class ButtonModule extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const buttonBorderColor = this.props.isOn ? 'ff66FDCF' : "ff626262";
-    const buttonTextColor = this.props.isOn ? 'ff66FDCF' : 'ffCBCBCB';
-
-    return (
-      <View
-        {...styles.param_module}
-      >
-        <ParameterToggleButton
-          paramId={this.props.paramId}
-          onToggled={this.props.onToggled}
-          background-color="ff17191f"
-          borderColor={buttonBorderColor}
-          {...styles.button}
-        >
-          <Text color={buttonTextColor} {...styles.button_text}>
-            {this.props.paramLabel}
-          </Text>
-        </ParameterToggleButton>
-      </View>
-    )
-  }
-}
-
-class DummyModule extends Component {
-  render() {
-    return (<View {...styles.param_module} />)
-  }
-}
 
 class App extends Component {
   constructor(props) {
@@ -276,7 +215,6 @@ const styles = {
     height: '100%',
     flexDirection: 'column',
     backgroundColor: 'ff17191f',
-    // backgroundColor: 'ff00ff00',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
@@ -292,105 +230,33 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'flex-start',
     padding: 12.0,
-    // maxWidth: 800,
-    // aspectRatio: 800.0 / 480.0,
   },
   menu: {
-    // height: 24,
     width: '100%',
     flex: 1.0,
     flexDirection: 'column',
     justifyContent: 'space-around',
-    // backgroundColor: 'ff00ff00',
-    // alignItems: 'flex-start',
-    // marginTop: 16,
     marginBottom: -16,
     paddingLeft: 12.0,
     paddingRight: 12.0,
-    // maxWidth: 800,
-    // aspectRatio: 800.0 / 120.0,
     borderWidth: 4,
-    // borderColor: 'ffff0000',
   },
   logo: {
     marginLeft: 25,
-    // height: 60,
-    // flex: 1.0,
-    // flexDirection: 'column',
-    // justifyContent: 'space-around',
-    // backgroundColor: 'ff00ff00',
-    // alignItems: 'flex-start',
-    // marginTop: 16,
-    // padding: 12.0,
-    // maxWidth: 800,
-    // aspectRatio: 800.0 / 120.0,
-    // borderWidth: 4,
-    // borderColor: 'ffff0000',
+  },
+  logo_text: {
+    fontSize: 20.0,
+    color: 'ff626262',
   },
   param_row: {
     flex: 1.0,
     width: '100%',
     flexDirection: 'row',
-    // backgroundColor: 'ff00ff00',
     borderRadius: 12,
     borderStyle: 'solid',
     borderColor: 'ff626262',
     borderWidth: 3,
     marginBottom: 4,
-  },
-  param_module: {
-    minWidth: 100,
-    minHeight: 100,
-    flex: 1.0,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 4,
-    marginLeft: 2,
-    marginRight: 2,
-  },
-  knob: {
-    minWidth: 20.0,
-    minHeight: 20.0,
-    width: '100%',
-    height: '100%',
-    marginTop: 5,
-    marginBottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  label: {
-    flex: 1.0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    interceptClickEvents: false,
-  },
-  logo_text: {
-    // marginTop: -6, // ??
-    fontSize: 20.0,
-    // minHeight: 18,
-    color: 'ff626262',
-    // backgroundColor: 'ffff0000',
-  },
-  param_text: {
-    fontSize: 15.0,
-    minHeight: 18,
-    color: 'ffcbcbcb',
-  },
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5.0,
-    borderWidth: 5.0,
-    minWidth: 30.0,
-    minHeight: 30.0,
-    width: '80%',
-    height: '17.5%',
-  },
-  button_text: {
-    fontSize: 15.0,
-    lineSpacing: 1.6,
   },
 };
 
