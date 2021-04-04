@@ -9,8 +9,17 @@ import {
   View,
 } from 'react-juce';
 
-class App extends Component {
-  constructor(props) {
+interface IProps {
+}
+
+interface IState {
+  isEnvForAmpOn?: boolean;
+  isSyncOn?: boolean;
+  isChorusOn?: boolean;
+}
+
+class App extends Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
 
     this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this);
@@ -24,19 +33,19 @@ class App extends Component {
     }
   }
 
-  _onEnvForAmpToggled(toggled) {
+  _onEnvForAmpToggled(toggled: boolean) {
     this.setState({
       isEnvForAmpOn: toggled
     });
   }
 
-  _onSyncToggled(toggled) {
+  _onSyncToggled(toggled: boolean) {
     this.setState({
       isSyncOn: toggled
     })
   }
 
-  _onChorusToggled(toggled) {
+  _onChorusToggled(toggled: boolean) {
     this.setState({
       isChorusOn: toggled
     });

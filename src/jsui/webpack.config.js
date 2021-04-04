@@ -1,15 +1,24 @@
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.tsx',
+  devtool: 'inline-source-map',
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   output: {
     path: __dirname + '/build/js',
     filename: 'main.js',
     sourceMapFilename: "[file].map",
     devtoolModuleFilenameTemplate: info =>
-        `webpack:///${info.absoluteResourcePath.replace(/\\/g, '/')}`
+      `webpack:///${info.absoluteResourcePath.replace(/\\/g, '/')}`
   },
   devtool: "source-map",
   module: {
     rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
