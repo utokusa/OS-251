@@ -1,3 +1,4 @@
+import Menu from './Menu'
 import SliderModule from './SliderModule'
 import ButtonModule from './ButtonModule'
 import DummyModule from './DummyModule'
@@ -5,7 +6,6 @@ import DummyModule from './DummyModule'
 import React, { Component } from 'react';
 
 import {
-  Text,
   View,
 } from 'react-juce';
 
@@ -46,13 +46,7 @@ class App extends Component {
 
     return (
       <View {...styles.container}>
-        <View {...styles.menu}>
-          <View {...styles.logo}>
-            <Text {...styles.logo_text}>
-              OS-251
-            </Text>
-          </View>
-        </View>
+        <Menu />
         <View {...styles.content}>
           <View {...styles.param_row}>
             <SliderModule
@@ -230,23 +224,6 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'flex-start',
     padding: 12.0,
-  },
-  menu: {
-    width: '100%',
-    flex: 1.0,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    marginBottom: -16,
-    paddingLeft: 12.0,
-    paddingRight: 12.0,
-    borderWidth: 4,
-  },
-  logo: {
-    marginLeft: 25,
-  },
-  logo_text: {
-    fontSize: 20.0,
-    color: 'ff626262',
   },
   param_row: {
     flex: 1.0,
