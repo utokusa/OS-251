@@ -8,8 +8,15 @@ import {
   View,
 } from 'react-juce';
 
-class ButtonModule extends Component {
-  constructor(props) {
+interface IProps {
+  paramId?: string;
+  paramLabel?: string;
+  isOn?: boolean;
+  onToggled?: Function;
+}
+
+class ButtonModule extends Component<IProps> {
+  constructor(props: IProps) {
     super(props);
   }
 

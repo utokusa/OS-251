@@ -10,8 +10,13 @@ import {
   Slider,
 } from 'react-juce';
 
-class SliderModule extends Component {
-  constructor(props) {
+interface IProps {
+  paramId?: string;
+  paramLabel?: string;
+}
+
+class SliderModule extends Component<IProps> {
+  constructor(props: IProps) {
     super(props);
   }
 

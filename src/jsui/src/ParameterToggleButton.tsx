@@ -2,8 +2,22 @@ import ParameterValueStore from './ParameterValueStore';
 import React, { Component } from 'react';
 import { Button } from "react-juce";
 
-class ParameterToggleButton extends Component {
-  constructor(props) {
+interface IProps {
+  paramId?: string;
+  onToggled?: Function;
+  borderColor?: string;
+}
+
+interface IState {
+  defaultValue?: any;
+  value?: any;
+}
+
+class ParameterToggleButton extends Component<IProps, IState> {
+  _handleEnter: any;
+  _handleLeave: any;
+
+  constructor(props: IProps) {
     super(props);
 
     this._handleClick = this._handleClick.bind(this);
@@ -41,7 +55,7 @@ class ParameterToggleButton extends Component {
     );
   }
 
-  _handleClick(e) {
+  _handleClick(e: any) {
     const newValue = this.state.value === 0.0 ? 1.0 : 0.0
 
     this.setState({
@@ -49,8 +63,11 @@ class ParameterToggleButton extends Component {
     });
 
     if (typeof this.props.paramId === 'string' && this.props.paramId.length > 0) {
+      // @ts-ignore
       global.beginParameterChangeGesture(this.props.paramId);
+      // @ts-ignore
       global.setParameterValueNotifyingHost(this.props.paramId, newValue);
+      // @ts-ignore
       global.endParameterChangeGesture(this.props.paramId);
     }
 
@@ -59,7 +76,7 @@ class ParameterToggleButton extends Component {
     }
   }
 
-  _onParameterValueChange(paramId) {
+  _onParameterValueChange(paramId: string) {
     const shouldUpdate = typeof this.props.paramId === 'string' &&
       this.props.paramId.length > 0 &&
       this.props.paramId === paramId;
@@ -82,7 +99,7 @@ class ParameterToggleButton extends Component {
   }
 
   render() {
-    const { parameterId, onToggled, ...other } = this.props;
+    const { paramId, onToggled, ...other } = this.props;
 
     return (
       <Button {...other} onClick={this._handleClick} onMouseEnter={this._handleEnter} onMouseLeave={this._handleLeave}>

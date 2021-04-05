@@ -5,9 +5,16 @@ import {
   View,
 } from 'react-juce';
 
+interface IProps {
+  paramId?: string;
+}
 
-class Label extends Component {
-  constructor(props) {
+interface IState {
+  label?: string;
+}
+
+class Label extends Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
 
     this._onParameterValueChange = this._onParameterValueChange.bind(this);
@@ -25,7 +32,7 @@ class Label extends Component {
     EventBridge.removeListener('parameterValueChange', this._onParameterValueChange);
   }
 
-  _onParameterValueChange(index, paramId, defaultValue, currentValue, stringValue) {
+  _onParameterValueChange(index: number, paramId: string, defaultValue: any, currentValue: any, stringValue: string) {
     if (paramId === this.props.paramId) {
       this.setState({
         label: stringValue,

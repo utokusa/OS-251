@@ -9,6 +9,8 @@ import {
  *  cache.
  */
 class ParameterValueStore extends EventEmitter {
+  CHANGE_EVENT: string;
+  state: any;
   constructor() {
     super();
 
@@ -22,7 +24,7 @@ class ParameterValueStore extends EventEmitter {
     this.state = {};
   }
 
-  getParameterState(paramId) {
+  getParameterState(paramId: string) {
     if (!this.state.hasOwnProperty(paramId)) {
       return {};
     }
@@ -30,7 +32,7 @@ class ParameterValueStore extends EventEmitter {
     return this.state[paramId];
   }
 
-  _onParameterValueChange(index, paramId, defaultValue, currentValue, stringValue) {
+  _onParameterValueChange(index: number, paramId: string, defaultValue: any, currentValue: any, stringValue: string) {
     this.state[paramId] = {
       parameterIndex: index,
       parameterId: paramId,
