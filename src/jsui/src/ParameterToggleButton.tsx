@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { Button } from "react-juce";
+import {
+  Button,
+  SyntheticMouseEvent
+} from "react-juce";
 
 import ParameterValueStore from './ParameterValueStore';
 import type { ParamValue } from './ParamValueType';
 
 interface IProps {
   paramId?: string;
-  onToggled?: Function;
+  onToggled?: (toggled: boolean) => void;
   borderColor?: string;
 }
 
@@ -20,9 +23,9 @@ interface IState {
 declare global {
   namespace NodeJS {
     interface Global {
-      setParameterValueNotifyingHost: Function;
-      beginParameterChangeGesture: Function;
-      endParameterChangeGesture: Function;
+      setParameterValueNotifyingHost: (paramId: string, value: ParamValue) => void;
+      beginParameterChangeGesture: (paramId: string) => void;
+      endParameterChangeGesture: (paramId: string) => void;
     }
   }
 }
@@ -66,7 +69,7 @@ class ParameterToggleButton extends Component<IProps, IState> {
     );
   }
 
-  _handleClick(_e: any) {
+  _handleClick(_e: SyntheticMouseEvent) {
     const newValue = this.state.value === 0.0 ? 1.0 : 0.0
 
     this.setState({

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
-  Slider
+  Slider,
+  SyntheticMouseEvent
 } from 'react-juce';
 
 import ParameterValueStore from './ParameterValueStore';
@@ -8,8 +9,9 @@ import type { ParamValue } from './ParamValueType';
 
 interface IProps {
   paramId?: string;
-  onDraw?: Function;
-  mapDragGestureToValue?: Function;
+  onDraw?: (ctx: any, width: any, height: any, value: any) => void;
+  mapDragGestureToValue?: (mouseDownX: number, mouseDownY: number, sensitivity: number,
+    valueAtDragStart: number, dragEvent: SyntheticMouseEvent) => number;
 }
 
 interface IState {
@@ -23,9 +25,9 @@ interface IState {
 declare global {
   namespace NodeJS {
     interface Global {
-      setParameterValueNotifyingHost: Function;
-      beginParameterChangeGesture: Function;
-      endParameterChangeGesture: Function;
+      setParameterValueNotifyingHost: (paramId: string, value: ParamValue) => void;
+      beginParameterChangeGesture: (paramId: string) => void;
+      endParameterChangeGesture: (paramId: string) => void;
     }
   }
 }
@@ -63,11 +65,11 @@ class ParameterSlider extends Component<IProps, IState> {
     );
   }
 
-  _onMouseDown(_e: any) {
+  _onMouseDown(_e: SyntheticMouseEvent) {
     global.beginParameterChangeGesture(this.props.paramId);
   }
 
-  _onMouseUp(_e: any) {
+  _onMouseUp(_e: SyntheticMouseEvent) {
     global.endParameterChangeGesture(this.props.paramId);
   }
 

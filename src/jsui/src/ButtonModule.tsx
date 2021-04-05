@@ -12,7 +12,7 @@ interface IProps {
   paramId?: string;
   paramLabel?: string;
   isOn?: boolean;
-  onToggled?: Function;
+  onToggled?: (toggled: boolean) => void;
 }
 
 class ButtonModule extends Component<IProps> {
