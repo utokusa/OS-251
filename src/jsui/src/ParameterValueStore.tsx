@@ -3,6 +3,7 @@ import {
   EventBridge,
 } from 'react-juce';
 
+import type { ParamValue } from './ParamValueType';
 
 /** This is more or less a proxy to the EventBridge's parameter events that
  *  caches last known values and provides components a way to access the
@@ -32,7 +33,12 @@ class ParameterValueStore extends EventEmitter {
     return this.state[paramId];
   }
 
-  _onParameterValueChange(index: number, paramId: string, defaultValue: any, currentValue: any, stringValue: string) {
+  _onParameterValueChange(
+    index: number,
+    paramId: string,
+    defaultValue: ParamValue,
+    currentValue: ParamValue,
+    stringValue: string) {
     this.state[paramId] = {
       parameterIndex: index,
       parameterId: paramId,

@@ -1,6 +1,8 @@
-import ParameterValueStore from './ParameterValueStore';
 import React, { Component } from 'react';
 import { Button } from "react-juce";
+
+import ParameterValueStore from './ParameterValueStore';
+import type { ParamValue } from './ParamValueType';
 
 interface IProps {
   paramId?: string;
@@ -9,14 +11,23 @@ interface IProps {
 }
 
 interface IState {
-  defaultValue?: any;
-  value?: any;
+  defaultValue?: ParamValue;
+  value?: ParamValue;
+}
+
+// Extend NodeJS.Global
+// https://stackoverflow.com/questions/40743131/how-to-prevent-property-does-not-exist-on-type-global-with-jsdom-and-t#answer-42304473
+declare global {
+  namespace NodeJS {
+    interface Global {
+      setParameterValueNotifyingHost: Function;
+      beginParameterChangeGesture: Function;
+      endParameterChangeGesture: Function;
+    }
+  }
 }
 
 class ParameterToggleButton extends Component<IProps, IState> {
-  _handleEnter: any;
-  _handleLeave: any;
-
   constructor(props: IProps) {
     super(props);
 
@@ -55,7 +66,7 @@ class ParameterToggleButton extends Component<IProps, IState> {
     );
   }
 
-  _handleClick(e: any) {
+  _handleClick(_e: any) {
     const newValue = this.state.value === 0.0 ? 1.0 : 0.0
 
     this.setState({
@@ -63,11 +74,8 @@ class ParameterToggleButton extends Component<IProps, IState> {
     });
 
     if (typeof this.props.paramId === 'string' && this.props.paramId.length > 0) {
-      // @ts-ignore
       global.beginParameterChangeGesture(this.props.paramId);
-      // @ts-ignore
       global.setParameterValueNotifyingHost(this.props.paramId, newValue);
-      // @ts-ignore
       global.endParameterChangeGesture(this.props.paramId);
     }
 
@@ -102,7 +110,7 @@ class ParameterToggleButton extends Component<IProps, IState> {
     const { paramId, onToggled, ...other } = this.props;
 
     return (
-      <Button {...other} onClick={this._handleClick} onMouseEnter={this._handleEnter} onMouseLeave={this._handleLeave}>
+      <Button {...other} onClick={this._handleClick}>
         {this.props.children}
       </Button>
     )
@@ -110,4 +118,3 @@ class ParameterToggleButton extends Component<IProps, IState> {
 }
 
 export default ParameterToggleButton;
-

@@ -5,6 +5,8 @@ import {
   View,
 } from 'react-juce';
 
+import type { ParamValue } from './ParamValueType';
+
 interface IProps {
   paramId?: string;
 }
@@ -32,7 +34,12 @@ class Label extends Component<IProps, IState> {
     EventBridge.removeListener('parameterValueChange', this._onParameterValueChange);
   }
 
-  _onParameterValueChange(index: number, paramId: string, defaultValue: any, currentValue: any, stringValue: string) {
+  _onParameterValueChange(
+    _index: number,
+    paramId: string,
+    _defaultValue: ParamValue,
+    _currentValue: ParamValue,
+    stringValue: string) {
     if (paramId === this.props.paramId) {
       this.setState({
         label: stringValue,

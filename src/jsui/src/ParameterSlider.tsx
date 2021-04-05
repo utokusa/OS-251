@@ -4,6 +4,7 @@ import {
 } from 'react-juce';
 
 import ParameterValueStore from './ParameterValueStore';
+import type { ParamValue } from './ParamValueType';
 
 interface IProps {
   paramId?: string;
@@ -12,9 +13,21 @@ interface IProps {
 }
 
 interface IState {
-  currentValue?: any;
-  defaultValue?: any;
-  value?: any;
+  currentValue?: ParamValue;
+  defaultValue?: ParamValue;
+  value?: ParamValue;
+}
+
+// Extend NodeJS.Global
+// https://stackoverflow.com/questions/40743131/how-to-prevent-property-does-not-exist-on-type-global-with-jsdom-and-t#answer-42304473
+declare global {
+  namespace NodeJS {
+    interface Global {
+      setParameterValueNotifyingHost: Function;
+      beginParameterChangeGesture: Function;
+      endParameterChangeGesture: Function;
+    }
+  }
 }
 
 class ParameterSlider extends Component<IProps, IState> {
@@ -50,20 +63,17 @@ class ParameterSlider extends Component<IProps, IState> {
     );
   }
 
-  _onMouseDown(e: any) {
-    // @ts-ignore
+  _onMouseDown(_e: any) {
     global.beginParameterChangeGesture(this.props.paramId);
   }
 
-  _onMouseUp(e: any) {
-    // @ts-ignore
+  _onMouseUp(_e: any) {
     global.endParameterChangeGesture(this.props.paramId);
   }
 
-  _onSliderValueChange(value: any) {
+  _onSliderValueChange(value: ParamValue) {
     if (typeof this.props.paramId === 'string' &&
       this.props.paramId.length > 0) {
-      // @ts-ignore
       global.setParameterValueNotifyingHost(this.props.paramId, value);
     }
   }
