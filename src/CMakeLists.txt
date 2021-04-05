@@ -61,10 +61,10 @@ target_compile_definitions(Os251
         # JUCE_DISPLAY_SPLASH_SCREEN=0 #if your plugin is distributed with GPL license or paid
         )
 
-#juce_add_binary_data(Os251nBinaries
-#        SOURCES
-#        ${CMAKE_SOURCE_DIR}/assets/juce-logo.svg
-#        )
+juce_add_binary_data(Os251Binaries
+SOURCES
+${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
+)
 
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp
@@ -80,7 +80,7 @@ target_sources(Os251 PRIVATE
 target_include_directories(Os251 PRIVATE react_juce/)
 
 target_link_libraries(Os251 PUBLIC
-#        Os251Binaries
+        Os251Binaries
         juce::juce_audio_basics
         juce::juce_audio_devices
         juce::juce_audio_formats

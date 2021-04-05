@@ -60,6 +60,7 @@ private:
     onsen::SynthParams synthParams;
     onsen::SynthEngine synthEngine;
     juce::AudioPlayHead::CurrentPositionInfo positionInfo;
+    juce::String tmpUiBuldlePath;
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;

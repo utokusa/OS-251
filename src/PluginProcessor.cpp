@@ -22,7 +22,8 @@ Os251AudioProcessor::Os251AudioProcessor()
 #endif
       parameters (*this, nullptr),
       synthParams(),
-      synthEngine (&synthParams)
+      synthEngine (&synthParams),
+      tmpUiBuldlePath()
 {
     // ---
     // Parameter value conversion from [0, 1.0] float to juce::String.
@@ -266,7 +267,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 }
 
-Os251AudioProcessor::~Os251AudioProcessor() = default;
+Os251AudioProcessor::~Os251AudioProcessor()
+{
+    juce::File bundle = juce::File (tmpUiBuldlePath);
+    bundle.deleteFile();
+}
 
 //==============================================================================
 const juce::String Os251AudioProcessor::getName() const
@@ -419,8 +424,21 @@ bool Os251AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
-    File sourceDir = File (OS251_SOURCE_DIR);
-    File bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
+    const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
+    const juce::String jsFileName = "main.js";
+    juce::File bundle = dir.createTempFile (jsFileName);
+    tmpUiBuldlePath = bundle.getFullPathName(); // It will be deleted in destructor
+
+    {
+        juce::FileOutputStream fs = juce::FileOutputStream (bundle);
+        fs.write (BinaryData::main_js, BinaryData::main_jsSize);
+        fs.flush();
+    }
+
+#if JUCE_DEBUG
+    juce::File sourceDir = File (OS251_SOURCE_DIR);
+    bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
+#endif
 
     auto* editor = new reactjuce::GenericEditor (*this, bundle);
 
