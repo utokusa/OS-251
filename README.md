@@ -56,7 +56,7 @@ $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clan
 ### Tools
 
 - [ ] Add lint tool for javascript
-- [ ] Move to Typescript
+- [x] Move to Typescript
 - [ ] Lint check in CI
 - [ ] Create installer in CD
 - [ ] CI/CD for Windows and Linux
