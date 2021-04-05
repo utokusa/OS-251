@@ -1,14 +1,14 @@
 import moduleStyles from './ModuleStyles'
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react'
 
 import {
-  View,
-} from 'react-juce';
+  View
+} from 'react-juce'
 
 class DummyModule extends Component {
-  render() {
+  render (): ReactNode {
     return (<View {...moduleStyles.param_module} />)
   }
 }
 
-export default DummyModule;
+export default DummyModule

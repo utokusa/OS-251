@@ -1,56 +1,56 @@
-import EventEmitter from 'events';
+import EventEmitter from 'events'
 import {
-  EventBridge,
-} from 'react-juce';
+  EventBridge
+} from 'react-juce'
 
-import type { ParamValue } from './ParamValueType';
+import type { ParamValue } from './ParamValueType'
 
 /** This is more or less a proxy to the EventBridge's parameter events that
  *  caches last known values and provides components a way to access the
  *  cache.
  */
 class ParameterValueStore extends EventEmitter {
-  CHANGE_EVENT: string;
-  state: any;
-  constructor() {
-    super();
+  CHANGE_EVENT: string
+  state: any
+  constructor () {
+    super()
 
-    this.CHANGE_EVENT = 'change';
+    this.CHANGE_EVENT = 'change'
 
-    this.setMaxListeners(100);
-    this._onParameterValueChange = this._onParameterValueChange.bind(this);
+    this.setMaxListeners(100)
+    this._onParameterValueChange = this._onParameterValueChange.bind(this)
 
-    EventBridge.addListener('parameterValueChange', this._onParameterValueChange);
+    EventBridge.addListener('parameterValueChange', this._onParameterValueChange)
 
-    this.state = {};
+    this.state = {}
   }
 
-  getParameterState(paramId: string) {
-    if (!this.state.hasOwnProperty(paramId)) {
-      return {};
+  getParameterState (paramId: string): any {
+    if (!Object.prototype.hasOwnProperty.call(this.state, paramId)) {
+      return {}
     }
 
-    return this.state[paramId];
+    return this.state[paramId]
   }
 
-  _onParameterValueChange(
+  _onParameterValueChange (
     index: number,
     paramId: string,
     defaultValue: ParamValue,
     currentValue: ParamValue,
-    stringValue: string) {
+    stringValue: string): void {
     this.state[paramId] = {
       parameterIndex: index,
       parameterId: paramId,
       defaultValue: defaultValue,
       currentValue: currentValue,
-      stringValue: stringValue,
-    };
+      stringValue: stringValue
+    }
 
-    this.emit(this.CHANGE_EVENT, paramId);
+    this.emit(this.CHANGE_EVENT, paramId)
   }
 }
 
-const __singletonInstance = new ParameterValueStore();
+const _singletonInstance = new ParameterValueStore()
 
-export default __singletonInstance;
+export default _singletonInstance

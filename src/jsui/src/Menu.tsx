@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react'
 
 import {
   Text,
-  View,
-} from 'react-juce';
+  View
+} from 'react-juce'
 
 class Menu extends Component {
-  render() {
+  render (): ReactNode {
     return (
       <View {...styles.menu}>
         <View {...styles.logo}>
@@ -28,15 +28,15 @@ const styles = {
     marginBottom: -16,
     paddingLeft: 12.0,
     paddingRight: 12.0,
-    borderWidth: 4,
+    borderWidth: 4
   },
   logo: {
-    marginLeft: 25,
+    marginLeft: 25
   },
   logo_text: {
     fontSize: 20.0,
-    color: 'ff626262',
-  },
-};
+    color: 'ff626262'
+  }
+}
 
-export default Menu;
+export default Menu

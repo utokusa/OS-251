@@ -5,7 +5,7 @@ This plugin is currently under development.
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
-## Lint
+## Lint for C++
 
 ### Mac
 
@@ -25,6 +25,18 @@ $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clan
 
 # Check C++ code formatting (dry run)
 $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
+```
+
+## Lint for Typescript
+
+```bash
+$ cd src/jsui/
+
+# Fix Typescript code formatting
+$ npx eslint --fix src/
+
+# Check Typescript code formatting (dry run)
+$ npx eslint src/
 ```
 
 
@@ -55,7 +67,7 @@ $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clan
 
 ### Tools
 
-- [ ] Add lint tool for javascript
+- [x] Add lint tool for javascript
 - [x] Move to Typescript
 - [ ] Lint check in CI
 - [ ] Create installer in CD

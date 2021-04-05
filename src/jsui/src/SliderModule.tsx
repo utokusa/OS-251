@@ -1,28 +1,24 @@
 import moduleStyles from './ModuleStyles'
-import Label from './Label';
+import Label from './Label'
 import ParameterSlider from './ParameterSlider'
 
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react'
 
 import {
   Text,
   View,
-  Slider,
-} from 'react-juce';
+  Slider
+} from 'react-juce'
 
 interface IProps {
-  paramId?: string;
-  paramLabel?: string;
+  paramId: string
+  paramLabel?: string
 }
 
 class SliderModule extends Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-  }
-
-  render() {
-    const sliderFillColor = 'ff66fdcf';
-    const sliderTrackColor = 'ff626262';
+  render (): ReactNode {
+    const sliderFillColor = 'ff66fdcf'
+    const sliderTrackColor = 'ff626262'
 
     return (
       <View {...moduleStyles.param_module}>
@@ -49,19 +45,19 @@ const styles = {
     marginTop: 5,
     marginBottom: 0,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   value: {
     flex: 1.0,
     justifyContent: 'center',
     alignItems: 'center',
-    interceptClickEvents: false,
+    interceptClickEvents: false
   },
   param_name: {
     fontSize: 15.0,
     minHeight: 18,
-    color: 'ffcbcbcb',
-  },
-};
+    color: 'ffcbcbcb'
+  }
+}
 
-export default SliderModule;
+export default SliderModule

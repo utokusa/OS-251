@@ -9,8 +9,8 @@ const moduleStyles = {
     marginTop: 4,
     marginBottom: 4,
     marginLeft: 2,
-    marginRight: 2,
-  },
-};
+    marginRight: 2
+  }
+}
 
-export default moduleStyles;
+export default moduleStyles

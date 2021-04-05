@@ -1,28 +1,24 @@
 import moduleStyles from './ModuleStyles'
 import ParameterToggleButton from './ParameterToggleButton'
 
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react'
 
 import {
   Text,
-  View,
-} from 'react-juce';
+  View
+} from 'react-juce'
 
 interface IProps {
-  paramId?: string;
-  paramLabel?: string;
-  isOn?: boolean;
-  onToggled?: (toggled: boolean) => void;
+  paramId: string
+  paramLabel?: string
+  isOn?: boolean
+  onToggled?: (toggled: boolean) => void
 }
 
 class ButtonModule extends Component<IProps> {
-  constructor(props: IProps) {
-    super(props);
-  }
-
-  render() {
-    const buttonBorderColor = this.props.isOn ? 'ff66FDCF' : "ff626262";
-    const buttonTextColor = this.props.isOn ? 'ff66FDCF' : 'ffCBCBCB';
+  render (): ReactNode {
+    const buttonBorderColor = this.props.isOn != null ? 'ff66FDCF' : 'ff626262'
+    const buttonTextColor = this.props.isOn != null ? 'ff66FDCF' : 'ffCBCBCB'
 
     return (
       <View
@@ -53,12 +49,12 @@ const styles = {
     minWidth: 30.0,
     minHeight: 30.0,
     width: '80%',
-    height: '17.5%',
+    height: '17.5%'
   },
   param_name: {
     fontSize: 15.0,
-    lineSpacing: 1.6,
-  },
-};
+    lineSpacing: 1.6
+  }
+}
 
-export default ButtonModule;
+export default ButtonModule

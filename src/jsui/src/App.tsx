@@ -3,28 +3,25 @@ import SliderModule from './SliderModule'
 import ButtonModule from './ButtonModule'
 import DummyModule from './DummyModule'
 
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react'
 
 import {
-  View,
-} from 'react-juce';
-
-interface IProps {
-}
+  View
+} from 'react-juce'
 
 interface IState {
-  isEnvForAmpOn?: boolean;
-  isSyncOn?: boolean;
-  isChorusOn?: boolean;
+  isEnvForAmpOn?: boolean
+  isSyncOn?: boolean
+  isChorusOn?: boolean
 }
 
-class App extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
+class App extends Component<{}, IState> {
+  constructor (props: {}) {
+    super(props)
 
-    this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this);
-    this._onSyncToggled = this._onSyncToggled.bind(this);
-    this._onChorusToggled = this._onChorusToggled.bind(this);
+    this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this)
+    this._onSyncToggled = this._onSyncToggled.bind(this)
+    this._onChorusToggled = this._onChorusToggled.bind(this)
 
     this.state = {
       isEnvForAmpOn: true,
@@ -33,26 +30,25 @@ class App extends Component<IProps, IState> {
     }
   }
 
-  _onEnvForAmpToggled(toggled: boolean) {
+  _onEnvForAmpToggled (toggled: boolean): void {
     this.setState({
       isEnvForAmpOn: toggled
-    });
+    })
   }
 
-  _onSyncToggled(toggled: boolean) {
+  _onSyncToggled (toggled: boolean): void {
     this.setState({
       isSyncOn: toggled
     })
   }
 
-  _onChorusToggled(toggled: boolean) {
+  _onChorusToggled (toggled: boolean): void {
     this.setState({
       isChorusOn: toggled
-    });
+    })
   }
 
-  render() {
-
+  render (): ReactNode {
     return (
       <View {...styles.container}>
         <Menu />
@@ -208,7 +204,7 @@ class App extends Component<IProps, IState> {
           </View>
         </View>
       </View>
-    );
+    )
   }
 }
 
@@ -223,7 +219,7 @@ const styles = {
     borderRadius: 12,
     borderStyle: 'solid',
     borderColor: 'ff626262',
-    borderWidth: 10,
+    borderWidth: 10
   },
   content: {
     height: '95%',
@@ -232,7 +228,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'flex-start',
-    padding: 12.0,
+    padding: 12.0
   },
   param_row: {
     flex: 1.0,
@@ -242,8 +238,8 @@ const styles = {
     borderStyle: 'solid',
     borderColor: 'ff626262',
     borderWidth: 3,
-    marginBottom: 4,
-  },
-};
+    marginBottom: 4
+  }
+}
 
-export default App;
+export default App

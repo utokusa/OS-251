@@ -1,3 +1,3 @@
-type ParamValue = string | number;
+type ParamValue = string | number
 
-export type { ParamValue };
+export type { ParamValue }
