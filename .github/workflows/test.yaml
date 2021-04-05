@@ -13,9 +13,16 @@ jobs:
 
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
       - name: Build
         run: |
+          npm --prefix=src/jsui install
+          npm --prefix=src/jsui run build
           cmake -B ${BUILD_DIRECTORY} -G Ninja -DCMAKE_BUILD_TYPE=Release
           ninja -C ${BUILD_DIRECTORY} Os251_All -j 4
           ninja -C ${BUILD_DIRECTORY} Os251_Benchmark -j 4
