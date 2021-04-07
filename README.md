@@ -69,6 +69,6 @@ $ npx eslint src/
 
 - [x] Add lint tool for javascript
 - [x] Move to Typescript
-- [ ] Lint check in CI
+- [x] Lint check in CI
 - [ ] Create installer in CD
 - [ ] CI/CD for Windows and Linux
