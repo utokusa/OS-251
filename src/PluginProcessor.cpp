@@ -30,15 +30,15 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
-    auto valueToTextFunction = [] (float value) { return juce::String (value, numDecimal); };
-    auto valueToMinusOneToOneFunction = [] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
+    auto valueToTextFunction = [numDecimal] (float value) { return juce::String (value, numDecimal); };
+    auto valueToMinusOneToOneFunction = [numDecimal] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
 
     // Oscillator gain
     constexpr int numGainDecimal = 1;
-    auto oscGainValToDecibelFunction = [] (float value) { return juce::String (onsen::DspUtil::paramValToDecibel (
-                                                                                   value, onsen::OscillatorParams::dynamicRange),
-                                                                               numGainDecimal)
-                                                                 + juce::String (" dB"); };
+    auto oscGainValToDecibelFunction = [numGainDecimal] (float value) { return juce::String (onsen::DspUtil::paramValToDecibel (
+                                                                                                 value, onsen::OscillatorParams::dynamicRange),
+                                                                                             numGainDecimal)
+                                                                               + juce::String (" dB"); };
 
     // Synced Rate
     auto syncedRateTextFunction = [] (float value) { return juce::String (
@@ -49,12 +49,12 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Frequency
     constexpr float lowestFreqVal = onsen::FilterParams::lowestFreqVal();
     constexpr float freqBaseNumber = onsen::FilterParams::freqBaseNumber();
-    auto valueToFreqFunction = [] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
+    auto valueToFreqFunction = [lowestFreqVal, freqBaseNumber] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
 
     // Resonance
     constexpr float lowestResVal = onsen::FilterParams::lowestResVal();
     constexpr float resBaseNumber = onsen::FilterParams::resBaseNumber();
-    auto valueToResFunction = [] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
+    auto valueToResFunction = [lowestResVal, resBaseNumber, numDecimal] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
 
     // ON / OFF
     auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
@@ -70,9 +70,9 @@ Os251AudioProcessor::Os251AudioProcessor()
                                                                   + juce::String (" st"); };
 
     // Master gain
-    auto mastertGainValToDecibelFunction = [] (float value) { return juce::String (
-                                                                         onsen::DspUtil::paramValToDecibel (value, onsen::MasterParams::dynamicRange), numGainDecimal)
-                                                                     + juce::String (" dB"); };
+    auto mastertGainValToDecibelFunction = [numGainDecimal] (float value) { return juce::String (
+                                                                                       onsen::DspUtil::paramValToDecibel (value, onsen::MasterParams::dynamicRange), numGainDecimal)
+                                                                                   + juce::String (" dB"); };
 
     // Number of voices
     auto numVoicesToStr = [] (float value) { return juce::String (
@@ -407,7 +407,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        __unused auto* channelData = buffer.getWritePointer (channel);
+        [[maybe_unused]] auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
         buffer.clear (channel, 0, buffer.getNumSamples());
