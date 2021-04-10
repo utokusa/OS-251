@@ -97,4 +97,10 @@ target_link_libraries(Os251 PUBLIC
         react_juce
         )
 
+# Avoid link error on linux + gcc
+# https://forum.juce.com/t/loading-pytorch-model-using-binarydata/39997/2
+set_target_properties(Os251Binaries PROPERTIES
+        POSITION_INDEPENDENT_CODE TRUE
+        )
+
 juce_generate_juce_header(Os251)

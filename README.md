@@ -70,5 +70,5 @@ $ npx eslint src/
 - [x] Add lint tool for javascript
 - [x] Move to Typescript
 - [x] Lint check in CI
+- [x] CI/CD for macOS, Windows and Linux
 - [ ] Create installer in CD
-- [ ] CI/CD for Windows and Linux
