@@ -17,8 +17,8 @@ interface IProps {
 
 class ButtonModule extends Component<IProps> {
   render (): ReactNode {
-    const buttonBorderColor = this.props.isOn != null ? 'ff66FDCF' : 'ff626262'
-    const buttonTextColor = this.props.isOn != null ? 'ff66FDCF' : 'ffCBCBCB'
+    const buttonBorderColor = this.props.isOn === true ? 'ff66FDCF' : 'ff626262'
+    const buttonTextColor = this.props.isOn === true ? 'ff66FDCF' : 'ffCBCBCB'
 
     return (
       <View
