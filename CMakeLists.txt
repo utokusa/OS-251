@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 PROJECT(OS_251
         LANGUAGES CXX
-        VERSION 0.1.0
+        VERSION 0.1.1
         )
 
 # for clang-tidy(this enable to find system header files).
