@@ -1,23 +1,24 @@
+const path = require('path')
+
 module.exports = {
   entry: './src/index.tsx',
-  devtool: 'inline-source-map',
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js']
   },
   output: {
-    path: __dirname + '/build/js',
+    path: path.join(__dirname, '/build/js'),
     filename: 'main.js',
-    sourceMapFilename: "[file].map",
+    sourceMapFilename: '[file].map',
     devtoolModuleFilenameTemplate: info =>
       `webpack:///${info.absoluteResourcePath.replace(/\\/g, '/')}`
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.(ts|tsx)$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.(js|jsx)$/,
@@ -37,10 +38,10 @@ module.exports = {
             options: {
               limit: true,
               esModule: false
-            },
-          },
-        ],
-      },
+            }
+          }
+        ]
+      }
     ]
-  },
-};
+  }
+}
