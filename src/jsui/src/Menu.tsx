@@ -11,7 +11,7 @@ class Menu extends Component {
       <View {...styles.menu}>
         <View {...styles.logo}>
           <Text {...styles.logo_text}>
-            OS-251
+            Onsen Audio
           </Text>
         </View>
       </View>
@@ -25,7 +25,6 @@ const styles = {
     flex: 1.0,
     flexDirection: 'column',
     justifyContent: 'space-around',
-    marginBottom: -16,
     paddingLeft: 12.0,
     paddingRight: 12.0,
     borderWidth: 4
@@ -34,7 +33,7 @@ const styles = {
     marginLeft: 25
   },
   logo_text: {
-    fontSize: 20.0,
+    fontSize: 15.0,
     color: 'ff626262'
   }
 }
