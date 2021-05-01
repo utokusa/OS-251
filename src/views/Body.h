@@ -1,14 +1,38 @@
+/*
+  ==============================================================================
+
+   Body
+
+  ==============================================================================
+*/
+
+#pragma once
+
 #include "../DspCommon.h"
+#include "look_and_feels/SliderLookAndFeel.h"
 #include <JuceHeader.h>
 
 class BodyView : public reactjuce::View
 {
-    void paint (juce::Graphics& g) override
+public:
+    BodyView (juce::AudioProcessorValueTreeState& params)
     {
-        // Do your own paint routine like usual.
-        // You can also treat this whole class instance like your normal juce::Components. Add children, `addAndMakeVisible`,
-        // `resized` and everything!
-        Image backgroundImage = ImageCache::getFromMemory (BinaryData::background_png, BinaryData::background_pngSize);
-        g.drawImageWithin (backgroundImage, 0, 0, 900, 625, RectanglePlacement::Flags::xLeft, false);
+        sliderSin.setLookAndFeel (&sliderLookAndFeel);
+        sliderSin.setSliderStyle (Slider::LinearVertical);
+        sliderSin.setMouseDragSensitivity (700);
+        sliderSin.hideTextBox (true);
+        addAndMakeVisible (sliderSin);
+        s_freqAttachment.reset (new SliderAttachment (params, "sinGain", sliderSin));
     }
+
+    void paint (juce::Graphics& g) override;
+    void resized() override;
+
+private:
+    //==============================================================================
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    SliderLookAndFeel sliderLookAndFeel;
+
+    juce::Slider sliderSin;
+    std::unique_ptr<SliderAttachment> s_freqAttachment;
 };

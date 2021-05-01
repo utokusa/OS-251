@@ -65,6 +65,7 @@ juce_add_binary_data(Os251Binaries
 SOURCES
 ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
 ${CMAKE_SOURCE_DIR}/assets/background.png
+${CMAKE_SOURCE_DIR}/assets/slider_thumb.png
 )
 
 target_sources(Os251 PRIVATE
@@ -74,6 +75,8 @@ target_sources(Os251 PRIVATE
         Envelope.cpp
         SynthEngine.cpp
         SynthVoice.cpp
+        views/Body.cpp
+        views/look_and_feels/SliderLookAndFeel.cpp
         )
 
 # Add an explicit include path here so that react-juce's EcmascriptEngine can find

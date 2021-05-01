@@ -35,8 +35,8 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
 #endif
     addAndMakeVisible (appRoot);
-    appRoot.registerViewType ("BodyView", []() -> reactjuce::ViewManager::ViewPair {
-        auto view = std::make_unique<BodyView>();
+    appRoot.registerViewType ("BodyView", [this]() -> reactjuce::ViewManager::ViewPair {
+        auto view = std::make_unique<BodyView> (parameters);
         auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
 
         return { std::move (view), std::move (shadowView) };
