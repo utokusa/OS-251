@@ -1,5 +1,15 @@
+/*
+  ==============================================================================
+
+   SliderLookAndFeel
+
+  ==============================================================================
+*/
+
 #include "SliderLookAndFeel.h"
 
+namespace onsen
+{
 //==============================================================================
 void SliderLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, const Slider::SliderStyle, Slider&)
 {
@@ -15,3 +25,4 @@ Slider::SliderLayout SliderLookAndFeel::getSliderLayout (Slider&)
 
     return layout;
 }
+} // namespace onsen

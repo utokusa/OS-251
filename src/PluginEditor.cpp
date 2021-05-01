@@ -6,7 +6,7 @@
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
-#include "views/Body.h"
+#include "views/BodyView.h"
 
 //==============================================================================
 Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, juce::AudioProcessorValueTreeState& params)
@@ -36,7 +36,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
 #endif
     addAndMakeVisible (appRoot);
     appRoot.registerViewType ("BodyView", [this]() -> reactjuce::ViewManager::ViewPair {
-        auto view = std::make_unique<BodyView> (parameters);
+        auto view = std::make_unique<onsen::BodyView> (parameters);
         auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
 
         return { std::move (view), std::move (shadowView) };

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   Body
+   BodyView
 
   ==============================================================================
 */
@@ -12,6 +12,9 @@
 #include "look_and_feels/SliderLookAndFeel.h"
 #include <JuceHeader.h>
 
+namespace onsen
+{
+//==============================================================================
 class BodyView : public reactjuce::View
 {
 public:
@@ -36,3 +39,4 @@ private:
     juce::Slider sliderSin;
     std::unique_ptr<SliderAttachment> s_freqAttachment;
 };
+} // namespace onsen

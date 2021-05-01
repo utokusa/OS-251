@@ -1,8 +1,18 @@
+/*
+  ==============================================================================
+
+   SliderLookAndFeel
+
+  ==============================================================================
+*/
+
 #pragma once
 
 #include "../../DspCommon.h"
 #include <JuceHeader.h>
 
+namespace onsen
+{
 //==============================================================================
 class SliderLookAndFeel : public LookAndFeel_V4
 {
@@ -20,3 +30,4 @@ private:
     const Rectangle<int> textBoxBounds = Rectangle<int> (30, 0, 70, 14);
     const Rectangle<int> sliderBounds = Rectangle<int> (11, 32, 40, 145);
 };
+} // namespace onsen

@@ -1,13 +1,16 @@
 /*
   ==============================================================================
 
-   Body
+   BodyView
 
   ==============================================================================
 */
 
-#include "Body.h"
+#include "BodyView.h"
 
+namespace onsen
+{
+//==============================================================================
 void BodyView::paint (juce::Graphics& g)
 {
     // Do your own paint routine like usual.
@@ -24,3 +27,4 @@ void BodyView::resized()
 
     sliderSin.setBounds (75, 80, SliderLookAndFeel::sliderWidth, SliderLookAndFeel::sliderHeight);
 }
+} // namespace onsen

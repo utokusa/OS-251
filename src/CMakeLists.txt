@@ -75,7 +75,7 @@ target_sources(Os251 PRIVATE
         Envelope.cpp
         SynthEngine.cpp
         SynthVoice.cpp
-        views/Body.cpp
+        views/BodyView.cpp
         views/look_and_feels/SliderLookAndFeel.cpp
         )
 
