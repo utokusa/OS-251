@@ -1,7 +1,12 @@
 {
     "folders": [
         {
+            "name": "cpp",
             "path": "."
+        },
+        {
+            "name": "node",
+            "path": "./src/jsui"
         }
     ],
     "extensions": {
@@ -45,7 +50,7 @@
                 "name": "CMake Debug",
                 "program": "${command:cmake.launchTargetPath}",
                 "args": [],
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder:cpp}"
             },
         ]
     }
