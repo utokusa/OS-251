@@ -24,7 +24,13 @@ void BodyView::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-
-    sliderSin.setBounds (75, 80, SliderLookAndFeel::sliderWidth, SliderLookAndFeel::sliderHeight);
+    for (int i = 0; i < numSlider; i++)
+    {
+        sliderArray[i].setBounds (
+            sliderPositionArray[i].x,
+            sliderPositionArray[i].y,
+            SliderLookAndFeel::sliderWidth,
+            SliderLookAndFeel::sliderHeight);
+    }
 }
 } // namespace onsen
