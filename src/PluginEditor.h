@@ -26,10 +26,11 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    __unused Os251AudioProcessor& audioProcessor;
+    [[maybe_unused]] Os251AudioProcessor& audioProcessor;
 
     juce::AudioProcessorValueTreeState& parameters;
     reactjuce::ReactApplicationRoot appRoot;
+    std::unique_ptr<reactjuce::AppHarness> harness;
     juce::String tmpUiBuldlePath;
 
     static constexpr int bodyWidth = 900;

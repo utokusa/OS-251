@@ -13,6 +13,8 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
     : AudioProcessorEditor (&p),
       audioProcessor (p),
       parameters (params),
+      appRoot(),
+      harness(),
       tmpUiBuldlePath()
 {
     // Make sure that before the constructor has finished, you've set the
@@ -39,9 +41,17 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& p, ju
 
         return { std::move (view), std::move (shadowView) };
     });
-    appRoot.evaluate (bundle);
 
-    setSize(appWidth, appHeight);
+    harness = std::make_unique<reactjuce::AppHarness> (appRoot);
+    harness->watch (bundle);
+
+#if JUCE_DEBUG
+    harness->start();
+#else
+    harness->once();
+#endif
+
+    setSize (appWidth, appHeight);
 }
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
@@ -53,9 +63,8 @@ Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
 //==============================================================================
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 {
-  Image backgroundImage = ImageCache::getFromMemory(BinaryData::background_png
-                                                      , BinaryData::background_pngSize);
-  g.drawImageWithin(backgroundImage, 0, 0, bodyWidth, bodyHeight, RectanglePlacement::Flags::xLeft, false);
+    Image backgroundImage = ImageCache::getFromMemory (BinaryData::background_png, BinaryData::background_pngSize);
+    g.drawImageWithin (backgroundImage, 0, 0, bodyWidth, bodyHeight, RectanglePlacement::Flags::xLeft, false);
 }
 
 void Os251AudioProcessorEditor::resized()
