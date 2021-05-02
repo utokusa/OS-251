@@ -10,6 +10,7 @@
 
 #include "../DspCommon.h"
 #include "look_and_feels/SliderLookAndFeel.h"
+#include "look_and_feels/KnobLookAndFeel.h"
 #include <JuceHeader.h>
 #include <array>
 #include <utility>
@@ -38,6 +39,16 @@ public:
             slider.hideTextBox (true);
             addAndMakeVisible (slider);
             sliderAttachmentArray[i].reset (new SliderAttachment (params, sliderNameArray[i], slider));
+        }
+
+        for (int i = 0; i < numKnob; i++)
+        {
+            auto& knob = knobArray[i];
+            knob.setLookAndFeel (&knobLookAndFeel);
+            knob.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+            knob.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+            addAndMakeVisible (knob);
+            knobAttachmentArray[i].reset (new SliderAttachment (params, knobNameArray[i], knob));
         }
     }
 
@@ -93,5 +104,24 @@ private:
     // TODO: remove
     static constexpr int sliderXPositionAdjustment = 10;
     static constexpr int sliderYPositionAdjustment = 5;
+
+    KnobLookAndFeel knobLookAndFeel;
+    static constexpr int numKnob = 4;
+
+    std::array<juce::Slider, numKnob> knobArray;
+    std::array<std::unique_ptr<SliderAttachment>, numKnob> knobAttachmentArray;
+    std::array<juce::String, numKnob> knobNameArray {
+        "lfoShape",
+        "filterEnv",
+        "lfoFilterFreq",
+        "lfoPitch"
+    };
+    std::array<Position, numKnob> knobPositionArray {
+        { { 310, 140 },
+          { 430, 360 },
+          { 430, 420 },
+          { 630, 420 } }
+    };
+
 };
 } // namespace onsen

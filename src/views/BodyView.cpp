@@ -32,5 +32,14 @@ void BodyView::resized()
             SliderLookAndFeel::sliderWidth,
             SliderLookAndFeel::sliderHeight);
     }
+
+    for (int i = 0; i < numKnob; i++)
+    {
+        knobArray[i].setBounds (
+            knobPositionArray[i].x,
+            knobPositionArray[i].y,
+            KnobLookAndFeel::knobWidth,
+            KnobLookAndFeel::knobHeight);
+    }
 }
 } // namespace onsen
