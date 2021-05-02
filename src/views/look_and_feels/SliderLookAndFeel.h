@@ -26,6 +26,6 @@ public:
     Slider::SliderLayout getSliderLayout (Slider&) override;
 
 private:
-    const Rectangle<int> sliderBounds = Rectangle<int> (0, 0, sliderWidth, 148);
+    const Rectangle<int> sliderBounds = Rectangle<int> (0, thumbHeight / 2, sliderWidth, 148);
 };
 } // namespace onsen

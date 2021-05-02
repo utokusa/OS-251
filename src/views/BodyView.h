@@ -9,8 +9,8 @@
 #pragma once
 
 #include "../DspCommon.h"
-#include "look_and_feels/SliderLookAndFeel.h"
 #include "look_and_feels/KnobLookAndFeel.h"
+#include "look_and_feels/SliderLookAndFeel.h"
 #include <JuceHeader.h>
 #include <array>
 #include <utility>
@@ -36,7 +36,6 @@ public:
             slider.setLookAndFeel (&sliderLookAndFeel);
             slider.setSliderStyle (juce::Slider::LinearVertical);
             slider.setMouseDragSensitivity (700);
-            slider.hideTextBox (true);
             addAndMakeVisible (slider);
             sliderAttachmentArray[i].reset (new SliderAttachment (params, sliderNameArray[i], slider));
         }
@@ -46,7 +45,7 @@ public:
             auto& knob = knobArray[i];
             knob.setLookAndFeel (&knobLookAndFeel);
             knob.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-            knob.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+            knob.setTextBoxStyle (juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
             addAndMakeVisible (knob);
             knobAttachmentArray[i].reset (new SliderAttachment (params, knobNameArray[i], knob));
         }
@@ -122,6 +121,5 @@ private:
           { 430, 420 },
           { 630, 420 } }
     };
-
 };
 } // namespace onsen

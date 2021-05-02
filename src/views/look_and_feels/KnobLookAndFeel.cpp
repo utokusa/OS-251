@@ -21,6 +21,5 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int wid
     int imgWidth = knobFilmStrip.getWidth();
     int imgHeight = knobFilmStrip.getHeight() / frames;
     g.drawImage (knobFilmStrip, x, y, width, height, 0, frameId * imgHeight, imgWidth, imgHeight);
-
 }
 } // namespace onsen
