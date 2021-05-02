@@ -27,8 +27,8 @@ void BodyView::resized()
     for (int i = 0; i < numSlider; i++)
     {
         sliderArray[i].setBounds (
-            sliderPositionArray[i].x,
-            sliderPositionArray[i].y,
+            sliderPositionArray[i].x - sliderXPositionAdjustment,
+            sliderPositionArray[i].y + sliderYPositionAdjustment,
             SliderLookAndFeel::sliderWidth,
             SliderLookAndFeel::sliderHeight);
     }

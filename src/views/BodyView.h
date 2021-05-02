@@ -71,6 +71,27 @@ private:
         "portamento",
         "masterVolume"
     };
-    std::array<Position, numSlider> sliderPositionArray { { { 75, 80 }, { 115, 80 }, { 155, 80 }, { 195, 80 }, { 235, 80 }, { 275, 80 }, { 455, 80 }, { 495, 80 }, { 535, 80 }, { 575, 80 }, { 75, 355 }, { 115, 355 }, { 155, 355 }, { 355, 355 }, { 395, 355 }, { 595, 355 }, { 775, 355 } } };
+    std::array<Position, numSlider> sliderPositionArray {
+        { { 75, 80 },
+          { 115, 80 },
+          { 155, 80 },
+          { 195, 80 },
+          { 235, 80 },
+          { 275, 80 },
+          { 455, 80 },
+          { 495, 80 },
+          { 535, 80 },
+          { 575, 80 },
+          { 75, 355 },
+          { 115, 355 },
+          { 155, 355 },
+          { 355, 355 },
+          { 395, 355 },
+          { 595, 355 },
+          { 775, 355 } }
+    };
+    // TODO: remove
+    static constexpr int sliderXPositionAdjustment = 10;
+    static constexpr int sliderYPositionAdjustment = 5;
 };
 } // namespace onsen
