@@ -24,6 +24,7 @@ void BodyView::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+
     for (int i = 0; i < numSlider; i++)
     {
         sliderArray[i].setBounds (
@@ -32,6 +33,9 @@ void BodyView::resized()
             SliderLookAndFeel::sliderWidth,
             SliderLookAndFeel::sliderHeight);
     }
+
+    // TODO: implement "chorusAdd" parameter
+    dummyChorusAddSlider.setBounds (745, 80, SliderLookAndFeel::sliderWidth, SliderLookAndFeel::sliderHeight);
 
     for (int i = 0; i < numKnob; i++)
     {

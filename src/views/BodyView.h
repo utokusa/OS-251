@@ -42,6 +42,12 @@ public:
             sliderAttachmentArray[i].reset (new SliderAttachment (params, sliderNameArray[i], slider));
         }
 
+        // TODO: implement "chorusAdd" parameter
+        dummyChorusAddSlider.setLookAndFeel (&sliderLookAndFeel);
+        dummyChorusAddSlider.setSliderStyle (juce::Slider::LinearVertical);
+        dummyChorusAddSlider.setMouseDragSensitivity (700);
+        addAndMakeVisible (dummyChorusAddSlider);
+
         for (int i = 0; i < numKnob; i++)
         {
             auto& knob = knobArray[i];
@@ -126,6 +132,9 @@ private:
     static constexpr int sliderXPositionAdjustment = 10;
     static constexpr int sliderYPositionAdjustment = 5;
 
+    // TODO: implement "chorusAdd" parameter
+    juce::Slider dummyChorusAddSlider;
+
     //==============================================================================
     KnobLookAndFeel knobLookAndFeel;
     static constexpr int numKnob = 4;
@@ -147,16 +156,18 @@ private:
 
     //==============================================================================
     ToggleSwitchLookAndFeel toggleSwitchLookAndFeel;
-    static constexpr int numToggleSwitch = 2;
+    static constexpr int numToggleSwitch = 3;
 
     std::array<juce::ToggleButton, numToggleSwitch> toggleSwitchArray;
     std::array<std::unique_ptr<ButtonAttachment>, numToggleSwitch> toggleSwitchAttachmentArray;
     std::array<juce::String, numToggleSwitch> toggleSwitchNameArray {
         "envForAmpOn",
+        "chorusOn", // TODO: Change to "chorusType"
         "syncOn"
     };
     std::array<Position, numToggleSwitch> toggleSwitchPositionArray {
         { { 617, 97 },
+          { 797, 97 },
           { 197, 438 } }
     };
 
