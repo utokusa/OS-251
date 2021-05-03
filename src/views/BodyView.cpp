@@ -41,5 +41,14 @@ void BodyView::resized()
             KnobLookAndFeel::knobWidth,
             KnobLookAndFeel::knobHeight);
     }
+
+    for (int i = 0; i < numToggleSwitch; i++)
+    {
+        toggleSwitchArray[i].setBounds (
+            toggleSwitchPositionArray[i].x,
+            toggleSwitchPositionArray[i].y,
+            ToggleSwitchLookAndFeel::toggleSwitchWidth,
+            ToggleSwitchLookAndFeel::toggleSwitchHeight);
+    }
 }
 } // namespace onsen

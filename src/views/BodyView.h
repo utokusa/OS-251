@@ -11,6 +11,7 @@
 #include "../DspCommon.h"
 #include "look_and_feels/KnobLookAndFeel.h"
 #include "look_and_feels/SliderLookAndFeel.h"
+#include "look_and_feels/ToggleSwitchLookAndFeel.h"
 #include <JuceHeader.h>
 #include <array>
 #include <utility>
@@ -49,6 +50,16 @@ public:
             addAndMakeVisible (knob);
             knobAttachmentArray[i].reset (new SliderAttachment (params, knobNameArray[i], knob));
         }
+
+        for (int i = 0; i < numToggleSwitch; i++)
+        {
+            auto& toggleSwitch = toggleSwitchArray[i];
+            toggleSwitch.setLookAndFeel (&toggleSwitchLookAndFeel);
+            // toggleSwitch.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+            // toggleSwitch.setTextBoxStyle (juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
+            addAndMakeVisible (toggleSwitch);
+            toggleSwitchAttachmentArray[i].reset (new ButtonAttachment (params, toggleSwitchNameArray[i], toggleSwitch));
+        }
     }
 
     void paint (juce::Graphics& g) override;
@@ -57,6 +68,9 @@ public:
 private:
     //==============================================================================
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+
+    //==============================================================================
     SliderLookAndFeel sliderLookAndFeel;
     static constexpr int numSlider = 17;
 
@@ -104,6 +118,7 @@ private:
     static constexpr int sliderXPositionAdjustment = 10;
     static constexpr int sliderYPositionAdjustment = 5;
 
+    //==============================================================================
     KnobLookAndFeel knobLookAndFeel;
     static constexpr int numKnob = 4;
 
@@ -120,6 +135,21 @@ private:
           { 430, 360 },
           { 430, 420 },
           { 630, 420 } }
+    };
+
+    //==============================================================================
+    ToggleSwitchLookAndFeel toggleSwitchLookAndFeel;
+    static constexpr int numToggleSwitch = 2;
+
+    std::array<juce::ToggleButton, numToggleSwitch> toggleSwitchArray;
+    std::array<std::unique_ptr<ButtonAttachment>, numToggleSwitch> toggleSwitchAttachmentArray;
+    std::array<juce::String, numToggleSwitch> toggleSwitchNameArray {
+        "envForAmpOn",
+        "syncOn"
+    };
+    std::array<Position, numToggleSwitch> toggleSwitchPositionArray {
+        { { 617, 97 },
+          { 197, 438 } }
     };
 };
 } // namespace onsen

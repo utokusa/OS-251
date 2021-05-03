@@ -67,6 +67,8 @@ ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
 ${CMAKE_SOURCE_DIR}/assets/background.png
 ${CMAKE_SOURCE_DIR}/assets/knob.png
 ${CMAKE_SOURCE_DIR}/assets/slider_thumb.png
+${CMAKE_SOURCE_DIR}/assets/toggle_switch_off.png
+${CMAKE_SOURCE_DIR}/assets/toggle_switch_on.png
 )
 
 target_sources(Os251 PRIVATE
@@ -79,6 +81,7 @@ target_sources(Os251 PRIVATE
         views/BodyView.cpp
         views/look_and_feels/KnobLookAndFeel.cpp
         views/look_and_feels/SliderLookAndFeel.cpp
+        views/look_and_feels/ToggleSwitchLookAndFeel.cpp
         )
 
 # Add an explicit include path here so that react-juce's EcmascriptEngine can find
