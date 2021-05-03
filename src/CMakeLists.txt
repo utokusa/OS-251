@@ -79,6 +79,7 @@ target_sources(Os251 PRIVATE
         SynthEngine.cpp
         SynthVoice.cpp
         views/BodyView.cpp
+        views/look_and_feels/IntParamLookAndFeel.cpp
         views/look_and_feels/KnobLookAndFeel.cpp
         views/look_and_feels/SliderLookAndFeel.cpp
         views/look_and_feels/ToggleSwitchLookAndFeel.cpp

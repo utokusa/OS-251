@@ -31,7 +31,8 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
     auto valueToTextFunction = [numDecimal] (float value) { return juce::String (value, numDecimal); };
-    auto valueToMinusOneToOneFunction = [numDecimal] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
+    constexpr int numDecimalRough = 2;
+    auto valueToMinusOneToOneRoughFunction = [numDecimalRough] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimalRough); };
 
     // Oscillator gain
     constexpr int numGainDecimal = 1;
@@ -84,6 +85,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Set audio parameters
     using Parameter = juce::AudioProcessorValueTreeState::Parameter;
     juce::NormalisableRange<float> nrange (0.0, 1.0);
+    juce::NormalisableRange<float> nrangeRough (0.0, 1.0, 0.01);
 
     // Oscillator parameters
     onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
@@ -240,7 +242,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("masterSemitoneTune", this);
 
     // Master fine tuning
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterFineTune", "Fine Tune", "", nrange, 0.5, valueToMinusOneToOneFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterFineTune", "Fine Tune", "", nrangeRough, 0.5, valueToMinusOneToOneRoughFunction, nullptr, true));
     masterParams->setMasterFineTunePtr (parameters.getRawParameterValue (("masterFineTune")));
     parameters.addParameterListener ("masterFineTune", this);
 

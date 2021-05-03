@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../DspCommon.h"
+#include "look_and_feels/IntParamLookAndFeel.h"
 #include "look_and_feels/KnobLookAndFeel.h"
 #include "look_and_feels/SliderLookAndFeel.h"
 #include "look_and_feels/ToggleSwitchLookAndFeel.h"
@@ -55,10 +56,17 @@ public:
         {
             auto& toggleSwitch = toggleSwitchArray[i];
             toggleSwitch.setLookAndFeel (&toggleSwitchLookAndFeel);
-            // toggleSwitch.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-            // toggleSwitch.setTextBoxStyle (juce::Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
             addAndMakeVisible (toggleSwitch);
             toggleSwitchAttachmentArray[i].reset (new ButtonAttachment (params, toggleSwitchNameArray[i], toggleSwitch));
+        }
+
+        for (int i = 0; i < numIntParam; i++)
+        {
+            auto& intParam = intParamArray[i];
+            intParam.setLookAndFeel (&intParamLookAndFeel);
+            intParam.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+            addAndMakeVisible (intParam);
+            intParamAttachmentArray[i].reset (new SliderAttachment (params, intParamNameArray[i], intParam));
         }
     }
 
@@ -150,6 +158,32 @@ private:
     std::array<Position, numToggleSwitch> toggleSwitchPositionArray {
         { { 617, 97 },
           { 197, 438 } }
+    };
+
+    //==============================================================================
+    IntParamLookAndFeel intParamLookAndFeel;
+    static constexpr int numIntParam = 6;
+
+    std::array<juce::Slider, numIntParam> intParamArray;
+    std::array<std::unique_ptr<SliderAttachment>, numIntParam> intParamAttachmentArray;
+    std::array<juce::String, numIntParam> intParamNameArray {
+        "numVoices",
+        "rateSync",
+        "pitchBendWidth",
+        "masterOctaveTune",
+        "masterSemitoneTune",
+        "masterFineTune"
+
+    };
+    std::array<Position, numIntParam> intParamPositionArray {
+        {
+            { 319, 90 },
+            { 199, 371 },
+            { 640, 371 },
+            { 700, 372 },
+            { 700, 430 },
+            { 700, 490 },
+        }
     };
 };
 } // namespace onsen

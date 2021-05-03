@@ -50,5 +50,14 @@ void BodyView::resized()
             ToggleSwitchLookAndFeel::toggleSwitchWidth,
             ToggleSwitchLookAndFeel::toggleSwitchHeight);
     }
+
+    for (int i = 0; i < numIntParam; i++)
+    {
+        intParamArray[i].setBounds (
+            intParamPositionArray[i].x,
+            intParamPositionArray[i].y,
+            IntParamLookAndFeel::intParamWidth,
+            IntParamLookAndFeel::intParamHeight);
+    }
 }
 } // namespace onsen
