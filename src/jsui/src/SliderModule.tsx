@@ -40,7 +40,7 @@ const styles = {
     minHeight: 20.0,
     width: '100%',
     height: '100%',
-    marginTop: 5,
+    marginTop: 0,
     marginBottom: 0,
     justifyContent: 'center',
     alignItems: 'center'
@@ -52,7 +52,7 @@ const styles = {
     interceptClickEvents: false
   },
   param_name: {
-    fontSize: 15.0,
+    fontSize: 12.0,
     minHeight: 18,
     color: textColor
   }

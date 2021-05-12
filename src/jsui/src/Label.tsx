@@ -62,7 +62,7 @@ class Label extends Component<IProps, IState> {
 const styles = {
   labelText: {
     color: textColor,
-    fontSize: 15.0,
+    fontSize: 12.0,
     lineSpacing: 1.6
   }
 }

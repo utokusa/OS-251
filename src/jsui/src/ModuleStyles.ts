@@ -1,12 +1,12 @@
 const moduleStyles = {
   param_module: {
-    minWidth: 100,
-    minHeight: 100,
+    width: 100,
+    height: 75,
     flex: 1.0,
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 2,
     marginBottom: 4,
     marginLeft: 2,
     marginRight: 2

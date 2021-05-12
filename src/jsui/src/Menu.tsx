@@ -4,6 +4,7 @@ import {
   Text,
   View
 } from 'react-juce'
+import { textColor } from './Colors'
 
 class Menu extends Component {
   render (): ReactNode {
@@ -31,11 +32,11 @@ const styles = {
     borderWidth: 4
   },
   logo: {
-    marginLeft: 25
+    marginLeft: 13
   },
   logo_text: {
     fontSize: 20.0,
-    color: 'ffE4D3B0'
+    color: textColor
   }
 }
 

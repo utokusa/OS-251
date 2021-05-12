@@ -52,7 +52,7 @@ const styles = {
     height: '17.5%'
   },
   param_name: {
-    fontSize: 15.0,
+    fontSize: 12.0,
     lineSpacing: 1.6
   }
 }

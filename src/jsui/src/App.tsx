@@ -6,9 +6,10 @@ import DummyModule from './DummyModule'
 import React, { Component, ReactNode } from 'react'
 
 import {
-  View
+  View,
+  Text
 } from 'react-juce'
-import { backgroundColor, backgroundColorDark, textColorDark } from './Colors'
+import { backgroundColor, backgroundColorDark, testColorSecondary, textColorDark } from './Colors'
 
 interface IState {
   isEnvForAmpOn?: boolean
@@ -55,153 +56,213 @@ class App extends Component<{}, IState> {
         <Menu />
         <View {...styles.content}>
           <View {...styles.param_row}>
-            <SliderModule
-              paramId="sinGain"
-              paramLabel="Sin"
-            />
-            <SliderModule
-              paramId="squareGain"
-              paramLabel="Square"
-            />
-            <SliderModule
-              paramId="sawGain"
-              paramLabel="Saw"
-            />
-            <SliderModule
-              paramId="subSquareGain"
-              paramLabel="Sub Square"
-            />
-            <SliderModule
-              paramId="noiseGain"
-              paramLabel="Noise"
-            />
-            <SliderModule
-              paramId="shape"
-              paramLabel="Osc shape"
-            />
-            <SliderModule
-              paramId="lfoShape"
-              paramLabel="LFO -> Shape"
-            />
-            <SliderModule
-              paramId="numVoices"
-              paramLabel="Num Voices"
-            />
+            <View {...styles.param_row_header}>
+            <View {...styles.param_row_header_element}><Text {...styles.groupText}>OSC</Text></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            <View {...styles.param_row_header_element}></View>
+            </View>
+            <View {...styles.param_row_body}>
+              <SliderModule
+                paramId="sinGain"
+                paramLabel="Sin"
+              />
+              <SliderModule
+                paramId="squareGain"
+                paramLabel="Square"
+              />
+              <SliderModule
+                paramId="sawGain"
+                paramLabel="Saw"
+              />
+              <SliderModule
+                paramId="subSquareGain"
+                paramLabel="Sub Square"
+              />
+              <SliderModule
+                paramId="noiseGain"
+                paramLabel="Noise"
+              />
+              <SliderModule
+                paramId="shape"
+                paramLabel="Osc shape"
+              />
+              <SliderModule
+                paramId="lfoShape"
+                paramLabel="LFO -> Shape"
+              />
+              <SliderModule
+                paramId="numVoices"
+                paramLabel="Num Voices"
+              />
+            </View>
           </View>
           <View {...styles.param_row}>
-            <SliderModule
-              paramId="attack"
-              paramLabel="Attack"
-            />
-            <SliderModule
-              paramId="decay"
-              paramLabel="Decay"
-            />
-            <SliderModule
-              paramId="sustain"
-              paramLabel="Sustain"
-            />
-            <SliderModule
-              paramId="release"
-              paramLabel="Release"
-            />
-            <ButtonModule
-              paramId="envForAmpOn"
-              paramLabel="Env -> Amp"
-              onToggled={this._onEnvForAmpToggled}
-              isOn={this.state.isEnvForAmpOn}
-            />
-            <DummyModule />
-            <DummyModule />
-            <DummyModule />
+            <View {...styles.param_row_header}>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>ENV</Text></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+            </View>
+            <View {...styles.param_row_body}>
+              <SliderModule
+                paramId="attack"
+                paramLabel="Attack"
+              />
+              <SliderModule
+                paramId="decay"
+                paramLabel="Decay"
+              />
+              <SliderModule
+                paramId="sustain"
+                paramLabel="Sustain"
+              />
+              <SliderModule
+                paramId="release"
+                paramLabel="Release"
+              />
+              <ButtonModule
+                paramId="envForAmpOn"
+                paramLabel="Env -> Amp"
+                onToggled={this._onEnvForAmpToggled}
+                isOn={this.state.isEnvForAmpOn}
+              />
+              <DummyModule />
+              <DummyModule />
+              <DummyModule />
+            </View>
           </View>
           <View {...styles.param_row}>
-            <SliderModule
-              paramId="frequency"
-              paramLabel="Frequency"
-            />
-            <SliderModule
-              paramId="resonance"
-              paramLabel="Resonance"
-            />
-            <SliderModule
-              paramId="filterEnv"
-              paramLabel="Env -> Filter"
-            />
-            <SliderModule
-              paramId="lfoFilterFreq"
-              paramLabel="LFO -> Freq"
-            />
-            <SliderModule
-              paramId="hpfFreq"
-              paramLabel="HPF Freq"
-            />
-            <DummyModule />
-            <DummyModule />
-            <DummyModule />
+            <View {...styles.param_row_header}>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>LPF</Text></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>HPF</Text></View>
+            </View>
+            <View {...styles.param_row_body}>
+              <SliderModule
+                paramId="frequency"
+                paramLabel="Frequency"
+              />
+              <SliderModule
+                paramId="resonance"
+                paramLabel="Resonance"
+              />
+              <SliderModule
+                paramId="filterEnv"
+                paramLabel="Env -> Filter"
+              />
+              <SliderModule
+                paramId="lfoFilterFreq"
+                paramLabel="LFO -> Freq"
+              />
+              <DummyModule />
+              <DummyModule />
+              <DummyModule />
+              <SliderModule
+                paramId="hpfFreq"
+                paramLabel="HPF Freq"
+              />
+            </View>
           </View>
           <View {...styles.param_row}>
-            <ButtonModule
-              paramId="syncOn"
-              paramLabel="LFO Sync"
-              onToggled={this._onSyncToggled}
-              isOn={this.state.isSyncOn}
-            />
-            <SliderModule
-              paramId="rate"
-              paramLabel="Rate"
-            />
-            <SliderModule
-              paramId="rateSync"
-              paramLabel="Synced Rate"
-            />
-            <SliderModule
-              paramId="lfoPhase"
-              paramLabel="LFO Phase"
-            />
-            <SliderModule
-              paramId="lfoDelay"
-              paramLabel="LFO Delay"
-            />
-            <DummyModule />
-            <DummyModule />
-            <ButtonModule
-              paramId="chorusOn"
-              paramLabel="Chorus"
-              onToggled={this._onChorusToggled}
-              isOn={this.state.isChorusOn}
-            />
+            <View {...styles.param_row_header}>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>LFO</Text></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>CHORUS</Text></View>
+            </View>
+            <View {...styles.param_row_body}>
+              <ButtonModule
+                paramId="syncOn"
+                paramLabel="LFO Sync"
+                onToggled={this._onSyncToggled}
+                isOn={this.state.isSyncOn}
+              />
+              <SliderModule
+                paramId="rate"
+                paramLabel="Rate"
+              />
+              <SliderModule
+                paramId="rateSync"
+                paramLabel="Synced Rate"
+              />
+              <SliderModule
+                paramId="lfoPhase"
+                paramLabel="LFO Phase"
+              />
+              <SliderModule
+                paramId="lfoDelay"
+                paramLabel="LFO Delay"
+              />
+              <DummyModule />
+              <DummyModule />
+              <ButtonModule
+                paramId="chorusOn"
+                paramLabel="Chorus"
+                onToggled={this._onChorusToggled}
+                isOn={this.state.isChorusOn}
+              />
+            </View>
           </View>
           <View {...styles.param_row}>
-            <SliderModule
-              paramId="lfoPitch"
-              paramLabel="LFO -> Pitch"
-            />
-            <SliderModule
-              paramId="pitchBendWidth"
-              paramLabel="Pitch Bend"
-            />
-            <SliderModule
-              paramId="portamento"
-              paramLabel="Portamento"
-            />
-            <SliderModule
-              paramId="masterOctaveTune"
-              paramLabel="Octave"
-            />
-            <SliderModule
-              paramId="masterSemitoneTune"
-              paramLabel="Semi"
-            />
-            <SliderModule
-              paramId="masterFineTune"
-              paramLabel="Fine Tune"
-            />
-            <DummyModule />
-            <SliderModule
-              paramId="masterVolume"
-              paramLabel="Master Vol"
-            />
+            <View {...styles.param_row_header}>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>MASTER</Text></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+            </View>
+            <View {...styles.param_row_body}>
+              <SliderModule
+                paramId="lfoPitch"
+                paramLabel="LFO -> Pitch"
+              />
+              <SliderModule
+                paramId="pitchBendWidth"
+                paramLabel="Pitch Bend"
+              />
+              <SliderModule
+                paramId="portamento"
+                paramLabel="Portamento"
+              />
+              <SliderModule
+                paramId="masterOctaveTune"
+                paramLabel="Octave"
+              />
+              <SliderModule
+                paramId="masterSemitoneTune"
+                paramLabel="Semi"
+              />
+              <SliderModule
+                paramId="masterFineTune"
+                paramLabel="Fine Tune"
+              />
+              <DummyModule />
+              <SliderModule
+                paramId="masterVolume"
+                paramLabel="Master Vol"
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -230,13 +291,38 @@ const styles = {
   param_row: {
     flex: 1.0,
     width: '100%',
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: backgroundColor,
     borderRadius: 12,
     borderStyle: 'solid',
     borderColor: textColorDark,
     borderWidth: 3,
     marginBottom: 4
+  },
+  param_row_header: {
+    flex: 1.0,
+    width: '100%',
+    height: '25%',
+    flexDirection: 'row'
+  },
+  groupText: {
+    color: testColorSecondary,
+    fontSize: 16.0
+  },
+  param_row_header_element: {
+    flex: 1.0,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    width: 100,
+    paddingTop: 6,
+    paddingLeft: 15
+  },
+  param_row_body: {
+    flex: 1.0,
+    width: '100%',
+    height: '85%',
+    flexDirection: 'row'
   }
 }
 
