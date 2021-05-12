@@ -1,26 +1,24 @@
 import moduleStyles from './ModuleStyles'
 import ParameterToggleButton from './ParameterToggleButton'
-import IModuleColor from './ModuleColors'
-
 import React, { Component, ReactNode } from 'react'
 
 import {
   Text,
   View
 } from 'react-juce'
+import { backgroundColor, primaryColor, primaryColorDark } from './Colors'
 
 interface IProps {
   paramId: string
   paramLabel?: string
   isOn?: boolean
-  color: IModuleColor
   onToggled?: (toggled: boolean) => void
 }
 
 class ButtonModule extends Component<IProps> {
   render (): ReactNode {
-    const buttonBorderColor = this.props.isOn === true ? this.props.color.primary : this.props.color.secondary
-    const buttonTextColor = this.props.isOn === true ? this.props.color.primary : 'ff626262'
+    const buttonBorderColor = this.props.isOn === true ? primaryColor : primaryColorDark
+    const buttonTextColor = this.props.isOn === true ? primaryColor : 'ff626262'
 
     return (
       <View
@@ -29,7 +27,7 @@ class ButtonModule extends Component<IProps> {
         <ParameterToggleButton
           paramId={this.props.paramId}
           onToggled={this.props.onToggled}
-          background-color='ff282423'
+          background-color={backgroundColor}
           borderColor={buttonBorderColor}
           {...styles.button}
         >

@@ -2,13 +2,13 @@ import Menu from './Menu'
 import SliderModule from './SliderModule'
 import ButtonModule from './ButtonModule'
 import DummyModule from './DummyModule'
-import { darkBlueModuleColor } from './ModuleColors'
 
 import React, { Component, ReactNode } from 'react'
 
 import {
   View
 } from 'react-juce'
+import { backgroundColor, backgroundColorDark, textColorDark } from './Colors'
 
 interface IState {
   isEnvForAmpOn?: boolean
@@ -58,70 +58,57 @@ class App extends Component<{}, IState> {
             <SliderModule
               paramId="sinGain"
               paramLabel="Sin"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="squareGain"
               paramLabel="Square"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="sawGain"
               paramLabel="Saw"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="subSquareGain"
               paramLabel="Sub Square"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="noiseGain"
               paramLabel="Noise"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="shape"
               paramLabel="Osc shape"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="lfoShape"
               paramLabel="LFO -> Shape"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="numVoices"
               paramLabel="Num Voices"
-              color={darkBlueModuleColor}
             />
           </View>
           <View {...styles.param_row}>
             <SliderModule
               paramId="attack"
               paramLabel="Attack"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="decay"
               paramLabel="Decay"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="sustain"
               paramLabel="Sustain"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="release"
               paramLabel="Release"
-              color={darkBlueModuleColor}
             />
             <ButtonModule
               paramId="envForAmpOn"
               paramLabel="Env -> Amp"
               onToggled={this._onEnvForAmpToggled}
-              color={darkBlueModuleColor}
               isOn={this.state.isEnvForAmpOn}
             />
             <DummyModule />
@@ -132,27 +119,22 @@ class App extends Component<{}, IState> {
             <SliderModule
               paramId="frequency"
               paramLabel="Frequency"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="resonance"
               paramLabel="Resonance"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="filterEnv"
               paramLabel="Env -> Filter"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="lfoFilterFreq"
               paramLabel="LFO -> Freq"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="hpfFreq"
               paramLabel="HPF Freq"
-              color={darkBlueModuleColor}
             />
             <DummyModule />
             <DummyModule />
@@ -163,28 +145,23 @@ class App extends Component<{}, IState> {
               paramId="syncOn"
               paramLabel="LFO Sync"
               onToggled={this._onSyncToggled}
-              color={darkBlueModuleColor}
               isOn={this.state.isSyncOn}
             />
             <SliderModule
               paramId="rate"
               paramLabel="Rate"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="rateSync"
               paramLabel="Synced Rate"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="lfoPhase"
               paramLabel="LFO Phase"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="lfoDelay"
               paramLabel="LFO Delay"
-              color={darkBlueModuleColor}
             />
             <DummyModule />
             <DummyModule />
@@ -192,7 +169,6 @@ class App extends Component<{}, IState> {
               paramId="chorusOn"
               paramLabel="Chorus"
               onToggled={this._onChorusToggled}
-              color={darkBlueModuleColor}
               isOn={this.state.isChorusOn}
             />
           </View>
@@ -200,38 +176,31 @@ class App extends Component<{}, IState> {
             <SliderModule
               paramId="lfoPitch"
               paramLabel="LFO -> Pitch"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="pitchBendWidth"
               paramLabel="Pitch Bend"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="portamento"
               paramLabel="Portamento"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="masterOctaveTune"
               paramLabel="Octave"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="masterSemitoneTune"
               paramLabel="Semi"
-              color={darkBlueModuleColor}
             />
             <SliderModule
               paramId="masterFineTune"
               paramLabel="Fine Tune"
-              color={darkBlueModuleColor}
             />
             <DummyModule />
             <SliderModule
               paramId="masterVolume"
               paramLabel="Master Vol"
-              color={darkBlueModuleColor}
             />
           </View>
         </View>
@@ -245,7 +214,7 @@ const styles = {
     width: '100%',
     height: '100%',
     flexDirection: 'column',
-    backgroundColor: 'ff262123',
+    backgroundColor: backgroundColorDark,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -262,10 +231,10 @@ const styles = {
     flex: 1.0,
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: 'ff282423',
+    backgroundColor: backgroundColor,
     borderRadius: 12,
     borderStyle: 'solid',
-    borderColor: 'ffA99988',
+    borderColor: textColorDark,
     borderWidth: 3,
     marginBottom: 4
   }

@@ -4,6 +4,7 @@ import {
   Text,
   View
 } from 'react-juce'
+import { textColor } from './Colors'
 
 import type { ParamValue } from './ParamValueType'
 
@@ -60,7 +61,7 @@ class Label extends Component<IProps, IState> {
 
 const styles = {
   labelText: {
-    color: 'ffE4D3B0',
+    color: textColor,
     fontSize: 15.0,
     lineSpacing: 1.6
   }
