@@ -442,7 +442,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 
     auto* editor = new reactjuce::GenericEditor (*this, bundle);
 
-    editor->setSize (758, 510 + 34 /* For menu*/);
+    editor->setSize (758, 408 + 34 /* For menu*/);
 
     return editor;
 }

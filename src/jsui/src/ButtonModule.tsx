@@ -6,7 +6,7 @@ import {
   Text,
   View
 } from 'react-juce'
-import { backgroundColor, primaryColor, primaryColorDark } from './Colors'
+import { backgroundColor, primaryColor, primaryColorDark, textColor } from './Colors'
 
 interface IProps {
   paramId: string
@@ -18,7 +18,7 @@ interface IProps {
 class ButtonModule extends Component<IProps> {
   render (): ReactNode {
     const buttonBorderColor = this.props.isOn === true ? primaryColor : primaryColorDark
-    const buttonTextColor = this.props.isOn === true ? primaryColor : 'ff626262'
+    const buttonTextColor = this.props.isOn === true ? primaryColor : textColor
 
     return (
       <View

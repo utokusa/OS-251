@@ -107,7 +107,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>LPF</Text></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
@@ -129,29 +129,6 @@ class App extends Component<{}, IState> {
                 paramId="release"
                 paramLabel="Release"
               />
-              <ButtonModule
-                paramId="envForAmpOn"
-                paramLabel="Env -> Amp"
-                onToggled={this._onEnvForAmpToggled}
-                isOn={this.state.isEnvForAmpOn}
-              />
-              <DummyModule />
-              <DummyModule />
-              <DummyModule />
-            </View>
-          </View>
-          <View {...styles.param_row}>
-            <View {...styles.param_row_header}>
-              <View {...styles.param_row_header_element}><Text {...styles.groupText}>LPF</Text></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}><Text {...styles.groupText}>HPF</Text></View>
-            </View>
-            <View {...styles.param_row_body}>
               <SliderModule
                 paramId="frequency"
                 paramLabel="Frequency"
@@ -168,13 +145,6 @@ class App extends Component<{}, IState> {
                 paramId="lfoFilterFreq"
                 paramLabel="LFO -> Freq"
               />
-              <DummyModule />
-              <DummyModule />
-              <DummyModule />
-              <SliderModule
-                paramId="hpfFreq"
-                paramLabel="HPF Freq"
-              />
             </View>
           </View>
           <View {...styles.param_row}>
@@ -185,7 +155,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>HPF</Text></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>CHORUS</Text></View>
             </View>
             <View {...styles.param_row_body}>
@@ -212,7 +182,10 @@ class App extends Component<{}, IState> {
                 paramLabel="LFO Delay"
               />
               <DummyModule />
-              <DummyModule />
+              <SliderModule
+                paramId="hpfFreq"
+                paramLabel="HPF Freq"
+              />
               <ButtonModule
                 paramId="chorusOn"
                 paramLabel="Chorus"
@@ -223,13 +196,13 @@ class App extends Component<{}, IState> {
           </View>
           <View {...styles.param_row}>
             <View {...styles.param_row_header}>
-              <View {...styles.param_row_header_element}><Text {...styles.groupText}>MASTER</Text></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>PITCH</Text></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>AMP</Text></View>
               <View {...styles.param_row_header_element}></View>
             </View>
             <View {...styles.param_row_body}>
@@ -257,7 +230,12 @@ class App extends Component<{}, IState> {
                 paramId="masterFineTune"
                 paramLabel="Fine Tune"
               />
-              <DummyModule />
+              <ButtonModule
+                paramId="envForAmpOn"
+                paramLabel="Env -> Amp"
+                onToggled={this._onEnvForAmpToggled}
+                isOn={this.state.isEnvForAmpOn}
+              />
               <SliderModule
                 paramId="masterVolume"
                 paramLabel="Master Vol"
