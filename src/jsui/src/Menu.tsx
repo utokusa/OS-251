@@ -35,7 +35,7 @@ const styles = {
   },
   logo_text: {
     fontSize: 20.0,
-    color: 'ff626262'
+    color: 'ffE4D3B0'
   }
 }
 

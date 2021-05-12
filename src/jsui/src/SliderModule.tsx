@@ -1,6 +1,7 @@
 import moduleStyles from './ModuleStyles'
 import Label from './Label'
 import ParameterSlider from './ParameterSlider'
+import IModuleColor from './ModuleColors'
 
 import React, { Component, ReactNode } from 'react'
 
@@ -13,18 +14,16 @@ import {
 interface IProps {
   paramId: string
   paramLabel?: string
+  color: IModuleColor
 }
 
 class SliderModule extends Component<IProps> {
   render (): ReactNode {
-    const sliderFillColor = 'ff66fdcf'
-    const sliderTrackColor = 'ff626262'
-
     return (
       <View {...moduleStyles.param_module}>
         <ParameterSlider
           paramId={this.props.paramId}
-          onDraw={Slider.drawRotary(sliderTrackColor, sliderFillColor)}
+          onDraw={Slider.drawRotary(this.props.color.secondary, this.props.color.primary)}
           mapDragGestureToValue={Slider.rotaryGestureMap}
           {...styles.knob}
         >
@@ -56,7 +55,7 @@ const styles = {
   param_name: {
     fontSize: 15.0,
     minHeight: 18,
-    color: 'ffcbcbcb'
+    color: 'ffE4D3B0'
   }
 }
 
