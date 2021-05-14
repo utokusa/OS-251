@@ -64,6 +64,7 @@ target_compile_definitions(Os251
 juce_add_binary_data(Os251Binaries
 SOURCES
 ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
+${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
 )
 
 target_sources(Os251 PRIVATE

@@ -23,7 +23,8 @@ Os251AudioProcessor::Os251AudioProcessor()
       parameters (*this, nullptr),
       synthParams(),
       synthEngine (&synthParams),
-      tmpUiBuldlePath()
+      tmpUiBuldlePath(),
+      laf()
 {
     // ---
     // Parameter value conversion from [0, 1.0] float to juce::String.
@@ -424,6 +425,10 @@ bool Os251AudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
+    // Look and feel
+    juce::LookAndFeel::setDefaultLookAndFeel(&laf);
+
+    // Editor
     const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
     const juce::String jsFileName = "main.js";
     juce::File bundle = dir.createTempFile (jsFileName);

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "SynthEngine.h"
+#include "FancyLookAndFeel.h"
 #include <JuceHeader.h>
 
 //==============================================================================
@@ -61,6 +62,7 @@ private:
     onsen::SynthEngine synthEngine;
     juce::AudioPlayHead::CurrentPositionInfo positionInfo;
     juce::String tmpUiBuldlePath;
+    onsen::FancyLookAndFeel laf;
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;
