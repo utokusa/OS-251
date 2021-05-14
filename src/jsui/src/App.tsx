@@ -89,7 +89,7 @@ class App extends Component<{}, IState> {
               />
               <SliderModule
                 paramId="shape"
-                paramLabel="Osc shape"
+                paramLabel="OSC shape"
               />
               <SliderModule
                 paramId="lfoShape"
