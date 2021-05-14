@@ -426,7 +426,7 @@ bool Os251AudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
     // Look and feel
-    juce::LookAndFeel::setDefaultLookAndFeel(&laf);
+    juce::LookAndFeel::setDefaultLookAndFeel (&laf);
 
     // Editor
     const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
