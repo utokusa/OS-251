@@ -26,7 +26,7 @@ const styles = {
     flex: 1.0,
     flexDirection: 'column',
     justifyContent: 'space-around',
-    marginBottom: -16,
+    marginBottom: -14,
     paddingLeft: 12.0,
     paddingRight: 12.0,
     borderWidth: 4
