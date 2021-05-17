@@ -20,18 +20,17 @@ static constexpr int DEFAULT_SAMPLES_PER_BLOCK = 512;
 static constexpr flnum pi = juce::MathConstants<flnum>::pi;
 static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 //==============================================================================
-class DspUtil
+namespace DspUtil
 {
-public:
     // Map value [0.0, 1.0] to [-1.0, 1.0].
-    static flnum valMinusOneToOne (flnum valZeroToOne)
+    inline flnum valMinusOneToOne (flnum valZeroToOne)
     {
         return std::clamp<flnum> ((valZeroToOne - 0.5) * 2.0, -1.0, 1.0);
     }
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
-    static flnum paramValToDecibel (flnum paramVal, flnum dynamicRange)
+    inline flnum paramValToDecibel (flnum paramVal, flnum dynamicRange)
     {
         // e.g.
         // paramVal: 1.0 ---> gain: 0 [db] (max)
@@ -39,17 +38,17 @@ public:
         return dynamicRange * (paramVal - 1.0);
     }
 
-    static flnum decibelToParamVal (flnum decibelGain, flnum dynamicRange)
+    inline flnum decibelToParamVal (flnum decibelGain, flnum dynamicRange)
     {
         return decibelGain / dynamicRange + 1.0;
     }
 
-    static flnum decibelToLinear (flnum decibelGain)
+    inline flnum decibelToLinear (flnum decibelGain)
     {
         return std::pow (10.0, decibelGain / 20.0);
     }
 
-    static int mapFlnumToInt (flnum fval, flnum fmin, flnum fmax, int imin, int imax)
+    inline int mapFlnumToInt (flnum fval, flnum fmin, flnum fmax, int imin, int imax)
     {
         // fmin ---> mininum number of floating point number
         // imax ---> maximum number of integer
@@ -58,7 +57,7 @@ public:
         assert (imax > imin);
         return static_cast<int> ((fval - fmin) / (fmax - fmin) * (imax - imin) + 0.5) + imin;
     }
-};
+} // namespace DspUtil
 
 class SmoothFlnum
 {
