@@ -123,7 +123,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     onsen::EnvelopeParams* const envelopeParams = synthParams.envelope();
 
     // Attack
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("attack", "Attack", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     envelopeParams->setAttackPtr (parameters.getRawParameterValue ("attack"));
     parameters.addParameterListener ("attack", this);
 

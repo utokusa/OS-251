@@ -19,7 +19,7 @@ public:
     flnum getAttack() const
     {
         constexpr flnum minValSec = 0.004;
-        constexpr flnum maxValSec = 4.0;
+        constexpr flnum maxValSec = 2.0;
         return minValSec + attackTimeCurve (attackVal) * (maxValSec - minValSec);
     }
     void setAttackPtr (const std::atomic<flnum>* _attack)
@@ -30,7 +30,7 @@ public:
     flnum getDecay() const
     {
         constexpr flnum minValSec = 0.004;
-        constexpr flnum maxValSec = 1.0;
+        constexpr flnum maxValSec = 0.5;
         return minValSec + decayTimeCurve (decayVal) * (maxValSec - minValSec);
     }
     void setDecayPtr (const std::atomic<flnum>* _decay)
@@ -50,7 +50,7 @@ public:
     flnum getRelease() const
     {
         constexpr flnum minValSec = 0.004;
-        constexpr flnum maxValSec = 4.0;
+        constexpr flnum maxValSec = 2.0;
         return minValSec + releaseTimeCurve (releaseVal) * (maxValSec - minValSec);
     }
     void setReleasePtr (const std::atomic<flnum>* _release)
