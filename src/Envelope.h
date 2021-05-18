@@ -98,7 +98,7 @@ private:
     // Return value [0, 1]
     flnum decayCurve (flnum curTimeSec, flnum lengthSec)
     {
-        return (lengthSec - curTimeSec) / lengthSec;
+        return ZeroOneToZeroOne::square ((lengthSec - curTimeSec) / lengthSec);
     }
 
     // Return value [0, 1]

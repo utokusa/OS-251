@@ -107,4 +107,30 @@ private:
     }
 };
 
+namespace ZeroOneToZeroOne
+{
+    [[maybe_unused]] inline flnum linear (flnum x)
+    {
+        return x;
+    }
+
+    inline flnum square (flnum x)
+    {
+        x = std::clamp (x, 0.0f, 1.0f);
+        return x * x;
+    }
+
+    [[maybe_unused]] inline flnum invert (flnum x)
+    {
+        x = std::clamp (x, 0.0f, 1.0f);
+        return x * x;
+    }
+
+    [[maybe_unused]] inline flnum tanh (flnum x)
+    {
+        x = std::clamp (x, 0.0f, 1.0f);
+        return std::tanh ((x - 0.5) * 2 * pi) * 0.5 + 0.5;
+    }
+} // namespace ZeroOneToZeroOne
+
 } // namespace onsen
