@@ -72,7 +72,7 @@ public:
     }
     flnum getPitch() const
     {
-        return pitchVal;
+        return ZeroOneToZeroOne::square (pitchVal);
     }
     void setPitchPtr (const std::atomic<flnum>* _pitch)
     {
