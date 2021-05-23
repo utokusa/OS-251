@@ -137,8 +137,8 @@ private:
     flnum noteOffLevel;
     int sampleCnt;
 
-    static constexpr flnum attackSec = 0.001; // [ms]
-    static constexpr flnum releaseSec = 0.001; // [ms]
+    static constexpr flnum attackSec = 0.002; // [s]
+    static constexpr flnum releaseSec = 0.002; // [s]
 
     // Adjust parameter value like attack, decay or release according to the
     // sampling rate
