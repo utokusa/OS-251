@@ -114,7 +114,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
-    // Noise shape
+    // Oscillator shape
     parameters.createAndAddParameter (std::make_unique<Parameter> ("shape", "Shape", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setShapePtr (parameters.getRawParameterValue ("shape"));
     parameters.addParameterListener ("shape", this);
@@ -250,20 +250,24 @@ Os251AudioProcessor::Os251AudioProcessor()
     masterParams->setPortamentoPtr (parameters.getRawParameterValue (("portamento")));
     parameters.addParameterListener ("portamento", this);
 
+    // Unison ON
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("unisonOn", "Unison", "", nrange, 0.0, valueToOnOff, nullptr, true));
+    masterParams->setUnisonOnPtr (parameters.getRawParameterValue (("unisonOn")));
+    parameters.addParameterListener ("unisonOn", this);
+
+    // Number of voices
+    // TODO: We need a smarter way to set the initial value.
+    constexpr float defaultFlnumNumVoices = 0.3; // The number will be converted to 4. OS-251 has 4 voices as default.
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
+    masterParams->setNumVoicesPtr (parameters.getRawParameterValue (("numVoices")));
+    parameters.addParameterListener ("numVoices", this);
+
     // Master volume
     parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, onsen::DspUtil::decibelToParamVal (-3.0, onsen::MasterParams::dynamicRange), mastertGainValToDecibelFunction, nullptr, true));
     masterParams->setMasterVolumePtr (parameters.getRawParameterValue (("masterVolume")));
     parameters.addParameterListener ("masterVolume", this);
 
     // ---
-
-    // Parameters used with callback
-
-    // Number of voices
-    // TODO: We need a smarter way to set the initial value.
-    constexpr float defaultFlnumNumVoices = 0.3; // The number will be converted to 4. OS-251 has 4 voices as default.
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
-    parameters.addParameterListener ("numVoices", this);
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 }
@@ -494,10 +498,17 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     hpfParams->parameterChanged();
     master->parameterChanged();
 
-    if (parameterID == "numVoices")
+    if (parameterID == "unisonOn" || parameterID == "numVoices")
     {
-        const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices);
-        synthEngine.changeNumberOfVoices (num);
+        if (master->getUnisonOn())
+        {
+            synthEngine.changeNumberOfVoices (1);
+        }
+        else
+        {
+            synthEngine.changeNumberOfVoices (master->getNumVoices());
+        }
+        
     }
 }
 

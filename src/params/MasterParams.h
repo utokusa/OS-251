@@ -84,6 +84,24 @@ public:
         portamento = _portamento;
         portamentoVal = *portamento;
     }
+    bool getUnisonOn() const
+    {
+        return unisonOnVal > 0.5;
+    }
+    void setUnisonOnPtr (const std::atomic<flnum>* _unisonOn)
+    {
+        unisonOn = _unisonOn;
+        unisonOnVal = *unisonOn;
+    }
+    int getNumVoices() const
+    {
+        return DspUtil::mapFlnumToInt (numVoicesVal, 0.0, 1.0, 1, maxNumVoices);
+    }
+    void setNumVoicesPtr (const std::atomic<flnum>* _numVoices)
+    {
+        numVoices = _numVoices;
+        numVoicesVal = *numVoices;
+    }
     flnum getMasterVolume() const
     {
         auto decibelGain = DspUtil::paramValToDecibel (masterVolumeVal, dynamicRange);
@@ -102,6 +120,8 @@ public:
         masterSemitoneTuneVal = *masterSemitoneTune;
         masterFineTuneVal = *masterFineTune;
         portamentoVal = *portamento;
+        unisonOnVal = *unisonOn;
+        numVoicesVal = *numVoices;
         masterVolumeVal = *masterVolume;
     }
     flnum getPitchBendWidthInFreqRatio() const
@@ -125,14 +145,18 @@ private:
     const std::atomic<flnum>* masterSemitoneTune {};
     const std::atomic<flnum>* masterFineTune {};
     const std::atomic<flnum>* portamento {};
+    const std::atomic<flnum>* unisonOn {};
+    const std::atomic<flnum>* numVoices {};
     const std::atomic<flnum>* masterVolume {};
 
     flnum envForAmpOnVal = 1.0;
-    flnum pitchBendWidthVal = 12; // Unit is [semitone]
+    flnum pitchBendWidthVal = 1.0;
     flnum masterOctaveTuneVal = 0.5;
     flnum masterSemitoneTuneVal = 0.5;
     flnum masterFineTuneVal = 0.5;
     flnum portamentoVal = 0.0;
+    flnum unisonOnVal = 0.0;
+    flnum numVoicesVal = 0.0;
     flnum masterVolumeVal = 0.5;
 };
 } // namespace onsen

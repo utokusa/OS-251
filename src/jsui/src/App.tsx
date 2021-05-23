@@ -14,6 +14,7 @@ import { backgroundColor, backgroundColorDark, testColorSecondary, textColorDark
 interface IState {
   isEnvForAmpOn?: boolean
   isSyncOn?: boolean
+  isUnisonOn?: boolean
   isChorusOn?: boolean
 }
 
@@ -23,11 +24,13 @@ class App extends Component<{}, IState> {
 
     this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this)
     this._onSyncToggled = this._onSyncToggled.bind(this)
+    this._onUnisonToggled = this._onUnisonToggled.bind(this)
     this._onChorusToggled = this._onChorusToggled.bind(this)
 
     this.state = {
       isEnvForAmpOn: true,
       isSyncOn: false,
+      isUnisonOn: false,
       isChorusOn: false
     }
   }
@@ -41,6 +44,12 @@ class App extends Component<{}, IState> {
   _onSyncToggled (toggled: boolean): void {
     this.setState({
       isSyncOn: toggled
+    })
+  }
+
+  _onUnisonToggled (toggled: boolean): void {
+    this.setState({
+      isUnisonOn: toggled
     })
   }
 
@@ -154,7 +163,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>UNISON</Text></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>HPF</Text></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>CHORUS</Text></View>
             </View>
@@ -181,7 +190,12 @@ class App extends Component<{}, IState> {
                 paramId="lfoDelay"
                 paramLabel="LFO Delay"
               />
-              <DummyModule />
+              <ButtonModule
+                paramId="unisonOn"
+                paramLabel="Unison"
+                onToggled={this._onUnisonToggled}
+                isOn={this.state.isUnisonOn}
+              />
               <SliderModule
                 paramId="hpfFreq"
                 paramLabel="HPF Freq"

@@ -82,9 +82,26 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
         while (--numSamples >= 0)
         {
             envManager.switchTarget (p->getEnvForAmpOn());
-            flnum currentSample = osc.oscillatorVal (
-                                      currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount())
-                                  * level * envManager.getLevel();
+            flnum currentSample = 0.0f;
+            const flnum shapeModulationAmount = lfo->getLevel (idx) * lfo->getShapeAmount();
+            if (p->getUnisonOn())
+            {
+                const int n = p->getNumVoices();
+                for (int i = 0; i < n; i++)
+                {
+                    currentSample += osc.oscillatorVal (
+                        currentAngle + 2.0f * pi / 8.0f * static_cast<flnum>(i), shapeModulationAmount
+                    );
+                }
+                currentSample /= n;
+            }
+            else
+            {
+                currentSample += osc.oscillatorVal (currentAngle, shapeModulationAmount);
+            }
+            // Apply velocity level and envelope level
+            currentSample *= level * envManager.getLevel();
+
             currentSample = filter.process (currentSample, idx);
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
@@ -93,7 +110,16 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             flnum lfoPitchDepth = lfo->getPitchAmount();
             flnum lfoVal = lfo->getLevel (idx);
             smoothedAngleDelta.setSmoothness (p->getPortamento());
-            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
+
+            const flnum pitchFlutter = std::sin(currentPitchFlutterAngle) * 0.001f;
+            constexpr flnum flutterFreq = 0.5f; // [Hz]
+            currentPitchFlutterAngle += (2 * pi * flutterFreq / getSampleRate());
+            if (currentPitchFlutterAngle > pi * 2.0)
+            {
+                currentPitchFlutterAngle -= pi * 2.0;
+            }
+            
+            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal + pitchFlutter);
             if (currentAngle > pi * 2.0)
             {
                 currentAngle -= pi * 2.0;

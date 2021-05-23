@@ -50,6 +50,7 @@ private:
     MasterParams* const p;
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
+    flnum currentPitchFlutterAngle = 0.0;
     SmoothFlnum smoothedAngleDelta;
     flnum pitchBend = 1.0;
     Oscillator osc;
