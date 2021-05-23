@@ -70,6 +70,12 @@ public:
         return out0;
     }
 
+    void resetBuffer()
+    {
+        fb.out1 = 0.0;
+        fb.out2 = 0.0;
+    }
+
     void setCurrentPlaybackSampleRate (double _sampleRate)
     {
         sampleRate = static_cast<flnum> (_sampleRate);
