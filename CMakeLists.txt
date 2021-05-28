@@ -36,4 +36,5 @@ add_subdirectory(lib/JUCE)
 juce_add_module(lib/react-juce/react_juce)
 
 add_subdirectory(src)
+add_subdirectory(tests)
 add_subdirectory(benchmark)
