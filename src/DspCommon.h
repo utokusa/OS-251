@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include <algorithm>
 #include <cassert>
+#include <cmath>
 
 namespace onsen
 {
@@ -17,7 +18,7 @@ namespace onsen
 using flnum = float;
 static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
 static constexpr int DEFAULT_SAMPLES_PER_BLOCK = 512;
-static constexpr flnum pi = juce::MathConstants<flnum>::pi;
+static constexpr flnum pi = 3.141592653589793238L;
 static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 //==============================================================================
 namespace DspUtil

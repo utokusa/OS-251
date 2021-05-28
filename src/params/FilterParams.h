@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../DspCommon.h"
+#include <atomic>
 
 namespace onsen
 {
@@ -18,12 +19,12 @@ class FilterParams
 public:
     [[maybe_unused]] flnum getFrequency() const
     {
-        return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
+        return lowestFreqVal() * std::pow (freqBaseNumber(), frequencyVal);
     }
     flnum getControlledFrequency (flnum controlVal) const
     {
         flnum newFrequency = std::clamp<flnum> (frequencyVal + controlVal, 0.0, 1.0);
-        return lowestFreqVal() * pow (freqBaseNumber(), newFrequency);
+        return lowestFreqVal() * std::pow (freqBaseNumber(), newFrequency);
     }
     void setFrequencyPtr (const std::atomic<flnum>* _frequency)
     {

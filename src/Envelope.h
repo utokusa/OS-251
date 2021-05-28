@@ -10,7 +10,6 @@
 
 #include "DspCommon.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../DspCommon.h"
+#include <atomic>
 
 namespace onsen
 {
