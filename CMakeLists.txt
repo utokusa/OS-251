@@ -5,8 +5,10 @@ PROJECT(OS_251
         VERSION 0.1.3
         )
 
+
+
 # for clang-tidy(this enable to find system header files).
-if(CMAKE_EXPORT_COMPILE_COMMANDS)
+if(APPLE AND CMAKE_EXPORT_COMPILE_COMMANDS)
     set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
