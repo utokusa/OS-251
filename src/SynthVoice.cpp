@@ -55,7 +55,7 @@ void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
     if (allowTailOff)
     {
         // Change state to RELEASE
-        envManager.noteOFf();
+        envManager.noteOff();
         isNoteOverlapped = false;
     }
     else

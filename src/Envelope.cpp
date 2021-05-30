@@ -17,7 +17,7 @@ void Envelope::noteOn()
     state = State::ATTACK;
 }
 
-void Envelope::noteOFf()
+void Envelope::noteOff()
 {
     sampleCnt = 0;
     noteOffLevel = level;
@@ -63,6 +63,7 @@ void Envelope::update()
         {
             sampleCnt = 0;
             level = 0;
+            state = State::OFF;
         }
     }
     else
@@ -78,7 +79,7 @@ void Gate::noteOn()
     state = State::ATTACK;
 }
 
-void Gate::noteOFf()
+void Gate::noteOff()
 {
     sampleCnt = 0;
     noteOffLevel = level;

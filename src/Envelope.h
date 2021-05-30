@@ -27,7 +27,7 @@ public:
     };
     virtual ~IEnvelope() = default;
     virtual void noteOn() = 0;
-    virtual void noteOFf() = 0;
+    virtual void noteOff() = 0;
     virtual void update() = 0;
     virtual flnum getLevel() const = 0;
     virtual flnum isEnvOff() const = 0;
@@ -48,10 +48,10 @@ public:
           sampleCnt (0) {}
 
     void noteOn() override;
-    void noteOFf() override;
+    void noteOff() override;
     void update() override;
     flnum getLevel() const override { return level; }
-    flnum isEnvOff() const override { return state == State::RELEASE && level < 0.005; }
+    flnum isEnvOff() const override { return state == State::OFF; }
     void setCurrentPlaybackSampleRate (const double newRate) override { sampleRate = newRate; }
 
 private:
@@ -120,7 +120,7 @@ public:
           sampleCnt (0) {}
 
     void noteOn() override;
-    void noteOFf() override;
+    void noteOff() override;
     void update() override;
     flnum getLevel() const override { return level; }
     flnum isEnvOff() const override { return state == State::RELEASE && level < 0.005; }
@@ -191,10 +191,10 @@ public:
         env->noteOn();
         gate->noteOn();
     };
-    void noteOFf() override
+    void noteOff() override
     {
-        env->noteOFf();
-        gate->noteOFf();
+        env->noteOff();
+        gate->noteOff();
     };
     void update() override
     {

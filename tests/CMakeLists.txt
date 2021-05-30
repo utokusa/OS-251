@@ -16,10 +16,11 @@ target_compile_definitions(Os251_Tests
 
 target_sources(Os251_Tests PRIVATE
         Main.cpp
+        ../src/Envelope.cpp
         )
 
 target_link_libraries(Os251_Tests PUBLIC
-        juce::juce_core
+        # juce::juce_core
         )
 
 juce_generate_juce_header(Os251_Tests)
