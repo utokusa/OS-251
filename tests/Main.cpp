@@ -5,12 +5,18 @@
 
 namespace onsen
 {
+//==============================================================================
+// Sample test using JUCE
+
 // TEST (JuceLib, UseJuceString)
 // {
 //     juce::String hello ("hello");
 //     // Expect two strings to be equal.
 //     EXPECT_STREQ (hello.toRawUTF8(), "hello");
 // }
+
+//==============================================================================
+// Envelope
 
 void updateEnv (IEnvelope* env, int times)
 {
@@ -20,94 +26,84 @@ void updateEnv (IEnvelope* env, int times)
     }
 }
 
-TEST (Envelope, NoteOn)
+class EnvelopeTest : public ::testing::Test
 {
+protected:
+    void SetUp() override
+    {
+        // 1 sec per one env.update()
+        env.setCurrentPlaybackSampleRate(sampleRate);
+    }
+
+    // void TearDown() override {}
+
+    static constexpr double sampleRate = 1.0;
     EnvelopeParamsMock envParams;
-    Envelope env ((IEnvelopeParams*) (&envParams));
+    Envelope env { (IEnvelopeParams*) (&envParams) };
+};
+
+TEST_F (EnvelopeTest, NoteOn)
+{
     EXPECT_TRUE (env.isEnvOff());
     env.noteOn();
     EXPECT_FALSE (env.isEnvOff());
 }
 
-TEST (Envelope, NoteOff)
+TEST_F (EnvelopeTest, NoteOff)
 {
-    EnvelopeParamsMock envParams;
-    Envelope env ((IEnvelopeParams*) (&envParams));
-    // 1 sec per one env.update()
-    env.setCurrentPlaybackSampleRate (1.0);
-    EXPECT_TRUE (env.isEnvOff());
     env.noteOn();
-    EXPECT_FALSE (env.isEnvOff());
     env.noteOff();
-    // The release of mock env is 3 sec
     updateEnv (&env, 3);
     EXPECT_TRUE (env.isEnvOff());
 }
 
-TEST (Envelope, NoteOffInSAttack)
+TEST_F (EnvelopeTest, NoteOffInSAttack)
 {
-    EnvelopeParamsMock envParams;
-    Envelope env ((IEnvelopeParams*) (&envParams));
-    // 1 sec per one env.update()
-    env.setCurrentPlaybackSampleRate (1.0);
-    EXPECT_TRUE (env.isEnvOff());
-    EXPECT_FLOAT_EQ (env.getLevel(), 0.0);
     env.noteOn();
-    // The attack of mock env is 3 sec
+    // Attack
     updateEnv (&env, 1);
     EXPECT_LT (env.getLevel(), 1.0);
     env.noteOff();
-    // The release of mock env is 3 sec
+    // Release
     updateEnv (&env, 2);
     EXPECT_FALSE (env.isEnvOff());
     updateEnv (&env, 1);
     EXPECT_TRUE (env.isEnvOff());
 }
 
-TEST (Envelope, NoteOffInDecay)
+TEST_F (EnvelopeTest, NoteOffInDecay)
 {
-    EnvelopeParamsMock envParams;
-    Envelope env ((IEnvelopeParams*) (&envParams));
-    // 1 sec per one env.update()
-    env.setCurrentPlaybackSampleRate (1.0);
-    EXPECT_TRUE (env.isEnvOff());
     EXPECT_FLOAT_EQ (env.getLevel(), 0.0);
     env.noteOn();
-    // The attack of mock env is 3 sec
+    // Attack
     updateEnv (&env, 3);
     EXPECT_FLOAT_EQ (env.getLevel(), 1.0);
-    // The decay of mock env is 3 sec
+    // Decay
     updateEnv (&env, 1);
     EXPECT_LT (0.5, env.getLevel());
     env.noteOff();
-    // The release of mock env is 3 sec
+    // Release
     updateEnv (&env, 2);
     EXPECT_FALSE (env.isEnvOff());
     updateEnv (&env, 1);
     EXPECT_TRUE (env.isEnvOff());
 }
 
-TEST (Envelope, NoteOffInSustain)
+TEST_F (EnvelopeTest, NoteOffInSustain)
 {
-    EnvelopeParamsMock envParams;
-    Envelope env ((IEnvelopeParams*) (&envParams));
-    // 1 sec per one env.update()
-    env.setCurrentPlaybackSampleRate (1.0);
-    EXPECT_TRUE (env.isEnvOff());
     EXPECT_FLOAT_EQ (env.getLevel(), 0.0);
     env.noteOn();
-    // The attack of mock env is 3 sec
+    // Attack
     updateEnv (&env, 3);
     EXPECT_FLOAT_EQ (env.getLevel(), 1.0);
-    // The decay of mock env is 3 sec
+    // Decay
     updateEnv (&env, 3);
-    // The mock sustain's value is 0.5
     EXPECT_FLOAT_EQ (env.getLevel(), 0.5f);
-    // Sustain should keep its level
+    // Sustain
     updateEnv (&env, 100);
     EXPECT_FLOAT_EQ (env.getLevel(), 0.5f);
     env.noteOff();
-    // The release of mock env is 3 sec
+    // Release
     updateEnv (&env, 2);
     EXPECT_FALSE (env.isEnvOff());
     updateEnv (&env, 1);
