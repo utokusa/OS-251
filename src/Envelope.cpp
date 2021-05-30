@@ -32,7 +32,7 @@ void Envelope::update()
     if (state == State::ATTACK)
     {
         const flnum attackSec = p->getAttack();
-        level = attackCurve (toTimeSec (sampleCnt++), attackSec);
+        level = attackCurve (toTimeSec (++sampleCnt), attackSec);
         if (sampleCnt >= toSample (attackSec))
         {
             sampleCnt = 0;
@@ -43,7 +43,7 @@ void Envelope::update()
     {
         const flnum decaySec = p->getDecay();
         const flnum sustain = p->getSustain();
-        level = sustain + (MAX_LEVEL - sustain) * decayCurve (toTimeSec (sampleCnt++), decaySec);
+        level = sustain + (MAX_LEVEL - sustain) * decayCurve (toTimeSec (++sampleCnt), decaySec);
         if (sampleCnt >= toSample (decaySec))
         {
             sampleCnt = 0;
@@ -58,7 +58,7 @@ void Envelope::update()
     else if (state == State::RELEASE)
     {
         const flnum releaseSec = p->getRelease();
-        level = noteOffLevel * releaseCurve (toTimeSec (sampleCnt++), releaseSec);
+        level = noteOffLevel * releaseCurve (toTimeSec (++sampleCnt), releaseSec);
         if (sampleCnt >= toSample (releaseSec))
         {
             sampleCnt = 0;
@@ -93,7 +93,7 @@ void Gate::update()
 
     if (state == State::ATTACK)
     {
-        level = attackCurve (toTimeSec (sampleCnt++), attackSec);
+        level = attackCurve (toTimeSec (++sampleCnt), attackSec);
         if (sampleCnt >= toSample (attackSec))
         {
             sampleCnt = 0;
@@ -106,7 +106,7 @@ void Gate::update()
     }
     else if (state == State::RELEASE)
     {
-        level = noteOffLevel * releaseCurve (toTimeSec (sampleCnt++), releaseSec);
+        level = noteOffLevel * releaseCurve (toTimeSec (++sampleCnt), releaseSec);
         if (sampleCnt >= toSample (releaseSec))
         {
             sampleCnt = 0;

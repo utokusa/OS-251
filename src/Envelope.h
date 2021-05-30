@@ -39,8 +39,8 @@ class Envelope : public IEnvelope
 {
 public:
     Envelope() = delete;
-    Envelope (SynthParams* const synthParams)
-        : p (synthParams->envelope()),
+    Envelope (IEnvelopeParams* const envParams)
+        : p (envParams),
           sampleRate (DEFAULT_SAMPLE_RATE),
           state (State::OFF),
           level (0.0),
@@ -57,7 +57,7 @@ public:
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
 
-    const EnvelopeParams* const p;
+    const IEnvelopeParams* const p;
     flnum sampleRate;
 
     State state;

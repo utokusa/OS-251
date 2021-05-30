@@ -14,10 +14,20 @@
 namespace onsen
 {
 //==============================================================================
-class EnvelopeParams
+class IEnvelopeParams
 {
 public:
-    flnum getAttack() const
+    virtual flnum getAttack() const = 0;
+    virtual flnum getDecay() const = 0;
+    virtual flnum getSustain() const = 0;
+    virtual flnum getRelease() const = 0;
+};
+
+//==============================================================================
+class EnvelopeParams : public IEnvelopeParams
+{
+public:
+    flnum getAttack() const override
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 2.0;
@@ -28,7 +38,7 @@ public:
         attack = _attack;
         attackVal = *attack;
     }
-    flnum getDecay() const
+    flnum getDecay() const override
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 0.5;
@@ -39,7 +49,7 @@ public:
         decay = _decay;
         decayVal = *decay;
     }
-    flnum getSustain() const
+    flnum getSustain() const override
     {
         return sustainVal;
     }
@@ -48,7 +58,7 @@ public:
         sustain = _sustain;
         sustainVal = *sustain;
     }
-    flnum getRelease() const
+    flnum getRelease() const override
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 2.0;

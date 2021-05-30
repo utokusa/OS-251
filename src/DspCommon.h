@@ -18,6 +18,7 @@ namespace onsen
 using flnum = float;
 static constexpr flnum DEFAULT_SAMPLE_RATE = 44100.0;
 static constexpr int DEFAULT_SAMPLES_PER_BLOCK = 512;
+// TODO: cnage const to capital letters
 static constexpr flnum pi = 3.141592653589793238L;
 static constexpr flnum EPSILON = std::numeric_limits<flnum>::epsilon();
 //==============================================================================

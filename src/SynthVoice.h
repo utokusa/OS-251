@@ -28,7 +28,7 @@ public:
         : p (synthParams->master()),
           smoothedAngleDelta (0.0, 0.0),
           osc (synthParams),
-          env (synthParams),
+          env ((IEnvelopeParams*) (synthParams->envelope())),
           gate(),
           envManager (&env, &gate),
           lfo (_lfo),
