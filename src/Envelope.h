@@ -65,29 +65,6 @@ private:
     flnum noteOffLevel;
     int sampleCnt;
 
-    // Adjust parameter value like attack, decay or release according to the
-    // sampling rate
-    flnum adjust (const flnum val) const
-    {
-        // If no need to adjust
-        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
-        {
-            return val;
-        }
-        const flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
-        return val * amount;
-    }
-
-    int toSample (flnum timeSec)
-    {
-        return timeSec * sampleRate;
-    }
-
-    flnum toTimeSec (int sample)
-    {
-        return sample / sampleRate;
-    }
-
     // Return value [0, 1]
     flnum attackCurve (flnum curTimeSec, flnum lengthSec)
     {
@@ -138,29 +115,6 @@ private:
 
     static constexpr flnum attackSec = 0.002; // [s]
     static constexpr flnum releaseSec = 0.002; // [s]
-
-    // Adjust parameter value like attack, decay or release according to the
-    // sampling rate
-    flnum adjust (const flnum val) const
-    {
-        // If no need to adjust
-        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
-        {
-            return val;
-        }
-        const flnum amount = std::pow (val, DEFAULT_SAMPLE_RATE / sampleRate - 1);
-        return val * amount;
-    }
-
-    int toSample (flnum timeSec)
-    {
-        return timeSec * sampleRate;
-    }
-
-    flnum toTimeSec (int sample)
-    {
-        return sample / sampleRate;
-    }
 
     // Return value [0, 1]
     flnum attackCurve (flnum curTimeSec, flnum lengthSec)

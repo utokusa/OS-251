@@ -59,6 +59,16 @@ namespace DspUtil
         assert (imax > imin);
         return static_cast<int> ((fval - fmin) / (fmax - fmin) * (imax - imin) + 0.5) + imin;
     }
+
+    inline int timeSecToSample (flnum timeSec, double sampleRate)
+    {
+        return timeSec * sampleRate;
+    }
+
+    inline flnum sampleToTimeSec (int sample, double sampleRate)
+    {
+        return sample / sampleRate;
+    }
 } // namespace DspUtil
 
 class SmoothFlnum

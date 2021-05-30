@@ -32,8 +32,8 @@ void Envelope::update()
     if (state == State::ATTACK)
     {
         const flnum attackSec = p->getAttack();
-        level = attackCurve (toTimeSec (++sampleCnt), attackSec);
-        if (sampleCnt >= toSample (attackSec))
+        level = attackCurve (DspUtil::sampleToTimeSec (++sampleCnt, sampleRate), attackSec);
+        if (sampleCnt >= DspUtil::timeSecToSample (attackSec, sampleRate))
         {
             sampleCnt = 0;
             state = State::DECAY;
@@ -43,8 +43,10 @@ void Envelope::update()
     {
         const flnum decaySec = p->getDecay();
         const flnum sustain = p->getSustain();
-        level = sustain + (MAX_LEVEL - sustain) * decayCurve (toTimeSec (++sampleCnt), decaySec);
-        if (sampleCnt >= toSample (decaySec))
+        level = sustain
+                + (MAX_LEVEL - sustain)
+                      * decayCurve (DspUtil::sampleToTimeSec (++sampleCnt, sampleRate), decaySec);
+        if (sampleCnt >= DspUtil::timeSecToSample (decaySec, sampleRate))
         {
             sampleCnt = 0;
             level = sustain;
@@ -58,8 +60,9 @@ void Envelope::update()
     else if (state == State::RELEASE)
     {
         const flnum releaseSec = p->getRelease();
-        level = noteOffLevel * releaseCurve (toTimeSec (++sampleCnt), releaseSec);
-        if (sampleCnt >= toSample (releaseSec))
+        level = noteOffLevel
+                * releaseCurve (DspUtil::sampleToTimeSec (++sampleCnt, sampleRate), releaseSec);
+        if (sampleCnt >= DspUtil::timeSecToSample (releaseSec, sampleRate))
         {
             sampleCnt = 0;
             level = 0;
@@ -93,8 +96,8 @@ void Gate::update()
 
     if (state == State::ATTACK)
     {
-        level = attackCurve (toTimeSec (++sampleCnt), attackSec);
-        if (sampleCnt >= toSample (attackSec))
+        level = attackCurve (DspUtil::sampleToTimeSec (++sampleCnt, sampleRate), attackSec);
+        if (sampleCnt >= DspUtil::timeSecToSample (attackSec, sampleRate))
         {
             sampleCnt = 0;
             state = State::SUSTAIN;
@@ -106,8 +109,9 @@ void Gate::update()
     }
     else if (state == State::RELEASE)
     {
-        level = noteOffLevel * releaseCurve (toTimeSec (++sampleCnt), releaseSec);
-        if (sampleCnt >= toSample (releaseSec))
+        level = noteOffLevel
+                * releaseCurve (DspUtil::sampleToTimeSec (++sampleCnt, sampleRate), releaseSec);
+        if (sampleCnt >= DspUtil::timeSecToSample (releaseSec, sampleRate))
         {
             sampleCnt = 0;
             level = 0;
