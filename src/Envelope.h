@@ -123,7 +123,7 @@ public:
     void noteOff() override;
     void update() override;
     flnum getLevel() const override { return level; }
-    flnum isEnvOff() const override { return state == State::RELEASE && level < 0.005; }
+    flnum isEnvOff() const override { return state == State::OFF; }
     void setCurrentPlaybackSampleRate (const double newRate) override { sampleRate = newRate; }
 
 private:

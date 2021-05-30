@@ -111,6 +111,7 @@ void Gate::update()
         {
             sampleCnt = 0;
             level = 0;
+            state = State::OFF;
         }
     }
     else
