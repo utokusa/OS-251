@@ -80,10 +80,10 @@ public:
         filterParams->setFrequencyPtr (&frequency);
         filterParams->setResonancePtr (&resonance);
         filterParams->setFilterEnvelopePtr (&filterEnvelope);
-        
+
         // HPF parameters
         onsen::HpfParams* const hpfParams = synthParams.hpf();
-        hpfParams->setFrequencyPtr(&hpfFreq);
+        hpfParams->setFrequencyPtr (&hpfFreq);
 
         // Chorus parameters
         onsen::ChorusParams* const chorusParams = synthParams.chorus();
@@ -91,14 +91,14 @@ public:
 
         // Master parameters
         onsen::MasterParams* const masterParams = synthParams.master();
-        masterParams->setEnvForAmpOnPtr(&envForAmpOn);
-        masterParams->setPitchBendWidthPtr(&pitchBendWidth);
-        masterParams->setMasterOctaveTunePtr(&masterOctaveTune);
-        masterParams->setMasterSemitoneTunePtr(&masterSemitoneTune);
-        masterParams->setMasterFineTunePtr(&masterFineTune);
-        masterParams->setPortamentoPtr(&portamento);
-        masterParams->setMasterVolumePtr(&masterVolume);
-        
+        masterParams->setEnvForAmpOnPtr (&envForAmpOn);
+        masterParams->setPitchBendWidthPtr (&pitchBendWidth);
+        masterParams->setMasterOctaveTunePtr (&masterOctaveTune);
+        masterParams->setMasterSemitoneTunePtr (&masterSemitoneTune);
+        masterParams->setMasterFineTunePtr (&masterFineTune);
+        masterParams->setPortamentoPtr (&portamento);
+        masterParams->setMasterVolumePtr (&masterVolume);
+
         synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
 
         for (const auto& note : notes)

@@ -11,7 +11,7 @@ jobs:
           sudo apt install clang-format
       - name: Run clang-format
         run: |
-          find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' |
+          find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' |
             xargs clang-format -i --dry-run --Werror
       - name: Install Node.js
         uses: actions/setup-node@v2

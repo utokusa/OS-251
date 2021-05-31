@@ -14,16 +14,16 @@ display_usage() {
 
 # Tips: clang-format without this script
 # Linux + fix lint
-# $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i
+# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i
 
 # Linux + check lint
-# $ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
+# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
 
 # Mac + fix lint
-# $ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i
+# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i
 
 # Mac + check lint
-# $ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run 
+# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run 
 
 TARGET="all"
 MODE="check"
