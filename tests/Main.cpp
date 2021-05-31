@@ -179,4 +179,50 @@ TEST_F (GateTest, NoteOffInSustain)
     EXPECT_TRUE (gate.isEnvOff());
 }
 
+//==============================================================================
+// EnvManager
+
+class EnvManagerTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        envManager.setCurrentPlaybackSampleRate (sampleRate);
+    }
+
+    // void TearDown() override {}
+
+    // 1 sec per one env.update()
+    EnvelopeParamsMock envParams;
+    Envelope env { (IEnvelopeParams*) (&envParams) };
+    Gate gate;
+    EnvManager envManager { &env, &gate };
+
+    // NOTE: Following variables is available only for current implementation
+    // Requires 2 samples to finish gate's atack (When attack is 0.002 sec)
+    static constexpr double sampleRate = 1000.0;
+    static constexpr int requiredSampleFor2MiliSecGateAttack = 2;
+    static constexpr int requiredSampleFor2MiliSecGateRelease = 2;
+    static constexpr int marginSample = 1;
+};
+
+TEST_F (EnvManagerTest, SwitchEnvelope)
+{
+    EXPECT_TRUE (envManager.isEnvOff());
+    // Start note using env
+    envManager.noteOn();
+    EXPECT_FALSE (envManager.isEnvOff());
+    // Finish gate attack
+    updateEnv (&envManager, requiredSampleFor2MiliSecGateAttack + marginSample);
+    // env is still less than the max amplitude 1.0
+    EXPECT_LT (envManager.getLevel(), 1.0);
+    // Switch to gate
+    envManager.switchTarget (false);
+    EXPECT_FLOAT_EQ (envManager.getLevel(), 1.0f);
+    // Switch to env
+    envManager.switchTarget (true);
+    // env is still less than the max amplitude 1.0
+    EXPECT_LT (envManager.getLevel(), 1.0);
+}
+
 } // namespace onsen
