@@ -2,6 +2,12 @@
   "name": "ui",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "webpack -w --mode=development",
+    "build": "webpack --mode=production",
+    "lint": "eslint src/",
+    "lint:fix": "eslint --fix src/"
+  },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.11.2",
     "@types/node": "^14.14.37",
@@ -29,9 +35,5 @@
     "url-loader": "4.1.0",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2"
-  },
-  "scripts": {
-    "start": "webpack -w --mode=development",
-    "build": "webpack --mode=production"
   }
 }

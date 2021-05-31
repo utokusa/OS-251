@@ -5,41 +5,9 @@ This plugin is currently under development.
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
-## Lint for C++
-
-### Mac
-
-```bash
-# Fix C++ code formatting
-$ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i
-
-# Check C++ code formatting (dry run)
-$ find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
-```
-
-### Linux
-
-```bash
-# Fix C++ code formatting
-$ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i
-
-# Check C++ code formatting (dry run)
-$ find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
-```
-
-## Lint for Typescript
-
-```bash
-$ cd src/jsui/
-
-# Fix Typescript code formatting
-$ npx eslint --fix src/
-
-# Check Typescript code formatting (dry run)
-$ npx eslint src/
-```
-
-
+## Lint
+Lint checking for both C++ and Node.js is available.
+See details by running `./lint.sh -h`.
 
 ## TODO
 
