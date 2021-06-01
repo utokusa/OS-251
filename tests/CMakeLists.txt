@@ -1,5 +1,3 @@
-enable_testing()
-
 juce_add_console_app(Os251_Tests)
 
 target_compile_features(Os251_Tests PUBLIC cxx_std_17)
