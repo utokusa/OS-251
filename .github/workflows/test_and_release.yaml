@@ -191,7 +191,7 @@ jobs:
     - if: ${{ runner.os=='Windows'}}
       name: Run Tests (Windows)
       run: |
-        & .\build\tests\${Env:PROJECT_NAME}_Tests_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}Tests.exe
+        & .\build\tests\${Env:PROJECT_NAME}_Tests_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}_Tests.exe
     - if: ${{ runner.os!='Windows'}}
       name: Run Tests (Unix)
       run: |
