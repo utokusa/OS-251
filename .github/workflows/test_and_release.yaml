@@ -189,12 +189,20 @@ jobs:
         endif()
         execute_process(COMMAND ccache -s)
     - if: ${{ runner.os=='Windows'}}
-      name: Run Test (Windows)
+      name: Run Tests (Windows)
+      run: |
+        & .\build\tests\${Env:PROJECT_NAME}_Tests_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}Tests.exe
+    - if: ${{ runner.os!='Windows'}}
+      name: Run Tests (Unix)
+      run: |
+        ./build/tests/${PROJECT_NAME}_Tests_artefacts/${BUILD_TYPE}/${PROJECT_NAME}_Tests
+    - if: ${{ runner.os=='Windows'}}
+      name: Run Benchmark (Windows)
       # Use benchmark as test for now
       run: |
         & .\build\benchmark\${Env:PROJECT_NAME}_Benchmark_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}_Benchmark.exe
     - if: ${{ runner.os!='Windows'}}
-      name: Run Test (Unix)
+      name: Run Benchmark (Unix)
       # Use benchmark as test for now
       run: |
         ./build/benchmark/${PROJECT_NAME}_Benchmark_artefacts/${BUILD_TYPE}/${PROJECT_NAME}_Benchmark
