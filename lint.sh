@@ -76,9 +76,9 @@ if [ "$TARGET" == "all" ] || [ "$TARGET" == "node" ]; then
 fi
 
 if [ "$OS" == "MacOSX" ]; then
-    CPP_FILES=`find -E . -regex '^\./src/.*\.(cpp|h)$' -not -path './src/jsui/*'`
+    CPP_FILES=`find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*'`
 elif [ "$OS" == "Linux" ] || [ "$OS" == "Windows" ]; then
-    CPP_FILES=`find . -regex '^\./src/.*\.\(cpp\|h\)$' -not -path './src/jsui/*'`
+    CPP_FILES=`find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*'`
 else
     echo "Unknow OS"
     exit 1

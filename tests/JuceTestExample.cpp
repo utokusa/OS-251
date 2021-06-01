@@ -8,8 +8,8 @@
   ==============================================================================
 */
 
-#include <gtest/gtest.h>
 #include <JuceHeader.h>
+#include <gtest/gtest.h>
 
 namespace onsen
 {
