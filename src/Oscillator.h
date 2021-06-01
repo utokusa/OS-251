@@ -10,7 +10,6 @@
 
 #include "DspCommon.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 #include <random>
 
 namespace onsen
@@ -22,8 +21,8 @@ class Oscillator
 
 public:
     Oscillator() = delete;
-    Oscillator (SynthParams* const synthParams)
-        : p (synthParams->oscillator()),
+    Oscillator (IOscillatorParams* const oscillatorParams)
+        : p (oscillatorParams),
           randEngine (seedGen()),
           randDist (0.0, 1.0)
     {
@@ -31,23 +30,23 @@ public:
 
     // Return oscillator voltage value.
     // Angle is in radian.
-    flnum oscillatorVal (flnum angle, flnum shapeModulationAmount)
+    flnum oscillatorVal (flnum angleRad, flnum shapeModulationAmount)
     {
-        const flnum firstAngle = angle;
-        const flnum secondAngle = shapePhase (angle * 2, shapeModulationAmount);
+        const flnum firstAngleRad = angleRad;
+        const flnum secondAngleRad = shapePhase (angleRad * 2, shapeModulationAmount);
 
         flnum currentSample = 0.0;
-        currentSample += sinWave (secondAngle) * p->getSinGain();
-        currentSample += squareWave (secondAngle) * p->getSquareGain();
-        currentSample += sawWave (secondAngle) * p->getSawGain();
-        currentSample += squareWave (firstAngle) * p->getSubSquareGain();
+        currentSample += sinWave (secondAngleRad) * p->getSinGain();
+        currentSample += squareWave (secondAngleRad) * p->getSquareGain();
+        currentSample += sawWave (secondAngleRad) * p->getSawGain();
+        currentSample += squareWave (firstAngleRad) * p->getSubSquareGain();
         currentSample += noiseWave() * p->getNoiseGain();
 
         return currentSample;
     }
 
 private:
-    OscillatorParams* const p;
+    IOscillatorParams* const p;
     std::random_device seedGen;
     std::default_random_engine randEngine;
     std::uniform_real_distribution<> randDist;

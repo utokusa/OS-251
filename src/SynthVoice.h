@@ -27,7 +27,7 @@ public:
     FancySynthVoice (SynthParams* const synthParams, Lfo* const _lfo)
         : p (synthParams->master()),
           smoothedAngleDelta (0.0, 0.0),
-          osc (synthParams),
+          osc (synthParams->oscillator()),
           env ((IEnvelopeParams*) (synthParams->envelope())),
           gate(),
           envManager (&env, &gate),

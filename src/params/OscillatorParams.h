@@ -14,14 +14,26 @@
 namespace onsen
 {
 //==============================================================================
-class OscillatorParams
+class IOscillatorParams
+{
+public:
+    virtual flnum getSinGain() const = 0;
+    virtual flnum getSquareGain() const = 0;
+    virtual flnum getSawGain() const = 0;
+    virtual flnum getSubSquareGain() const = 0;
+    virtual flnum getNoiseGain() const = 0;
+    virtual flnum getShape() = 0;
+};
+
+//==============================================================================
+class OscillatorParams : public IOscillatorParams
 {
 public:
     // Dynamic range in [db]
     static constexpr flnum dynamicRange = 48.0;
 
     //==============================================================================
-    flnum getSinGain() const
+    flnum getSinGain() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (sinGainVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);
@@ -31,7 +43,7 @@ public:
         sinGain = _sinGain;
         sinGainVal = *sinGain;
     }
-    flnum getSquareGain() const
+    flnum getSquareGain() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (squareGainVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);
@@ -41,7 +53,7 @@ public:
         squareGain = _squareGain;
         squareGainVal = *squareGain;
     }
-    flnum getSawGain() const
+    flnum getSawGain() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (sawGainVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);
@@ -51,7 +63,7 @@ public:
         sawGain = _sawGain;
         sawGainVal = *sawGain;
     }
-    flnum getSubSquareGain() const
+    flnum getSubSquareGain() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (subSquareGainVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);
@@ -61,7 +73,7 @@ public:
         subSquareGain = _subSquareGain;
         subSquareGainVal = *subSquareGain;
     }
-    flnum getNoiseGain() const
+    flnum getNoiseGain() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (noiseGainVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);
@@ -71,7 +83,7 @@ public:
         noiseGain = _noiseGain;
         noiseGainVal = *noiseGain;
     }
-    flnum getShape()
+    flnum getShape() override
     {
         return shapeVal.get();
     }
