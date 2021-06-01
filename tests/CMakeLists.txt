@@ -15,11 +15,15 @@ target_compile_definitions(Os251_Tests
         )
 
 target_sources(Os251_Tests PRIVATE
-        Main.cpp
+        EnvelopeTest.cpp
+        OscillatorTest.cpp
         ../src/Envelope.cpp
+        # Uncomment below if you want to run JuceTestExample.cpp
+        # JuceTestExample.cpp
         )
 
 target_link_libraries(Os251_Tests PUBLIC
+        # Uncomment below if you want to run JuceTestExample.cpp
         # juce::juce_core
         )
 
