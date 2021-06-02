@@ -21,8 +21,8 @@ class Lfo
 
 public:
     Lfo() = delete;
-    Lfo (SynthParams* const synthParams, const CurrentPositionInfo& _positionInfo)
-        : p (synthParams->lfo()),
+    Lfo (ILfoParams* const lfoParams, const CurrentPositionInfo& _positionInfo)
+        : p (lfoParams),
           positionInfo (_positionInfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
           numNoteOn (0),
@@ -191,7 +191,7 @@ public:
 private:
     static constexpr flnum MAX_LEVEL = 1.0;
 
-    const LfoParams* const p;
+    const ILfoParams* const p;
     const CurrentPositionInfo& positionInfo;
 
     flnum sampleRate;

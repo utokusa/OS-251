@@ -14,10 +14,17 @@
 namespace onsen
 {
 //==============================================================================
-class HpfParams
+class IHpfParams
 {
 public:
-    flnum getFrequency() const
+    virtual flnum getFrequency() const = 0;
+};
+
+//==============================================================================
+class HpfParams : public IHpfParams
+{
+public:
+    flnum getFrequency() const override
     {
         return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
     }

@@ -14,14 +14,23 @@
 namespace onsen
 {
 //==============================================================================
-class FilterParams
+class IFilterParams
+{
+public:
+    virtual flnum getControlledFrequency (flnum controlVal) const = 0;
+    virtual flnum getResonance() const = 0;
+    virtual flnum getFilterEnvelope() const = 0;
+};
+
+//==============================================================================
+class FilterParams : public IFilterParams
 {
 public:
     [[maybe_unused]] flnum getFrequency() const
     {
         return lowestFreqVal() * std::pow (freqBaseNumber(), frequencyVal);
     }
-    flnum getControlledFrequency (flnum controlVal) const
+    flnum getControlledFrequency (flnum controlVal) const override
     {
         flnum newFrequency = std::clamp<flnum> (frequencyVal + controlVal, 0.0, 1.0);
         return lowestFreqVal() * std::pow (freqBaseNumber(), newFrequency);
@@ -31,7 +40,7 @@ public:
         frequency = _frequency;
         frequencyVal = *frequency;
     }
-    flnum getResonance() const
+    flnum getResonance() const override
     {
         return lowestResVal() * std::pow (resBaseNumber(), resonanceVal);
     }
@@ -40,7 +49,7 @@ public:
         resonance = _resonance;
         resonanceVal = *resonance;
     }
-    flnum getFilterEnvelope() const
+    flnum getFilterEnvelope() const override
     {
         return DspUtil::valMinusOneToOne (filterEnvelopeVal);
     }

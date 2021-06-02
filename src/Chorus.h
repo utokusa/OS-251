@@ -9,7 +9,8 @@
 #pragma once
 
 #include "DspCommon.h"
-#include <JuceHeader.h>
+#include "IAudioBuffer.h"
+#include <vector>
 
 namespace onsen
 {
@@ -63,7 +64,7 @@ public:
         prepare();
     };
 
-    void render (juce::AudioBuffer<flnum>& outputAudio, int startSample, int numSamples);
+    void render (IAudioBuffer* outputAudio, int startSample, int numSamples);
     void setCurrentPlaybackSampleRate (double _sampleRate);
 
 private:

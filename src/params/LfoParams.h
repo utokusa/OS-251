@@ -14,11 +14,25 @@
 namespace onsen
 {
 //==============================================================================
-class LfoParams
+class ILfoParams
+{
+public:
+    virtual flnum getRate() const = 0;
+    virtual flnum getRateSync() const = 0;
+    virtual flnum getPhase() const = 0;
+    virtual flnum getDelay() const = 0;
+    virtual bool getSyncOn() const = 0;
+    virtual flnum getPitch() const = 0;
+    virtual flnum getFilterFreq() const = 0;
+    virtual flnum getShape() const = 0;
+};
+
+//==============================================================================
+class LfoParams : public ILfoParams
 {
 public:
     // Returns LFO rate in [Hz].
-    flnum getRate() const
+    flnum getRate() const override
     {
         return lowestRateVal() * pow (rateBaseNumber(), rateVal);
     }
@@ -28,7 +42,7 @@ public:
         rateVal = *rate;
     }
     // Returns syncd LFO rate in [quarter note].
-    flnum getRateSync() const
+    flnum getRateSync() const override
     {
         // The range of the return value is [1/48, 96/48]
         return static_cast<flnum> (
@@ -40,7 +54,7 @@ public:
         rateSync = _rateSync;
         rateSyncVal = *rateSync;
     }
-    flnum getPhase() const
+    flnum getPhase() const override
     {
         constexpr flnum minVal = 0.0;
         constexpr flnum maxVal = 2 * pi;
@@ -51,7 +65,7 @@ public:
         phase = _phase;
         phaseVal = *phase;
     }
-    flnum getDelay() const
+    flnum getDelay() const override
     {
         constexpr flnum minVal = 0.995;
         constexpr flnum maxVal = 0.99999;
@@ -62,7 +76,7 @@ public:
         delay = _rate;
         delayVal = *delay;
     }
-    bool getSyncOn() const
+    bool getSyncOn() const override
     {
         return syncOnVal > 0.5;
     }
@@ -71,7 +85,7 @@ public:
         syncOn = _syncOn;
         syncOnVal = *syncOn;
     }
-    flnum getPitch() const
+    flnum getPitch() const override
     {
         return ZeroOneToZeroOne::square (pitchVal);
     }
@@ -80,7 +94,7 @@ public:
         pitch = _pitch;
         pitchVal = *pitch;
     }
-    flnum getFilterFreq() const
+    flnum getFilterFreq() const override
     {
         return filterFreqVal;
     }
@@ -89,7 +103,7 @@ public:
         filterFreq = _filterFreq;
         filterFreqVal = *filterFreq;
     }
-    flnum getShape() const
+    flnum getShape() const override
     {
         return shapeVal;
     }

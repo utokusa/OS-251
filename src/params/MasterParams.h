@@ -14,7 +14,19 @@
 namespace onsen
 {
 //==============================================================================
-class MasterParams
+class IMasterParams
+{
+public:
+    virtual bool getEnvForAmpOn() const = 0;
+    virtual flnum getPitchBendWidth() const = 0;
+    virtual flnum getMasterOctaveTune() const = 0;
+    virtual flnum getMasterSemitoneTune() const = 0;
+    virtual flnum getMasterFineTune() const = 0;
+    virtual flnum getPortamento() const = 0;
+    virtual flnum getMasterVolume() const = 0;
+};
+//==============================================================================
+class MasterParams : public IMasterParams
 {
 public:
     static constexpr int maxPitchBendWidth = 24; // unit is [semitone] or [st]
@@ -24,7 +36,7 @@ public:
     static constexpr int maxNumVoices = 10;
 
     //==============================================================================
-    bool getEnvForAmpOn() const
+    bool getEnvForAmpOn() const override
     {
         return envForAmpOnVal;
     }
@@ -33,7 +45,7 @@ public:
         envForAmpOn = _envForAmpOn;
         envForAmpOnVal = *_envForAmpOn;
     }
-    flnum getPitchBendWidth() const
+    flnum getPitchBendWidth() const override
     {
         return DspUtil::mapFlnumToInt (pitchBendWidthVal, 0.0, 1.0, 0, maxPitchBendWidth);
     }
@@ -42,7 +54,7 @@ public:
         pitchBendWidth = _piatchBendWidth;
         pitchBendWidthVal = *pitchBendWidth;
     }
-    flnum getMasterOctaveTune() const
+    flnum getMasterOctaveTune() const override
     {
         return DspUtil::mapFlnumToInt (masterOctaveTuneVal, 0.0, 1.0, -maxOctaveTuneVal, maxOctaveTuneVal);
     }
@@ -51,7 +63,7 @@ public:
         masterOctaveTune = _masterOctaveTune;
         masterOctaveTuneVal = *masterOctaveTune;
     }
-    flnum getMasterSemitoneTune() const
+    flnum getMasterSemitoneTune() const override
     {
         return DspUtil::mapFlnumToInt (masterSemitoneTuneVal, 0.0, 1.0, -maxSemitoneTuneVal, maxSemitoneTuneVal);
     }
@@ -60,7 +72,7 @@ public:
         masterSemitoneTune = _masterSemitoneTune;
         masterSemitoneTuneVal = *masterSemitoneTune;
     }
-    flnum getMasterFineTune() const
+    flnum getMasterFineTune() const override
     {
         return DspUtil::valMinusOneToOne (masterFineTuneVal);
     }
@@ -69,7 +81,7 @@ public:
         masterFineTune = _masterFineTune;
         masterFineTuneVal = *masterFineTune;
     }
-    flnum getPortamento() const
+    flnum getPortamento() const override
     {
         // Whwn knob value is 0, portamento is OFF
         if (portamentoVal == 0.0)
@@ -85,7 +97,7 @@ public:
         portamento = _portamento;
         portamentoVal = *portamento;
     }
-    flnum getMasterVolume() const
+    flnum getMasterVolume() const override
     {
         auto decibelGain = DspUtil::paramValToDecibel (masterVolumeVal, dynamicRange);
         return DspUtil::decibelToLinear (decibelGain);

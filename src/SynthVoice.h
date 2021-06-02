@@ -32,7 +32,7 @@ public:
           gate(),
           envManager (&env, &gate),
           lfo (_lfo),
-          filter (synthParams, &env, lfo),
+          filter (synthParams->filter(), &env, lfo),
           isNoteOn (false),
           isNoteOverlapped (false)
     {

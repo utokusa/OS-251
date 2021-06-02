@@ -9,8 +9,8 @@
 #pragma once
 
 #include "DspCommon.h"
+#include "IAudioBuffer.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -18,24 +18,24 @@ namespace onsen
 class MasterVolume
 {
 public:
-    MasterVolume (SynthParams* const synthParams)
-        : p (synthParams->master()) {}
-    void render (juce::AudioBuffer<flnum>& outputAudio, int startSample, int numSamples)
+    MasterVolume (IMasterParams* const masterParams)
+        : p (masterParams) {}
+    void render (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
         int idx = startSample;
         while (--numSamples >= 0)
         {
             const flnum gain = p->getMasterVolume();
-            for (auto i = outputAudio.getNumChannels(); --i >= 0;)
+            for (auto i = outputAudio->getNumChannels(); --i >= 0;)
             {
-                flnum inputVal = outputAudio.getSample (i, idx);
-                outputAudio.setSample (i, idx, inputVal * gain);
+                flnum inputVal = outputAudio->getSample (i, idx);
+                outputAudio->setSample (i, idx, inputVal * gain);
             }
             idx++;
         }
     }
 
 private:
-    const MasterParams* const p;
+    const IMasterParams* const p;
 };
 } // namespace onsen

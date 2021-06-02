@@ -29,9 +29,9 @@ public:
     FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
         : params (synthParams),
           lfo (_lfo),
-          hpf (params, 2),
+          hpf (params->hpf(), 2),
           chorus(),
-          masterVolume (synthParams)
+          masterVolume (synthParams->master())
     {
     }
 
@@ -69,7 +69,7 @@ public:
     SynthEngine (SynthParams* const _synthParams)
         : synthParams (_synthParams),
           positionInfo(),
-          lfo (synthParams, positionInfo),
+          lfo (synthParams->lfo(), positionInfo),
           synth (synthParams, &lfo)
     {
         for (auto i = 0; i < 4; ++i)

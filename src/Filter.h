@@ -12,7 +12,6 @@
 #include "Envelope.h"
 #include "Lfo.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -32,8 +31,8 @@ class Filter
 
 public:
     Filter() = delete;
-    Filter (SynthParams* const synthParams, Envelope* const _env, Lfo* const _lfo)
-        : p (synthParams->filter()),
+    Filter (IFilterParams* const filterParams, Envelope* const _env, Lfo* const _lfo)
+        : p (filterParams),
           env (_env),
           lfo (_lfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
@@ -82,7 +81,7 @@ public:
     }
 
 private:
-    const FilterParams* const p;
+    const IFilterParams* const p;
     IEnvelope* const env;
     Lfo* const lfo;
     flnum sampleRate;

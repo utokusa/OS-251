@@ -7,6 +7,7 @@
 */
 
 #include "SynthEngine.h"
+#include "JuceAudioBuffer.h"
 
 namespace onsen
 {
@@ -52,13 +53,15 @@ void FancySynth::renderVoices (juce::AudioBuffer<flnum>& outputAudio,
                                int startSample,
                                int numSamples)
 {
+    JuceAudioBuffer outputAudioBuffer (&outputAudio);
+
     lfo->renderLfo (startSample, numSamples);
     lfo->renderLfoSync (startSample, numSamples);
     juce::Synthesiser::renderVoices (outputAudio, startSample, numSamples);
-    hpf.render (outputAudio, startSample, numSamples);
+    hpf.render (&outputAudioBuffer, startSample, numSamples);
     if (params->chorus()->getChorusOn())
-        chorus.render (outputAudio, startSample, numSamples);
-    masterVolume.render (outputAudio, startSample, numSamples);
+        chorus.render (&outputAudioBuffer, startSample, numSamples);
+    masterVolume.render (&outputAudioBuffer, startSample, numSamples);
 }
 
 } // namespace onsen

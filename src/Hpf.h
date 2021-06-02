@@ -10,9 +10,9 @@
 
 #include "DspCommon.h"
 #include "Envelope.h"
+#include "IAudioBuffer.h"
 #include "Lfo.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -32,15 +32,15 @@ class Hpf
 
 public:
     Hpf() = delete;
-    Hpf (SynthParams* const synthParams, int _numChannels)
-        : p (synthParams->hpf()),
+    Hpf (IHpfParams* const hpfParams, int _numChannels)
+        : p (hpfParams),
           sampleRate (DEFAULT_SAMPLE_RATE),
           numChannels (_numChannels),
           filterBuffers (numChannels)
     {
     }
 
-    void render (juce::AudioBuffer<flnum>& outputAudio, int startSample, int numSamples)
+    void render (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
@@ -56,13 +56,13 @@ public:
         flnum b1 = -1 - cosw0;
         flnum b2 = (1 + cosw0) / 2.0;
 
-        // Calculate
-        int numInputChannels = outputAudio.getNumChannels();
-        int bufferSize = outputAudio.getNumSamples();
+        // Calculate output
+        int numInputChannels = outputAudio->getNumChannels();
+        int bufferSize = outputAudio->getNumSamples();
         for (int channel = 0; channel < std::min (numChannels, numInputChannels); channel++)
         {
             FilterBuffer& fb = filterBuffers[channel];
-            float* bufferPtr = outputAudio.getWritePointer (channel);
+            flnum* bufferPtr = outputAudio->getWritePointer (channel);
             for (int i = startSample; i < bufferSize && i < startSample + numSamples; i++)
             {
                 flnum out0 = b0 / a0 * bufferPtr[i] + b1 / a0 * fb.in1 + b2 / a0 * fb.in2
@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    const HpfParams* const p;
+    const IHpfParams* const p;
     flnum sampleRate;
     int numChannels;
     // The length of this vector equals to max number of the channels;
