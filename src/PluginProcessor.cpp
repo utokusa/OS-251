@@ -441,7 +441,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
     }
 
 #if JUCE_DEBUG
-    juce::File sourceDir = File (OS251_SOURCE_DIR);
+    juce::File sourceDir = juce::File (OS251_SOURCE_DIR);
     bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
 #endif
 

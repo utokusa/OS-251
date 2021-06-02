@@ -22,16 +22,16 @@ public:
 
     ~FancyLookAndFeel() {}
 
-    Typeface::Ptr getTypefaceForFont (const Font& f) override
+    juce::Typeface::Ptr getTypefaceForFont (const juce::Font& f) override
     {
         return getCustomFont().getTypeface();
     }
 
-    static const Font getCustomFont()
+    static const juce::Font getCustomFont()
     {
         // Recursive-Regular.ttf
-        static auto typeface = Typeface::createSystemTypefaceFor (BinaryData::RecursiveRegular_ttf, BinaryData::RecursiveRegular_ttfSize);
-        return Font (typeface);
+        static auto typeface = juce::Typeface::createSystemTypefaceFor (BinaryData::RecursiveRegular_ttf, BinaryData::RecursiveRegular_ttfSize);
+        return juce::Font (typeface);
     }
 
 private:

@@ -24,6 +24,7 @@ target_compile_definitions(Os251_Benchmark
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         # JUCE_DISPLAY_SPLASH_SCREEN=0 #if your plugin is distributed with GPL license or paid
+        DONT_SET_USING_JUCE_NAMESPACE=1
         )
 
 #juce_add_binary_data(Os251nBinaries
