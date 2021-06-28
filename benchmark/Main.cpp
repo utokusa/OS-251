@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
+#include "../src/PositionInfoMock.h"
 #include "../src/SynthEngine.h"
 
 //==============================================================================
@@ -45,7 +46,7 @@ constexpr int VEL_OFF = 0x00;
 class SynthEngineFixture : public benchmark::Fixture
 {
 public:
-    SynthEngineFixture() : synthParams(), synthEngine (&synthParams) {}
+    SynthEngineFixture() : synthParams(), positionInfo(), synthEngine (&synthParams, &positionInfo) {}
     void SetUp (::benchmark::State& state) override
     {
         // Oscillator parameters
@@ -120,6 +121,7 @@ public:
 private:
     // Private member variables
     onsen::SynthParams synthParams;
+    onsen::PositionInfoMock positionInfo;
     onsen::SynthEngine synthEngine;
 
     std::atomic<flnum> sinGain = { 0.5f };

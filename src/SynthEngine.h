@@ -11,6 +11,7 @@
 #include "Chorus.h"
 #include "DspCommon.h"
 #include "Hpf.h"
+#include "IPositionInfo.h"
 #include "Lfo.h"
 #include "MasterVolume.h"
 #include "SynthParams.h"
@@ -62,13 +63,11 @@ private:
 //==============================================================================
 class SynthEngine
 {
-    using CurrentPositionInfo = juce::AudioPlayHead::CurrentPositionInfo;
-
 public:
     SynthEngine() = delete;
-    SynthEngine (SynthParams* const _synthParams)
+    SynthEngine (SynthParams* const _synthParams, IPositionInfo* const _positionInfo)
         : synthParams (_synthParams),
-          positionInfo(),
+          positionInfo (_positionInfo),
           lfo (synthParams->lfo(), positionInfo),
           synth (synthParams, &lfo)
     {
@@ -105,14 +104,9 @@ public:
         assert (num == synth.getNumVoices());
     }
 
-    void setPositionInfo (CurrentPositionInfo _positionInfo)
-    {
-        positionInfo = _positionInfo;
-    }
-
 private:
     SynthParams* const synthParams;
-    CurrentPositionInfo positionInfo;
+    IPositionInfo* positionInfo;
     Lfo lfo;
     FancySynth synth;
     juce::MidiMessageCollector midiCollector;

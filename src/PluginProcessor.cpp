@@ -22,7 +22,9 @@ Os251AudioProcessor::Os251AudioProcessor()
 #endif
       parameters (*this, nullptr),
       synthParams(),
-      synthEngine (&synthParams),
+      positionInfo(),
+      jucePositionInfo (&positionInfo),
+      synthEngine (&synthParams, &jucePositionInfo),
       tmpUiBuldlePath(),
       laf()
 {
@@ -382,8 +384,8 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     auto playHead = getPlayHead();
     if (playHead)
     {
+        // Update positionInfo which jucePositionInfo has its pointer
         playHead->getCurrentPosition (positionInfo);
-        synthEngine.setPositionInfo (positionInfo);
     }
 
     // Audio

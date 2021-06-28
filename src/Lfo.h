@@ -9,6 +9,7 @@
 #pragma once
 
 #include "DspCommon.h"
+#include "IPositionInfo.h"
 #include "SynthParams.h"
 #include <JuceHeader.h>
 
@@ -17,11 +18,9 @@ namespace onsen
 //==============================================================================
 class Lfo
 {
-    using CurrentPositionInfo = juce::AudioPlayHead::CurrentPositionInfo;
-
 public:
     Lfo() = delete;
-    Lfo (ILfoParams* const lfoParams, const CurrentPositionInfo& _positionInfo)
+    Lfo (ILfoParams* const lfoParams, const IPositionInfo* _positionInfo)
         : p (lfoParams),
           positionInfo (_positionInfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
@@ -95,30 +94,31 @@ public:
     void renderLfoSync (int startSample, int numSamples)
     {
         int idx = startSample;
-        const flnum bpm = positionInfo.bpm;
-        if (bpm == 0.0)
+
+        if (! positionInfo)
         {
-            // bpm is 0 or we don't have host with tempo functionality
-            // (When we don't have host, bpm should be 0.)
+            // We don't have host with tempo functionality
             return;
         }
 
-        if (! isPlaying && positionInfo.isPlaying)
+        const flnum bpm = positionInfo->getBpm();
+
+        if (! isPlaying && positionInfo->isPlaying())
         {
             // When DAW starts to play
             isPlaying = true;
-            basePosistionInQuarterNote = positionInfo.ppqPosition;
+            basePosistionInQuarterNote = positionInfo->getPpqPosition();
             baseAngle = currentAngle;
         }
 
-        if (isPlaying && ! positionInfo.isPlaying)
+        if (isPlaying && ! positionInfo->isPlaying())
         {
             // When DAW stop playing
             isPlaying = false;
         }
 
-        const flnum beatsPerSec = positionInfo.bpm / 60.0; // [quarter note / sec]
-        const flnum quarterNotesFromBaseToStartIdx = positionInfo.ppqPosition - basePosistionInQuarterNote; // [quarter note]
+        const flnum beatsPerSec = positionInfo->getBpm() / 60.0; // [quarter note / sec]
+        const flnum quarterNotesFromBaseToStartIdx = positionInfo->getPpqPosition() - basePosistionInQuarterNote; // [quarter note]
         while (--numSamples >= 0)
         {
             // LFO angle from the time DAW starts to play.
@@ -192,7 +192,7 @@ private:
     static constexpr flnum MAX_LEVEL = 1.0;
 
     const ILfoParams* const p;
-    const CurrentPositionInfo& positionInfo;
+    const IPositionInfo* positionInfo;
 
     flnum sampleRate;
     int numNoteOn;
