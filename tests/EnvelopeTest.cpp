@@ -36,7 +36,7 @@ protected:
     // 1 sec per one env.update()
     static constexpr double sampleRate = 1.0;
     EnvelopeParamsMock envParams;
-    Envelope env { (IEnvelopeParams*) (&envParams) };
+    Envelope env { &envParams };
 };
 
 TEST_F (EnvelopeTest, NoteOn)
