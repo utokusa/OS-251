@@ -11,7 +11,7 @@
 #include "DspCommon.h"
 #include "IPositionInfo.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
+#include <vector>
 
 namespace onsen
 {

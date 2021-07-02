@@ -9,7 +9,6 @@
 #pragma once
 
 #include "DspCommon.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {

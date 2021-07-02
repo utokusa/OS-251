@@ -10,6 +10,7 @@
 
 #include "DspCommon.h"
 #include "IPositionInfo.h"
+#include <JuceHeader.h>
 
 namespace onsen
 {
