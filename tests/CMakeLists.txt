@@ -19,6 +19,8 @@ target_sources(Os251_Tests PRIVATE
         OscillatorTest.cpp
         LfoTest.cpp
         FilterTest.cpp
+        HpfTest.cpp
+        TestAudioBufferInput.cpp
         ../src/Chorus.cpp
         ../src/Envelope.cpp
         # Uncomment below if you want to run JuceTestExample.cpp

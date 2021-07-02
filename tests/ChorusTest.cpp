@@ -8,26 +8,13 @@
 
 #include "../src/Chorus.h"
 #include "../src/AudioBufferMock.h"
+#include "TestAudioBufferInput.h"
 #include <gtest/gtest.h>
 
 namespace onsen
 {
 //==============================================================================
 // Chorus
-
-void setTestInput1 (IAudioBuffer* audioBuffer)
-{
-    for (int i = 0; i < audioBuffer->getNumChannels(); i++)
-    {
-        for (int j = 0; j < audioBuffer->getNumSamples(); j++)
-        {
-            // Some random input
-            flnum val = static_cast<flnum> ((j * 8) % audioBuffer->getNumSamples())
-                        / static_cast<flnum> (audioBuffer->getNumSamples());
-            audioBuffer->setSample (i, j, val);
-        }
-    }
-}
 
 class ChorusTest : public ::testing::Test
 {
