@@ -14,10 +14,17 @@
 namespace onsen
 {
 //==============================================================================
-class ChorusParams
+class IChorusParams
 {
 public:
-    bool getChorusOn() const
+    virtual bool getChorusOn() const = 0;
+};
+
+//==============================================================================
+class ChorusParams : public IChorusParams
+{
+public:
+    bool getChorusOn() const override
     {
         return chorusOnVal > 0.5;
     }
