@@ -18,6 +18,7 @@ target_sources(Os251_Tests PRIVATE
         EnvelopeTest.cpp
         OscillatorTest.cpp
         LfoTest.cpp
+        FilterTest.cpp
         ../src/Chorus.cpp
         ../src/Envelope.cpp
         # Uncomment below if you want to run JuceTestExample.cpp
