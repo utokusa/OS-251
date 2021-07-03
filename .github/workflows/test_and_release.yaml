@@ -191,11 +191,11 @@ jobs:
     - if: ${{ runner.os=='Windows'}}
       name: Run Tests (Windows)
       run: |
-        & .\build\tests\${Env:PROJECT_NAME}_Tests_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}_Tests.exe
+        & .\build\tests\${Env:PROJECT_NAME}_Tests.exe
     - if: ${{ runner.os!='Windows'}}
       name: Run Tests (Unix)
       run: |
-        ./build/tests/${PROJECT_NAME}_Tests_artefacts/${BUILD_TYPE}/${PROJECT_NAME}_Tests
+        ./build/tests/${PROJECT_NAME}_Tests
     - if: ${{ runner.os=='Windows'}}
       name: Run Benchmark (Windows)
       # Use benchmark as test for now
