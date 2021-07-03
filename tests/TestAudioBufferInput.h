@@ -11,4 +11,5 @@
 namespace onsen
 {
 void setTestInput1 (IAudioBuffer* audioBuffer);
+void setTestInput2Constant (IAudioBuffer* audioBuffer);
 } // namespace onsen

@@ -10,6 +10,7 @@
 
 #include "DspCommon.h"
 #include "IAudioBuffer.h"
+#include <vector>
 
 namespace onsen
 {

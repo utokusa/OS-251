@@ -23,4 +23,17 @@ void setTestInput1 (IAudioBuffer* audioBuffer)
         }
     }
 }
+
+// Set all value to 1.0
+void setTestInput2Constant (IAudioBuffer* audioBuffer)
+{
+    for (int i = 0; i < audioBuffer->getNumChannels(); i++)
+    {
+        for (int j = 0; j < audioBuffer->getNumSamples(); j++)
+        {
+            constexpr flnum val = 1.0;
+            audioBuffer->setSample (i, j, val);
+        }
+    }
+}
 } // namespace onsen

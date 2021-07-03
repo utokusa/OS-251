@@ -20,6 +20,7 @@ target_sources(Os251_Tests PRIVATE
         LfoTest.cpp
         FilterTest.cpp
         HpfTest.cpp
+        MasterVolumeTest.cpp
         TestAudioBufferInput.cpp
         ../src/Chorus.cpp
         ../src/Envelope.cpp
@@ -32,6 +33,7 @@ target_link_libraries(Os251_Tests PUBLIC
         # juce::juce_core
         )
 
+# Uncomment below if you want to run JuceTestExample.cpp
 # juce_generate_juce_header(Os251_Tests)
 
 include(GoogleTest)
