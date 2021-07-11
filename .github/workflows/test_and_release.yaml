@@ -7,6 +7,7 @@ on: [push, pull_request]
 
 env:
   PROJECT_NAME: Os251
+  APP_NAME: OS-251
   CMAKE_VERSION: 3.16.2
   NINJA_VERSION: 1.9.0
   BUILD_TYPE: Release
@@ -198,14 +199,34 @@ jobs:
         ./build/tests/${PROJECT_NAME}_Tests
     - if: ${{ runner.os=='Windows'}}
       name: Run Benchmark (Windows)
-      # Use benchmark as test for now
       run: |
         & .\build\benchmark\${Env:PROJECT_NAME}_Benchmark_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}_Benchmark.exe
     - if: ${{ runner.os!='Windows'}}
       name: Run Benchmark (Unix)
-      # Use benchmark as test for now
       run: |
         ./build/benchmark/${PROJECT_NAME}_Benchmark_artefacts/${BUILD_TYPE}/${PROJECT_NAME}_Benchmark
+    - if: ${{ runner.os=='macOS'}}
+      name: Code signing (Mac)
+      env:
+        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        KEYCHAIN_PWD: ${{ secrets.KEYCHAIN_PWD }}
+        IDENTITY_ID: ${{ secrets.IDENTITY_ID }}
+      run: |
+        set -x
+        mkdir ${{ github.event.repository.name }}-${{ runner.os }}
+        cd build/src/${PROJECT_NAME}_artefacts/Release/Standalone
+        rm -f ~/Library/Keychains/build.keychain-db
+        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+        security create-keychain -p $KEYCHAIN_PWD build.keychain
+        security default-keychain -s build.keychain
+        security unlock-keychain -p $KEYCHAIN_PWD build.keychain
+        echo $MACOS_CERTIFICATE_PWD
+        security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PWD build.keychain
+        /usr/bin/codesign --force -s $IDENTITY_ID ./${APP_NAME}.app -v
+        rm certificate.p12
+
     - if: ${{ runner.os=='Windows'}}
       name: Pack (Windows)
       run: |
@@ -218,7 +239,7 @@ jobs:
     - if: ${{ runner.os!='Windows'}}
       name: Pack (Unix)
       run: |
-        mkdir ${{ github.event.repository.name }}-${{ runner.os }}
+        mkdir -p ${{ github.event.repository.name }}-${{ runner.os }}
         cd build/src/*_artefacts/Release
         rm *.*
         mv * ../../../../${{ github.event.repository.name }}-${{ runner.os }}
