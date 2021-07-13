@@ -1,0 +1,18 @@
+{
+  "source" : [
+    "./build/src/Os251_artefacts/Release/Standalone/OS-251.app",
+    "./build/src/Os251_artefacts/Release/VST3/OS-251.vst3",
+    "./build/src/Os251_artefacts/Release/AU/OS-251.component"
+    ],
+  "bundle_id" : "onsenaudio.OS-251",
+  "apple_id": {
+      "password":  "@env:AC_PASSWORD"
+  },
+  "sign" :{
+      "application_identity" : "13A1AEE61409B53A0A1B425960E9AE3279110B8F"
+  },
+  "dmg" :{
+    "output_path":  "./OS-251-macOS.dmg",
+    "volume_name":  "OS-251"
+  }
+}
