@@ -5,38 +5,23 @@ This plugin is currently under development.
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
-## Lint
+## Download
+
+You can down load pre-built binaries from [release](https://github.com/utokusa/OS-251/releases).
+
+## Development
+
+### Build
+
+You can build OS-251 using CMake
+
+### Lint
+
 Lint checking for both C++ and Node.js is available.
 See details by running `./lint.sh -h`.
 
-## TODO
+### Code completion
 
-### Quality
-
-- [ ] Improve sound
-- [ ] Improve UI/UX
-
-### Functionality
-
-- [ ] Add "About" to UI
-- [x] One knob HPF
-- [x] LFO -> Shape parameter
-- [x] Master pitch setting (3 knobs)
-- [x] Pitchbend width setting
-- [ ] Presets
-- [x] (Optional) Make LFO sync with the host's tempo.
-  Maybe "Sync ON" button and "Phase" knob will be added.
-- [ ] ~~(Optional) Tempo LFO re-triggered by MIDI notes ("retring").~~
-  ~~Maybe "Tempo ON" button and "Phase" knob will be added.~~
-- [x] Allow to change number of voices
-- [ ] Unison
-- [x] Portamento
-- [x] "ENV or GATE" switch for VCA
-
-### Tools
-
-- [x] Add lint tool for javascript
-- [x] Move to Typescript
-- [x] Lint check in CI
-- [x] CI/CD for macOS, Windows and Linux
-- [ ] Create installer in CD
+Use clangd for code completion or go-to-definition. 
+`compile_commands.json` (it's necessary for clangd) is automatically generated when you build OS-251.
+Use `./run_compdb.sh -h`  if you want to add header information to `compile_commands.json`.
