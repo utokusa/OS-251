@@ -208,22 +208,77 @@ jobs:
       name: Import Code-Signing Certificates
       uses: Apple-Actions/import-codesign-certs@v1
       with:
+        keychain-password: ${{ secrets.KEYCHAIN_PWD }}
         # The certificates in a PKCS12 file encoded as a base64 string
-        p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
+        p12-file-base64: ${{ secrets.APPLE_DEVELOPER_APPLICATION_CERTIFICATE_P12_BASE64 }}
         # The password used to import the PKCS12 file.
-        p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        p12-password: ${{ secrets.APPLE_DEVELOPER_APPLICATION_CERTIFICATE_PASSWORD }}
+    - if: ${{ runner.os=='macOS' }}
+      name: Import Code-Signing Certificates (installer)
+      uses: Apple-Actions/import-codesign-certs@v1
+      with:
+        create-keychain: false
+        keychain-password: ${{ secrets.KEYCHAIN_PWD }}
+        # The certificates in a PKCS12 file encoded as a base64 string
+        p12-file-base64: ${{ secrets.APPLE_DEVELOPER_INSTALLER_CERTIFICATE_P12_BASE64 }}
+        # The password used to import the PKCS12 file.
+        p12-password: ${{ secrets.APPLE_DEVELOPER_INSTALLER_CERTIFICATE_PASSWORD }}
+    - if: ${{ runner.os=='macOS' }}
+      name: Sign plugins (macOS)
+      env:
+        APPLE_DEVELOPER_ID_APPLICATION: 13A1AEE61409B53A0A1B425960E9AE3279110B8F
+      run: |
+        /usr/bin/codesign -s $APPLE_DEVELOPER_ID_APPLICATION -f -v --timestamp --options runtime \
+        ./build/src/Os251_artefacts/Release/Standalone/OS-251.app \
+        ./build/src/Os251_artefacts/Release/VST3/OS-251.vst3 \
+        ./build/src/Os251_artefacts/Release/AU/OS-251.component
+    - if: ${{ runner.os=='macOS' }}
+      name: Install Packages app to create .pkg using packagesbuild command
+      run: |
+        wget http://s.sudre.free.fr/Software/files/Packages.dmg
+        # Mount packages image
+        hdiutil attach Packages.dmg
+        # Install Packages
+        sudo installer -pkg /Volumes/Packages\ 1.2.9/Install\ Packages.pkg -target /
+    - if: ${{ runner.os=='macOS' }}
+      name: Create .pkg (macOS)
+      run: |
+        set -x
+        mkdir ./build/src/Os251_artefacts/Release/installer
+        cp ./installer/macOS/OS-251.pkgproj ./build/src/Os251_artefacts/Release/installer
+        cp ./LICENSE ./build/src/Os251_artefacts/Release/installer/license_eng.txt
+        cd ./build/src/Os251_artefacts/Release
+        mv ./VST3/OS-251.vst3 ./installer
+        mv ./AU/OS-251.component ./installer
+        cd ./installer
+        # Build installer
+        packagesbuild OS-251.pkgproj
+    - if: ${{ runner.os=='macOS' }}
+      name: Sign .pkg (macOS)
+      env:
+        APPLE_DEVELOPER_ID_INSTALLER: 7EE492BDFEADA885197E69D6DDE3C91A122C03F0
+      run: |
+        cd ./build/src/Os251_artefacts/Release/installer/build
+        mkdir signed
+        productsign -s $APPLE_DEVELOPER_ID_INSTALLER OS-251.pkg ./signed/OS-251.pkg
     - if: ${{ runner.os=='macOS' }}
       name: Install gon via HomeBrew for code signing and app notarization
       run: |
         brew tap mitchellh/gon
         brew install mitchellh/gon/gon
     - if: ${{ runner.os=='macOS' }}
-      name: Sign the mac binaries with Gon
+      name: Nortalize .pkg with Gon
       env:
         AC_USERNAME: ${{ secrets.AC_USERNAME }}
         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
       run: |
         gon -log-level=debug -log-json ./gon.json
+    - if: ${{ runner.os=='macOS' }}
+      name: Create .dmg
+      run: |
+        hdiutil create OS-251-macOS.dmg -fs HFS+ \
+        -srcfolder ./build/src/Os251_artefacts/Release/installer/build/signed \
+        -format UDZO -volname OS-251
     - if: ${{ runner.os=='Windows' }}
       name: Pack (Windows)
       run: |
