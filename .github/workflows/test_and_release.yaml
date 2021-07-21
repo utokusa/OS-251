@@ -280,14 +280,22 @@ jobs:
         -srcfolder ./build/src/Os251_artefacts/Release/installer/build/signed \
         -format UDZO -volname OS-251
     - if: ${{ runner.os=='Windows' }}
+      name: Create Installer (Windows)
+      run: |
+        # First, put files for installer to .\build\src\Os251_artefacts\Release\installer
+        cp .\installer\Windows\OS-251.iss .\build\src\Os251_artefacts\Release
+        cd .\build\src\Os251_artefacts\Release
+        mkdir .\installer
+        mv .\OS-251.iss installer
+        cp .\VST3\OS-251.vst3\Contents\x86_64-win\OS-251.vst3 .\installer
+        cd .\installer
+        iscc OS-251.iss
+        # Put installer in the project root
+        mv .\Output\OS-251-Windows.exe ..\..\..\..\..\
+    - if: ${{ runner.os=='Windows' }}
       name: Pack (Windows)
       run: |
-        mkdir ${{ github.event.repository.name }}-${{ runner.os }}
-        cd build\src\*_artefacts\Release
-        del *.*
-        move * ..\..\..\..\${{ github.event.repository.name }}-${{ runner.os }}
-        cd ..\..\..\..
-        cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
+        cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}.exe
     - if: ${{ runner.os=='Linux' }}
       name: Pack (Linux)
       run: |
