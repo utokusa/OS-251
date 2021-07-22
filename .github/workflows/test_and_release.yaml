@@ -245,7 +245,7 @@ jobs:
       run: |
         set -x
         mkdir ./build/src/Os251_artefacts/Release/installer
-        cp ./installer/macOS/OS-251.pkgproj ./build/src/Os251_artefacts/Release/installer
+        cp ./distro/macOS/OS-251.pkgproj ./build/src/Os251_artefacts/Release/installer
         cp ./LICENSE ./build/src/Os251_artefacts/Release/installer/license_eng.txt
         cd ./build/src/Os251_artefacts/Release
         mv ./VST3/OS-251.vst3 ./installer
@@ -283,7 +283,7 @@ jobs:
       name: Create Installer (Windows)
       run: |
         # First, put files for installer to .\build\src\Os251_artefacts\Release\installer
-        cp .\installer\Windows\OS-251.iss .\build\src\Os251_artefacts\Release
+        cp .\distro\Windows\OS-251.iss .\build\src\Os251_artefacts\Release
         cd .\build\src\Os251_artefacts\Release
         mkdir .\installer
         mv .\OS-251.iss installer
@@ -300,9 +300,9 @@ jobs:
       name: Pack (Linux)
       run: |
         mkdir -p ${{ github.event.repository.name }}-${{ runner.os }}
-        cd build/src/*_artefacts/Release
-        rm *.*
-        mv * ../../../../${{ github.event.repository.name }}-${{ runner.os }}
+        cp ./distro/Linux/readme.txt ${{ github.event.repository.name }}-${{ runner.os }}
+        cd build/src/Os251_artefacts/Release
+        mv VST3/* ../../../../${{ github.event.repository.name }}-${{ runner.os }}
         cd ../../../..
         cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
     - if: ${{ runner.os!='macOS' }}
