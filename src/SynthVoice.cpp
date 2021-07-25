@@ -42,7 +42,6 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
     }
     else
     {
-        filter.resetBuffer();
         smoothedAngleDelta.reset (angleDelta);
     }
 
