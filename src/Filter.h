@@ -71,6 +71,8 @@ public:
 
     void resetBuffer()
     {
+        fb.in1 = 0.0;
+        fb.in2 = 0.0;
         fb.out1 = 0.0;
         fb.out2 = 0.0;
     }
