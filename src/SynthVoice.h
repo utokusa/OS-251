@@ -27,6 +27,7 @@ public:
     FancySynthVoice (SynthParams* const synthParams, Lfo* const _lfo)
         : p (synthParams->master()),
           smoothedAngleDelta (0.0, 0.0),
+          smoothedAmp (0.0, 0.995),
           osc (synthParams->oscillator()),
           env ((IEnvelopeParams*) (synthParams->envelope())),
           gate(),
@@ -51,6 +52,7 @@ private:
     // We use angle in radian
     flnum currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     SmoothFlnum smoothedAngleDelta;
+    SmoothFlnum smoothedAmp;
     flnum pitchBend = 1.0;
     Oscillator osc;
     Envelope env;

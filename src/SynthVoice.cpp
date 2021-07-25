@@ -27,7 +27,6 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
 {
     setPitchBend (currentPitchWheelPosition);
 
-    currentAngle = 0.0;
     level = velocity * 0.15;
     envManager.noteOn();
 
@@ -84,8 +83,11 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             envManager.switchTarget (p->getEnvForAmpOn());
             flnum currentSample = osc.oscillatorVal (
                 currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount());
+            flnum rawAmp = level * envManager.getLevel();
+            smoothedAmp.set (rawAmp);
+            flnum currentSmoothedAmp = smoothedAmp.get();
             currentSample = filter.process (currentSample, idx);
-            currentSample *= level * envManager.getLevel();
+            currentSample *= currentSmoothedAmp;
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
                 outputBuffer.addSample (i, idx, currentSample);
@@ -100,11 +102,12 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             }
             ++idx;
             envManager.update();
-            if (envManager.isEnvOff())
+            if (envManager.isEnvOff() && currentSmoothedAmp <= 0.001)
             {
-                clearCurrentNote();
+                smoothedAmp.reset (0.0);
                 angleDelta = 0.0;
                 smoothedAngleDelta.reset (angleDelta);
+                clearCurrentNote();
                 break;
             }
         }
