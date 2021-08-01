@@ -27,7 +27,7 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
 {
     setPitchBend (currentPitchWheelPosition);
 
-    level = velocity * 0.15;
+    level = velocity; // The max value of velocity is 1.0
     envManager.noteOn();
 
     flnum adjustOctave = 2.0;

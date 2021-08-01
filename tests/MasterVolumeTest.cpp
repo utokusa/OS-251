@@ -29,6 +29,8 @@ protected:
 
     static constexpr int samplesPerBlock = 512;
     static constexpr int numChannels = 2;
+    // This value depends on MasterVolume implementation.
+    static constexpr flnum gainAdjustment = 0.2;
     MasterParamsMock masterParam { false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     AudioBufferMock audioBuffer { numChannels, samplesPerBlock };
     MasterVolume masterVolume { &masterParam };
@@ -42,7 +44,7 @@ TEST_F (MasterVolumeTest, Volume0db)
     {
         for (int j = 0; j < audioBuffer.getNumSamples(); j++)
         {
-            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 1.0);
+            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 1.0 * gainAdjustment);
         }
     }
 }
@@ -55,7 +57,7 @@ TEST_F (MasterVolumeTest, VolumeMinus3db)
     {
         for (int j = 0; j < audioBuffer.getNumSamples(); j++)
         {
-            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 0.5);
+            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 0.5 * gainAdjustment);
         }
     }
 }
@@ -73,7 +75,7 @@ TEST_F (MasterVolumeTest, RenderPartOfBuffer)
             if (j >= renderStart && j <= renderStart + numSamplesToRender - 1)
             {
                 // Should have new value
-                EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 0.5);
+                EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 0.5 * gainAdjustment);
             }
             else
             {

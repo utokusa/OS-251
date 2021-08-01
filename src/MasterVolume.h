@@ -29,13 +29,14 @@ public:
             for (auto i = outputAudio->getNumChannels(); --i >= 0;)
             {
                 flnum inputVal = outputAudio->getSample (i, idx);
-                outputAudio->setSample (i, idx, inputVal * gain);
+                outputAudio->setSample (i, idx, inputVal * gain * gainAdjustment);
             }
             idx++;
         }
     }
 
 private:
+    static constexpr flnum gainAdjustment = 0.20;
     const IMasterParams* const p;
 };
 } // namespace onsen
