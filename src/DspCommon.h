@@ -32,7 +32,7 @@ namespace DspUtil
 
     // Convert parameter value (linear) to gain ([db])
     // in order to make UX better.
-    inline flnum paramValToDecibel (flnum paramVal, flnum dynamicRange)
+    [[maybe_unused]] inline flnum paramValToDecibel (flnum paramVal, flnum dynamicRange)
     {
         // e.g.
         // paramVal: 1.0 ---> gain: 0 [db] (max)
@@ -40,12 +40,12 @@ namespace DspUtil
         return dynamicRange * (paramVal - 1.0);
     }
 
-    inline flnum decibelToParamVal (flnum decibelGain, flnum dynamicRange)
+    [[maybe_unused]] inline flnum decibelToParamVal (flnum decibelGain, flnum dynamicRange)
     {
         return decibelGain / dynamicRange + 1.0;
     }
 
-    inline flnum decibelToLinear (flnum decibelGain)
+    [[maybe_unused]] inline flnum decibelToLinear (flnum decibelGain)
     {
         return std::pow (10.0, decibelGain / 20.0);
     }

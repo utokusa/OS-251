@@ -36,13 +36,6 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToTextFunction = [numDecimal] (float value) { return juce::String (value, numDecimal); };
     auto valueToMinusOneToOneFunction = [numDecimal] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
 
-    // Oscillator gain
-    constexpr int numGainDecimal = 1;
-    auto oscGainValToDecibelFunction = [numGainDecimal] (float value) { return juce::String (onsen::DspUtil::paramValToDecibel (
-                                                                                                 value, onsen::OscillatorParams::dynamicRange),
-                                                                                             numGainDecimal)
-                                                                               + juce::String (" dB"); };
-
     // Synced Rate
     auto syncedRateTextFunction = [] (float value) { return juce::String (
                                                                 onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal()))
@@ -72,11 +65,6 @@ Os251AudioProcessor::Os251AudioProcessor()
                                                                       onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxSemitoneTuneVal, onsen::MasterParams::maxSemitoneTuneVal))
                                                                   + juce::String (" st"); };
 
-    // Master gain
-    auto mastertGainValToDecibelFunction = [numGainDecimal] (float value) { return juce::String (
-                                                                                       onsen::DspUtil::paramValToDecibel (value, onsen::MasterParams::dynamicRange), numGainDecimal)
-                                                                                   + juce::String (" dB"); };
-
     // Number of voices
     auto numVoicesToStr = [] (float value) { return juce::String (
                                                  onsen::DspUtil::mapFlnumToInt (
@@ -92,27 +80,27 @@ Os251AudioProcessor::Os251AudioProcessor()
     onsen::OscillatorParams* const oscillatorParams = synthParams.oscillator();
 
     // Sin gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0, oscGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sinGain", "Sin", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSinGainPtr (parameters.getRawParameterValue ("sinGain"));
     parameters.addParameterListener ("sinGain", this);
 
     // Square gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("squareGain", "Square", "", nrange, 1.0, oscGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("squareGain", "Square", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSquareGainPtr (parameters.getRawParameterValue ("squareGain"));
     parameters.addParameterListener ("squareGain", this);
 
     // Saw gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("sawGain", "Saw", "", nrange, 1.0, oscGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("sawGain", "Saw", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSawGainPtr (parameters.getRawParameterValue ("sawGain"));
     parameters.addParameterListener ("sawGain", this);
 
     // Sub square gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("subSquareGain", "SubSquare", "", nrange, 1.0, oscGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("subSquareGain", "SubSquare", "", nrange, 1.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setSubSquareGainPtr (parameters.getRawParameterValue ("subSquareGain"));
     parameters.addParameterListener ("subSquareGain", this);
 
     // Noise gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.5, oscGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
@@ -253,7 +241,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("portamento", this);
 
     // Master volume
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, onsen::DspUtil::decibelToParamVal (-3.0, onsen::MasterParams::dynamicRange), mastertGainValToDecibelFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("masterVolume", "Master Vol", "", nrange, 0.5, valueToTextFunction, nullptr, true));
     masterParams->setMasterVolumePtr (parameters.getRawParameterValue (("masterVolume")));
     parameters.addParameterListener ("masterVolume", this);
 

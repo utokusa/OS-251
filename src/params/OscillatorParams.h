@@ -29,14 +29,10 @@ public:
 class OscillatorParams : public IOscillatorParams
 {
 public:
-    // Dynamic range in [db]
-    static constexpr flnum dynamicRange = 48.0;
-
     //==============================================================================
     flnum getSinGain() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (sinGainVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return sinGainVal;
     }
     void setSinGainPtr (const std::atomic<flnum>* _sinGain)
     {
@@ -45,8 +41,7 @@ public:
     }
     flnum getSquareGain() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (squareGainVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return squareGainVal;
     }
     void setSquareGainPtr (const std::atomic<flnum>* _squareGain)
     {
@@ -55,8 +50,7 @@ public:
     }
     flnum getSawGain() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (sawGainVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return sawGainVal;
     }
     void setSawGainPtr (const std::atomic<flnum>* _sawGain)
     {
@@ -65,8 +59,7 @@ public:
     }
     flnum getSubSquareGain() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (subSquareGainVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return subSquareGainVal;
     }
     void setSubSquareGainPtr (const std::atomic<flnum>* _subSquareGain)
     {
@@ -75,8 +68,7 @@ public:
     }
     flnum getNoiseGain() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (noiseGainVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return noiseGainVal;
     }
     void setNoiseGainPtr (const std::atomic<flnum>* _noiseGain)
     {

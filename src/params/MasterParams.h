@@ -99,8 +99,7 @@ public:
     }
     flnum getMasterVolume() const override
     {
-        auto decibelGain = DspUtil::paramValToDecibel (masterVolumeVal, dynamicRange);
-        return DspUtil::decibelToLinear (decibelGain);
+        return masterVolumeVal;
     }
     void setMasterVolumePtr (const std::atomic<flnum>* _masterVolume)
     {
