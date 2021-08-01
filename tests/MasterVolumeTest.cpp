@@ -23,7 +23,7 @@ protected:
     void SetUp() override
     {
         // Set all value to 1.0
-        setTestInput2Constant (&audioBuffer);
+        setTestInput2Constant (&audioBuffer, 1.0);
     }
     // void TearDown() override {}
 
@@ -31,6 +31,8 @@ protected:
     static constexpr int numChannels = 2;
     // This value depends on MasterVolume implementation.
     static constexpr flnum gainAdjustment = 0.2;
+    // This value depends on MasterVolume implementation.
+    static constexpr flnum clippingValue = 3.0;
     MasterParamsMock masterParam { false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     AudioBufferMock audioBuffer { numChannels, samplesPerBlock };
     MasterVolume masterVolume { &masterParam };
@@ -58,6 +60,38 @@ TEST_F (MasterVolumeTest, VolumeMinus3db)
         for (int j = 0; j < audioBuffer.getNumSamples(); j++)
         {
             EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), 0.5 * gainAdjustment);
+        }
+    }
+}
+
+TEST_F (MasterVolumeTest, ClipExtremeValue1)
+{
+    // Set the buffer with extreme value
+    setTestInput2Constant (&audioBuffer, 100.0);
+    masterParam.setMasterVolume (1.0);
+
+    masterVolume.render (&audioBuffer, 0, samplesPerBlock);
+    for (int i = 0; i < audioBuffer.getNumChannels(); i++)
+    {
+        for (int j = 0; j < audioBuffer.getNumSamples(); j++)
+        {
+            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), clippingValue);
+        }
+    }
+}
+
+TEST_F (MasterVolumeTest, ClipExtremeValue2)
+{
+    // Set the buffer with extreme value
+    setTestInput2Constant (&audioBuffer, -100.0);
+    masterParam.setMasterVolume (1.0);
+
+    masterVolume.render (&audioBuffer, 0, samplesPerBlock);
+    for (int i = 0; i < audioBuffer.getNumChannels(); i++)
+    {
+        for (int j = 0; j < audioBuffer.getNumSamples(); j++)
+        {
+            EXPECT_FLOAT_EQ (audioBuffer.getSample (i, j), -clippingValue);
         }
     }
 }

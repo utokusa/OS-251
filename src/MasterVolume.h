@@ -29,14 +29,16 @@ public:
             for (auto i = outputAudio->getNumChannels(); --i >= 0;)
             {
                 flnum inputVal = outputAudio->getSample (i, idx);
-                outputAudio->setSample (i, idx, inputVal * gain * gainAdjustment);
+                flnum outputVal = std::clamp (inputVal * gain * gainAdjustment, -clippingValue, clippingValue);
+                outputAudio->setSample (i, idx, outputVal);
             }
             idx++;
         }
     }
 
 private:
-    static constexpr flnum gainAdjustment = 0.20;
+    static constexpr flnum gainAdjustment = 0.2;
+    static constexpr flnum clippingValue = 3.0;
     const IMasterParams* const p;
 };
 } // namespace onsen
