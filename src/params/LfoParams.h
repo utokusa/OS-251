@@ -46,7 +46,7 @@ public:
     {
         // The range of the return value is [1/48, 96/48]
         return static_cast<flnum> (
-                   DspUtil::mapFlnumToInt (rateSyncVal, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal()))
+                   DspUtil::mapFlnumToInt (rateSyncVal, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal(), true))
                / rateSyncDenominatorVal();
     }
     void setRateSyncPtr (const std::atomic<flnum>* _rateSync)

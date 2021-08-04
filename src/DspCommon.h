@@ -50,14 +50,22 @@ namespace DspUtil
         return std::pow (10.0, decibelGain / 20.0);
     }
 
-    inline int mapFlnumToInt (flnum fval, flnum fmin, flnum fmax, int imin, int imax)
+    inline int mapFlnumToInt (flnum fval, flnum fmin, flnum fmax, int imin, int imax, bool reverse = false)
     {
         // fmin ---> mininum number of floating point number
         // imax ---> maximum number of integer
         assert (fval >= fmin);
         assert (fmax > fmin);
         assert (imax > imin);
-        return static_cast<int> ((fval - fmin) / (fmax - fmin) * (imax - imin) + 0.5) + imin;
+
+        flnum fval0to1 = (fval - fmin) / (fmax - fmin);
+        if (reverse)
+        {
+            fval0to1 = 1.0 - fval0to1;
+            // Avoid to make fval0to1 to be minus value
+            fval0to1 = std::max (static_cast<flnum> (0.0), fval0to1);
+        }
+        return static_cast<int> (fval0to1 * (imax - imin) + 0.5) + imin;
     }
 
     inline int timeSecToSample (flnum timeSec, double sampleRate)

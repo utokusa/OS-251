@@ -38,7 +38,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Synced Rate
     auto syncedRateTextFunction = [] (float value) { return juce::String (
-                                                                onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal()))
+                                                                onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal(), true))
                                                             + juce::String ("/")
                                                             + juce::String (onsen::LfoParams::rateSyncDenominatorVal()); };
 
