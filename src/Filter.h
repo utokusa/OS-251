@@ -36,7 +36,9 @@ public:
           env (_env),
           lfo (_lfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
-          fb()
+          fb(),
+          smoothedFreq (0.0, 0.995),
+          initialized (false)
     {
     }
 
@@ -44,8 +46,18 @@ public:
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        const flnum freq = p->getControlledFrequency (env->getLevel() * p->getFilterEnvelope()
-                                                      + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx));
+        flnum targetFreq = env->getLevel() * p->getFilterEnvelope()
+                           + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx);
+        if (! initialized)
+        {
+            smoothedFreq.reset (targetFreq);
+            initialized = true;
+        }
+        else
+        {
+            smoothedFreq.set (targetFreq);
+        }
+        const flnum freq = p->getControlledFrequency (smoothedFreq.get());
         const flnum omega0 = 2.0 * pi * freq / sampleRate;
         const flnum sinw0 = std::sin (omega0);
         const flnum cosw0 = std::cos (omega0);
@@ -89,5 +101,7 @@ private:
     flnum sampleRate;
     // The length of this vector equals to max number of the channels;
     FilterBuffer fb;
+    SmoothFlnum smoothedFreq;
+    bool initialized;
 };
 } // namespace onsen
