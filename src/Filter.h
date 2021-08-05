@@ -57,6 +57,7 @@ public:
         {
             smoothedFreq.set (targetFreq);
         }
+        smoothedFreq.update();
         const flnum freq = p->getControlledFrequency (smoothedFreq.get());
         const flnum omega0 = 2.0 * pi * freq / sampleRate;
         const flnum sinw0 = std::sin (omega0);

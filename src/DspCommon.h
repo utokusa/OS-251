@@ -88,7 +88,8 @@ public:
           cur (val),
           smoothness (_smoothness),
           adjustedSmoothness (_smoothness) {}
-    flnum get() { return cur = adjustedSmoothness * cur + (1 - adjustedSmoothness) * target; }
+    flnum get() const { return cur; }
+    void update() { cur = adjustedSmoothness * cur + (1 - adjustedSmoothness) * target; }
     void set (flnum val) { target = val; }
     void reset (flnum val)
     {

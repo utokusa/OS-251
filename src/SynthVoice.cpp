@@ -85,9 +85,9 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
                 currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount());
             flnum rawAmp = level * envManager.getLevel();
             smoothedAmp.set (rawAmp);
-            flnum currentSmoothedAmp = smoothedAmp.get();
+            smoothedAmp.update();
             currentSample = filter.process (currentSample, idx);
-            currentSample *= currentSmoothedAmp;
+            currentSample *= smoothedAmp.get();
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
                 outputBuffer.addSample (i, idx, currentSample);
@@ -95,6 +95,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             flnum lfoPitchDepth = lfo->getPitchAmount();
             flnum lfoVal = lfo->getLevel (idx);
             smoothedAngleDelta.setSmoothness (p->getPortamento());
+            smoothedAngleDelta.update();
             currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
             if (currentAngle > pi * 2.0)
             {
@@ -102,7 +103,8 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             }
             ++idx;
             envManager.update();
-            if (envManager.isEnvOff() && currentSmoothedAmp <= 0.001)
+            smoothedAmp.update();
+            if (envManager.isEnvOff() && smoothedAmp.get() <= 0.001)
             {
                 smoothedAmp.reset (0.0);
                 angleDelta = 0.0;

@@ -77,6 +77,7 @@ public:
     }
     flnum getShape() override
     {
+        shapeVal.update();
         return shapeVal.get();
     }
     void setShapePtr (const std::atomic<flnum>* _shape)
