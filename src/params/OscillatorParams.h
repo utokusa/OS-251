@@ -22,7 +22,7 @@ public:
     virtual flnum getSawGain() const = 0;
     virtual flnum getSubSquareGain() const = 0;
     virtual flnum getNoiseGain() const = 0;
-    virtual flnum getShape() = 0;
+    virtual flnum getShape() const = 0;
 };
 
 //==============================================================================
@@ -75,10 +75,9 @@ public:
         noiseGain = _noiseGain;
         noiseGainVal = *noiseGain;
     }
-    flnum getShape() override
+    flnum getShape() const override
     {
-        shapeVal.update();
-        return shapeVal.get();
+        return shapeVal;
     }
     void setShapePtr (const std::atomic<flnum>* _shape)
     {
@@ -91,11 +90,7 @@ public:
         sawGainVal = *sawGain;
         subSquareGainVal = *subSquareGain;
         noiseGainVal = *noiseGain;
-        shapeVal.set (*shape);
-    }
-    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
-    {
-        shapeVal.prepareToPlay (sampleRate);
+        shapeVal = *shape;
     }
 
 private:
@@ -111,6 +106,6 @@ private:
     flnum sawGainVal = 0.0;
     flnum subSquareGainVal = 0.0;
     flnum noiseGainVal = 0.0;
-    SmoothFlnum shapeVal = { 0.0, 0.995 };
+    flnum shapeVal = 0.0;
 };
 } // namespace onsen

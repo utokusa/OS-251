@@ -24,7 +24,8 @@ public:
     Oscillator (IOscillatorParams* const oscillatorParams)
         : p (oscillatorParams),
           randEngine (seedGen()),
-          randDist (0.0, 1.0)
+          randDist (0.0, 1.0),
+          smoothedShape (0.0, 0.995)
     {
     }
 
@@ -45,11 +46,17 @@ public:
         return currentSample;
     }
 
+    void setCurrentPlaybackSampleRate (double sampleRate)
+    {
+        smoothedShape.prepareToPlay (sampleRate);
+    }
+
 private:
     IOscillatorParams* const p;
     std::random_device seedGen;
     std::default_random_engine randEngine;
     std::uniform_real_distribution<> randDist;
+    SmoothFlnum smoothedShape;
 
     static flnum wrapAngle (flnum angle)
     {
@@ -85,7 +92,9 @@ private:
     flnum shapePhase (flnum angle, flnum shapeModulationAmount)
     {
         angle = wrapAngle (angle);
-        flnum shape = std::clamp<flnum> (p->getShape() + shapeModulationAmount, 0.0, 1.0);
+        smoothedShape.set (p->getShape() + shapeModulationAmount);
+        smoothedShape.update();
+        flnum shape = std::clamp<flnum> (smoothedShape.get(), 0.0, 1.0);
         flnum normalizedAngle = std::clamp (angle / (2.0 * pi), 0.0, 1.0);
         flnum shaped = 2.0 * pi * (shape * map (normalizedAngle) + (1.0 - shape) * normalizedAngle);
         return shaped;

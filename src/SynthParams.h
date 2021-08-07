@@ -55,7 +55,6 @@ public:
 
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
     {
-        oscillatorParams.prepareToPlay (samplesPerBlockExpected, sampleRate);
     }
 
 private:

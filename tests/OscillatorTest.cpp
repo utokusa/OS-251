@@ -88,8 +88,8 @@ TEST (OscillatorTest, Noise)
     }
     mean /= n;
 
-    constexpr flnum loose_epsilon = 0.1;
-    EXPECT_NEAR (mean, 0.5, loose_epsilon);
+    constexpr flnum LAX_EPSILON = 0.1;
+    EXPECT_NEAR (mean, 0.5, LAX_EPSILON);
 
     // Calculate variance
     flnum variance = 0.0;
@@ -110,14 +110,27 @@ TEST (OscillatorTest, ChangeShapeAndMixWaves)
     // Start with shape = 0
     OscillatorParamsMock params { 1.0, 1.0, 1.0, 1.0, 0.0, 0.0 };
     Oscillator osc (&params);
+    constexpr int NUM_UPDATE = 5000;
+    // Use lax epsilon because shape value is smoothed
+    constexpr flnum LAX_EPSILON = 0.001;
 
     EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 2.1993587017059326, EPSILON);
     EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 2.5326919555664062, EPSILON);
     params.shape = 0.5;
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.6666688919067383, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 2.1997506618499756, EPSILON);
+    // Wait for oscillatorVal becames stable
+    for (int i = 0; i < NUM_UPDATE; i++)
+    {
+        osc.oscillatorVal (0, 0.0);
+    }
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.6666688919067383, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 2.1997506618499756, LAX_EPSILON);
     params.shape = 1.0;
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.0000048875808716, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 1.0012624263763428, EPSILON);
+    // Wait for oscillatorVal becames stable
+    for (int i = 0; i < NUM_UPDATE; i++)
+    {
+        osc.oscillatorVal (0, 0.0);
+    }
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.0000048875808716, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 1.0012624263763428, LAX_EPSILON);
 }
 } // namespace onsen

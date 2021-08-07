@@ -87,14 +87,24 @@ public:
           target (val),
           cur (val),
           smoothness (_smoothness),
-          adjustedSmoothness (_smoothness) {}
+          adjustedSmoothness (_smoothness),
+          initialized (false) {}
     flnum get() const { return cur; }
     void update() { cur = adjustedSmoothness * cur + (1 - adjustedSmoothness) * target; }
-    void set (flnum val) { target = val; }
+    void set (flnum val)
+    {
+        if (! initialized)
+        {
+            reset (val); // `initialized` becomees true here
+            return;
+        }
+        target = val;
+    }
     void reset (flnum val)
     {
         target = val;
         cur = val;
+        initialized = true;
     }
     void setSmoothness (flnum val)
     {
@@ -103,6 +113,10 @@ public:
     }
     void prepareToPlay (double _sampleRate)
     {
+        if (std::abs (_sampleRate) <= EPSILON)
+        {
+            return;
+        }
         sampleRate = _sampleRate;
         adjustedSmoothness = adjust (smoothness);
     }
@@ -113,13 +127,14 @@ private:
     flnum cur;
     flnum smoothness;
     flnum adjustedSmoothness;
+    bool initialized;
 
     // Adjust parameter value like attack, decay or release according to the
     // sampling rate
     flnum adjust (const flnum val) const
     {
         // If no need to adjust
-        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON)
+        if (std::abs (sampleRate - DEFAULT_SAMPLE_RATE) <= EPSILON || val == 0)
         {
             return val;
         }

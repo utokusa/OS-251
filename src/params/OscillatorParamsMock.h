@@ -32,7 +32,7 @@ struct OscillatorParamsMock : public IOscillatorParams
     flnum getSawGain() const override { return sawGain; }
     flnum getSubSquareGain() const override { return subSquareGain; }
     flnum getNoiseGain() const override { return noiseGain; }
-    flnum getShape() override { return shape; }
+    flnum getShape() const override { return shape; }
 
     flnum sinGain;
     flnum squareGain;

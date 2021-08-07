@@ -21,6 +21,9 @@ void FancySynthVoice::setCurrentPlaybackSampleRate (const double newRate)
     juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
     envManager.setCurrentPlaybackSampleRate (newRate);
     filter.setCurrentPlaybackSampleRate (newRate);
+    osc.setCurrentPlaybackSampleRate (newRate);
+    smoothedAmp.prepareToPlay (newRate);
+    smoothedAngleDelta.prepareToPlay (newRate);
 }
 
 void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int currentPitchWheelPosition)

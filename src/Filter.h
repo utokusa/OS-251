@@ -37,8 +37,7 @@ public:
           lfo (_lfo),
           sampleRate (DEFAULT_SAMPLE_RATE),
           fb(),
-          smoothedFreq (0.0, 0.995),
-          initialized (false)
+          smoothedFreq (0.0, 0.995)
     {
     }
 
@@ -48,15 +47,7 @@ public:
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
         flnum targetFreq = env->getLevel() * p->getFilterEnvelope()
                            + lfo->getFilterFreqAmount() * lfo->getLevel (sampleIdx);
-        if (! initialized)
-        {
-            smoothedFreq.reset (targetFreq);
-            initialized = true;
-        }
-        else
-        {
-            smoothedFreq.set (targetFreq);
-        }
+        smoothedFreq.set (targetFreq);
         smoothedFreq.update();
         const flnum freq = p->getControlledFrequency (smoothedFreq.get());
         const flnum omega0 = 2.0 * pi * freq / sampleRate;
@@ -93,6 +84,7 @@ public:
     void setCurrentPlaybackSampleRate (double _sampleRate)
     {
         sampleRate = static_cast<flnum> (_sampleRate);
+        smoothedFreq.prepareToPlay (_sampleRate);
     }
 
 private:
@@ -103,6 +95,5 @@ private:
     // The length of this vector equals to max number of the channels;
     FilterBuffer fb;
     SmoothFlnum smoothedFreq;
-    bool initialized;
 };
 } // namespace onsen
