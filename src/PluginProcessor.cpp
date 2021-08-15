@@ -100,7 +100,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("subSquareGain", this);
 
     // Noise gain
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.5, valueToTextFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("noiseGain", "Noise", "", nrange, 0.0, valueToTextFunction, nullptr, true));
     oscillatorParams->setNoiseGainPtr (parameters.getRawParameterValue ("noiseGain"));
     parameters.addParameterListener ("noiseGain", this);
 
@@ -184,7 +184,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("frequency", this);
 
     // Filter resonance
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 1.0, valueToResFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 0.0, valueToResFunction, nullptr, true));
     filterParams->setResonancePtr (parameters.getRawParameterValue ("resonance"));
     parameters.addParameterListener ("resonance", this);
 
