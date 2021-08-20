@@ -16,6 +16,7 @@ void FancySynth::setCurrentPlaybackSampleRate (double sampleRate)
 {
     lfo->setCurrentPlaybackSampleRate (sampleRate);
     chorus.setCurrentPlaybackSampleRate (sampleRate);
+    hpf.setCurrentPlaybackSampleRate (sampleRate);
     juce::Synthesiser::setCurrentPlaybackSampleRate (sampleRate);
 }
 
