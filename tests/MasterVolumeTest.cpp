@@ -32,7 +32,7 @@ protected:
     // This value depends on MasterVolume implementation.
     static constexpr flnum gainAdjustment = 0.2;
     // This value depends on MasterVolume implementation.
-    static constexpr flnum clippingValue = 3.0;
+    static constexpr flnum clippingValue = 2.0;
     MasterParamsMock masterParam { false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     AudioBufferMock audioBuffer { numChannels, samplesPerBlock };
     MasterVolume masterVolume { &masterParam };

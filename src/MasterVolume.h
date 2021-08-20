@@ -38,7 +38,7 @@ public:
 
 private:
     static constexpr flnum gainAdjustment = 0.2;
-    static constexpr flnum clippingValue = 3.0;
+    static constexpr flnum clippingValue = 2.0;
     const IMasterParams* const p;
 };
 } // namespace onsen
