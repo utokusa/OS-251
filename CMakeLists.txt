@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 PROJECT(OS_251
         LANGUAGES CXX
-        VERSION 0.1.9
+        VERSION 0.1.10
         )
 
 
