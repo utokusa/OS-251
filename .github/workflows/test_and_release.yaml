@@ -300,6 +300,7 @@ jobs:
       name: Pack (Linux)
       run: |
         mkdir -p ${{ github.event.repository.name }}-${{ runner.os }}
+        cp ./LICENSE ${{ github.event.repository.name }}-${{ runner.os }}/license.txt
         cp ./distro/Linux/readme.txt ${{ github.event.repository.name }}-${{ runner.os }}
         cd build/src/Os251_artefacts/Release
         mv VST3/* ../../../../${{ github.event.repository.name }}-${{ runner.os }}
