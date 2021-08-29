@@ -184,7 +184,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("frequency", this);
 
     // Filter resonance
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 0.0, valueToResFunction, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("resonance", "Resonance", "", nrange, 0.35 /* converted to 1.0024*/, valueToResFunction, nullptr, true));
     filterParams->setResonancePtr (parameters.getRawParameterValue ("resonance"));
     parameters.addParameterListener ("resonance", this);
 
