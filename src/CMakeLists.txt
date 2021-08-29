@@ -16,7 +16,7 @@ juce_add_plugin(Os251
         # ICON_SMALL "${CMAKE_SOURCE_DIR}/Assets/icon16.png "
         COMPANY_NAME "Onsen Audio"                    # Specify the name of the plugin's author
         COMPANY_COPYRIGHT "Onsen Audio"
-        COMPANY_WEBSITE "https://github.com/utokusa/OS-251"
+        COMPANY_WEBSITE "https://onsenaudio.com/"
         # COMPANY_EMAIL "not.exist@dummy.com"
         IS_SYNTH TRUE                       # Is this a synth or an effect?
         NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?

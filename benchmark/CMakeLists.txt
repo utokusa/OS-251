@@ -4,7 +4,7 @@ juce_add_console_app(Os251_Benchmark
         # ICON_SMALL "${CMAKE_SOURCE_DIR}/Assets/icon16.png "
         COMPANY_NAME "Onsen Audio"                    # Specify the name of the plugin's author
         COMPANY_COPYRIGHT "Onsen Audio"
-        COMPANY_WEBSITE "https://github.com/utokusa/OS-251"
+        COMPANY_WEBSITE "https://onsenaudio.com/"
         # COMPANY_EMAIL "not.exist@dummy.com"
         PLUGIN_MANUFACTURER_CODE htMi               # A four-character manufacturer id with at least one upper-case character
         # DESCRIPTION "" # We don't use it. If set, the plug-in name in Pro Tools will be this value.
