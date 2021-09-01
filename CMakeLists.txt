@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment target")
 
 PROJECT(OS_251
         LANGUAGES CXX
         VERSION 1.0.0
         )
-
 
 
 # for clang-tidy(this enable to find system header files).
