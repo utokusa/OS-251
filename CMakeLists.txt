@@ -3,7 +3,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment ta
 
 PROJECT(OS_251
         LANGUAGES CXX
-        VERSION 1.0.0
+        VERSION 1.0.1
         )
 
 
