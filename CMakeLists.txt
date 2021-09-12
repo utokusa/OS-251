@@ -27,8 +27,10 @@ FetchContent_Declare(googlebenchmark
         GIT_REPOSITORY https://github.com/google/benchmark.git
         GIT_TAG v1.5.2)
 
+set(BENCHMARK_ENABLE_GTEST_TESTS 0)
 FetchContent_MakeAvailable(
-        googletest
+        # When hermes is used, googletest cannot be included here because it cause duplicated `gtest`s.
+        # googletest
         googlebenchmark)
 
 # Enable JUCE. Do not use find_package to prevent from mix up with one globally installed.
@@ -72,15 +74,30 @@ if (REACTJUCE_JS_LIBRARY STREQUAL "HERMES")
         INTERFACE
         hermesapi
     )
+
+    # We have to use customized googletest
+    include_directories(
+        lib/react-juce/react_juce/hermes/external/llvh/utils/unittest/googletest/include/
+    )
+    # Disable hermes's codes for in googletest
+    add_compile_definitions(GTEST_NO_LLVM_RAW_OSTREAM)
+
 elseif (REACTJUCE_JS_LIBRARY STREQUAL "DUKTAPE")
     target_compile_definitions(
         react_juce
         INTERFACE
         REACTJUCE_USE_DUKTAPE=1
     )
+
+    FetchContent_MakeAvailable(
+        googletest
+    )
+    
 endif()
 
 #######################################################<- react-juce
+
+
 
 enable_testing()
 configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR})
