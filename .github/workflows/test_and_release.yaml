@@ -39,7 +39,7 @@ jobs:
         echo ==============================================
         echo $Env:PATH
         echo ==============================================
-        Get-Item $Env:VSINSTALLDIR
+        Get-Item Env:VSINSTALLDIR
         echo ==============================================
         echo $Env:VSINSTALLDIR
 
