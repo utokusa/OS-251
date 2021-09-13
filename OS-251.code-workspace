@@ -38,7 +38,7 @@
             // "-DJUCE_BUILD_EXTRAS=ON"
         ],
         "cmake.preferredGenerators": [
-            "Ninja",
+            // "Ninja",
             "Unix Makefiles"
         ],
     },

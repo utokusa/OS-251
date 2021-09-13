@@ -3,7 +3,7 @@
 
 name: Test and Release
 
-on: [push, pull_request]
+on: [push]
 
 env:
   PROJECT_NAME: Os251
@@ -132,6 +132,12 @@ jobs:
               set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
             endif()
           endforeach()
+          # The above way to parse environment variables has a bug.
+          # For example `message(STATUS "Echo VSINSTALLDIR: $ENV{VSINSTALLDIR}")` outputs
+          # `Echo VSINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise;VSSDK150INSTALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VSSDK`.
+          # So I use a hard-coded value for now.
+          # TODO: fix
+          set(ENV{VSINSTALLDIR} "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise")
         endif()
         set(path_separator ":")
         if ("${{ runner.os }}" STREQUAL "Windows")
