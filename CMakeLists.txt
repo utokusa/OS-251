@@ -81,6 +81,9 @@ if (REACTJUCE_JS_LIBRARY STREQUAL "HERMES")
     )
     # Disable hermes's codes for in googletest
     add_compile_definitions(GTEST_NO_LLVM_RAW_OSTREAM)
+    # Avoid to use std::tr1
+    # https://github.com/google/googletest/issues/1111
+    add_definitions(-DGTEST_LANG_CXX11=1)
 
 elseif (REACTJUCE_JS_LIBRARY STREQUAL "DUKTAPE")
     target_compile_definitions(
