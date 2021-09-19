@@ -7,6 +7,7 @@
 */
 
 #include "PluginProcessor.h"
+#include "PluginEditor.h"
 
 //==============================================================================
 Os251AudioProcessor::Os251AudioProcessor()
@@ -25,7 +26,6 @@ Os251AudioProcessor::Os251AudioProcessor()
       positionInfo(),
       jucePositionInfo (&positionInfo),
       synthEngine (&synthParams, &jucePositionInfo),
-      tmpUiBuldlePath(),
       laf()
 {
     // ---
@@ -260,8 +260,6 @@ Os251AudioProcessor::Os251AudioProcessor()
 
 Os251AudioProcessor::~Os251AudioProcessor()
 {
-    juce::File bundle = juce::File (tmpUiBuldlePath);
-    bundle.deleteFile();
 }
 
 //==============================================================================
@@ -417,29 +415,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
     // Look and feel
     juce::LookAndFeel::setDefaultLookAndFeel (&laf);
-
-    // Editor
-    const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
-    const juce::String jsFileName = "main.js";
-    juce::File bundle = dir.createTempFile (jsFileName);
-    tmpUiBuldlePath = bundle.getFullPathName(); // It will be deleted in destructor
-
-    {
-        juce::FileOutputStream fs = juce::FileOutputStream (bundle);
-        fs.write (BinaryData::main_js, BinaryData::main_jsSize);
-        fs.flush();
-    }
-
-#if JUCE_DEBUG
-    juce::File sourceDir = juce::File (OS251_SOURCE_DIR);
-    bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
-#endif
-
-    auto* editor = new reactjuce::GenericEditor (*this, bundle);
-
-    editor->setSize (758, 408 + 34 /* For menu*/);
-
-    return editor;
+    return new Os251AudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================
