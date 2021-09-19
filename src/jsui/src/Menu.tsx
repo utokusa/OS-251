@@ -5,6 +5,7 @@ import {
   View
 } from 'react-juce'
 import { textColor } from './Colors'
+import { PresetManager } from './PresetManager'
 
 class Menu extends Component {
   render (): ReactNode {
@@ -14,6 +15,7 @@ class Menu extends Component {
           <Text {...styles.logo_text}>
             OS-251
           </Text>
+          <PresetManager {...styles.preset_manager}/>
         </View>
       </View>
     )
@@ -37,6 +39,12 @@ const styles = {
   logo_text: {
     fontSize: 20.0,
     color: textColor
+  },
+  preset_manager: {
+    height: 15,
+    width: 160,
+    marginTop: 1,
+    marginLeft: 400
   }
 }
 

@@ -63,7 +63,6 @@ private:
     juce::AudioPlayHead::CurrentPositionInfo positionInfo;
     onsen::JucePositionInfo jucePositionInfo;
     onsen::SynthEngine synthEngine;
-    juce::String tmpUiBuldlePath;
     onsen::FancyLookAndFeel laf;
 
     //==============================================================================
