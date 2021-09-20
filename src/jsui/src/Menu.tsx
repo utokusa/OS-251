@@ -42,9 +42,9 @@ const styles = {
   },
   preset_manager: {
     height: 15,
-    width: 240,
+    width: 460,
     marginTop: 1,
-    marginLeft: 400
+    marginLeft: 180
   }
 }
 
