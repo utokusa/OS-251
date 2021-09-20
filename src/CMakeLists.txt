@@ -71,6 +71,7 @@ ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp
         PluginEditor.cpp
+        GlobalVariables.cpp
         Chorus.cpp
         Envelope.cpp
         SynthEngine.cpp
