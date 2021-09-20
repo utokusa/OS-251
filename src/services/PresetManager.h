@@ -22,6 +22,7 @@ public:
                       currentPresetFile(),
                       currentPresetIndex (-1)
     {
+        scanUserPresets();
     }
 
     void save()
@@ -63,54 +64,10 @@ public:
 
     juce::String loadDefaultPreset()
     {
+        // TODO: Stop using actual file to prevent it from being deleted.
         loadPreset (juce::File::getSpecialLocation (
                         juce::File::SpecialLocationType::userApplicationDataDirectory)
                         .getChildFile ("Onsen Audio/OS-251/presets/default.oapreset"));
-        return getPresetName (currentPresetFile);
-    }
-
-    juce::String loadPrev()
-    {
-        presetFiles = scanUserPresets();
-        if (currentPresetIndex != -1
-            && presetFiles[currentPresetIndex] != currentPresetFile)
-        {
-            // If indexOf() fail, it returns -1 which is the default preset.
-            currentPresetIndex = presetFiles.indexOf (currentPresetFile);
-        }
-
-        if (currentPresetIndex == 0)
-        {
-            currentPresetIndex = -1;
-            loadDefaultPreset();
-        }
-        else if (currentPresetIndex > 0)
-        {
-            loadPreset (presetFiles[--currentPresetIndex]);
-        }
-        return getPresetName (currentPresetFile);
-    }
-
-    juce::String loadNext()
-    {
-        presetFiles = scanUserPresets();
-
-        if (currentPresetIndex != -1
-            && presetFiles[currentPresetIndex] != currentPresetFile)
-        {
-            // If indexOf() fail, it returns -1 which is the default preset.
-            currentPresetIndex = presetFiles.indexOf (currentPresetFile);
-        }
-
-        if (currentPresetIndex < 0)
-        {
-            loadPreset (presetFiles[currentPresetIndex = 0]);
-        }
-        else if (currentPresetIndex < presetFiles.size() - 1)
-        {
-            loadPreset (presetFiles[++currentPresetIndex]);
-        }
-
         return getPresetName (currentPresetFile);
     }
 
@@ -130,14 +87,14 @@ public:
         {
             std::cout << f.getFullPathName() << std::endl;
         }
-        return files;
+
+        return presetFiles = files;
     }
 
-private:
-    juce::AudioProcessorValueTreeState& parameters;
-    juce::Array<juce::File> presetFiles;
-    juce::File currentPresetFile;
-    int currentPresetIndex;
+    juce::Array<juce::File> getUserPresets()
+    {
+        return presetFiles;
+    }
 
     void loadPreset (juce::File file)
     {
@@ -154,9 +111,15 @@ private:
                     *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
     }
 
-    juce::String getPresetName (juce::File file)
+    static juce::String getPresetName (juce::File file)
     {
         return file.getFileNameWithoutExtension();
     }
+
+private:
+    juce::AudioProcessorValueTreeState& parameters;
+    juce::Array<juce::File> presetFiles;
+    juce::File currentPresetFile;
+    int currentPresetIndex;
 };
 } // namespace onsen
