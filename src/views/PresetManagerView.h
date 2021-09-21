@@ -20,14 +20,6 @@ class PresetManagerView : public reactjuce::View, public juce::Button::Listener
 public:
     PresetManagerView() : presetManager(), currentPresetMenuIdx (1)
     {
-        addAndMakeVisible (saveButton);
-        saveButton.setButtonText ("Save");
-        saveButton.addListener (this);
-
-        addAndMakeVisible (loadButton);
-        loadButton.setButtonText ("Load");
-        loadButton.addListener (this);
-
         addAndMakeVisible (revertButton);
         revertButton.setButtonText ("Revert");
         revertButton.addListener (this);
@@ -66,8 +58,9 @@ public:
 
     ~PresetManagerView()
     {
-        saveButton.removeListener (this);
-        loadButton.removeListener (this);
+        revertButton.removeListener (this);
+        prevButton.removeListener (this);
+        nextButton.removeListener (this);
     }
 
     void paint (juce::Graphics& g) override
@@ -76,8 +69,6 @@ public:
 
     void resized() override
     {
-        saveButton.setBounds (0, 0, getWidth() / 8, 15);
-        loadButton.setBounds (getWidth() / 8, 0, getWidth() / 8, 15);
         revertButton.setBounds (getWidth() * 2 / 8, 0, getWidth() / 8, 15);
         prevButton.setBounds (getWidth() * 3 / 8, 0, getWidth() / 8, 15);
         nextButton.setBounds (getWidth() * 4 / 8, 0, getWidth() / 8, 15);
@@ -86,16 +77,6 @@ public:
 
     void buttonClicked (juce::Button* button) override
     {
-        if (button == &saveButton)
-        {
-            presetManager.save();
-        }
-
-        if (button == &loadButton)
-        {
-            presetManager.load();
-        }
-
         if (button == &revertButton)
         {
             int selectedItemId = presetMenu.getSelectedId();
@@ -123,13 +104,11 @@ public:
 
 private:
     PresetManager presetManager;
-    juce::TextButton saveButton;
-    juce::TextButton loadButton;
     juce::TextButton revertButton;
     juce::TextButton prevButton;
     juce::TextButton nextButton;
 
-    juce::ComboBox presetMenu;
+    juce::ComboBox presetMenu; // TODO: need to do something like presetMenu.removeListener()?
     juce::PopupMenu userPresetMenu;
     int currentPresetMenuIdx;
     std::unique_ptr<juce::FileChooser> chooser;
@@ -169,6 +148,7 @@ private:
         saveAsItem.text = "Save as...";
         saveAsItem.action = [this]() {
             std::cout << "save as... " << presetMenu.getSelectedItemIndex() << std::endl;
+            // TODO: Remove hard-coded "*.oapreset"
             chooser = std::make_unique<juce::FileChooser> ("Save as...",
                                                            presetManager.getUserPresetDir(),
                                                            "*.oapreset");
