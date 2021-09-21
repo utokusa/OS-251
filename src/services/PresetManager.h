@@ -25,23 +25,6 @@ public:
         scanUserPresets();
     }
 
-    void save()
-    {
-        juce::File file (juce::File::getSpecialLocation (
-                             juce::File::SpecialLocationType::userDesktopDirectory)
-                             .getChildFile ("test.oapreset"));
-        savePreset (file);
-    }
-
-    juce::String load()
-    {
-        juce::File file (juce::File::getSpecialLocation (
-                             juce::File::SpecialLocationType::userDesktopDirectory)
-                             .getChildFile ("test.oapreset"));
-        loadPreset (file);
-        return getPresetName (currentPresetFile);
-    }
-
     juce::String loadDefaultPreset()
     {
         // TODO: Stop using actual file to prevent it from being deleted.
