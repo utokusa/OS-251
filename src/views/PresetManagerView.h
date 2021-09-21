@@ -136,9 +136,12 @@ private:
     //==============================================================================
     void loadPresetMenu()
     {
+        presetMenu.clear (juce::NotificationType::dontSendNotification);
+        userPresetMenu.clear();
         int id = 1;
+        currentPresetMenuIdx = 1; // default
         presetMenu.addItem ("default", id++);
-        auto presetFiles = presetManager.getUserPresets();
+        auto presetFiles = presetManager.scanUserPresets();
         for (auto presetFile : presetFiles)
         {
             juce::PopupMenu::Item presetItem;
@@ -173,7 +176,11 @@ private:
             chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser) {
                 juce::File file (chooser.getResult());
                 presetManager.savePreset (file);
-                presetMenu.setSelectedId (currentPresetMenuIdx);
+                loadPresetMenu();
+                auto presetFiles = presetManager.getUserPresets();
+                int idx = presetFiles.indexOf (file);
+                // TODO: handle the case when currentFile.existsAsFile() == false here.
+                presetMenu.setSelectedId (presetMenuId (idx));
             });
         };
         presetMenu.getRootMenu()->addItem (saveAsItem);
@@ -195,6 +202,28 @@ private:
         rescanPresetsItem.action = [this]() {
             presetMenu.setSelectedId (currentPresetMenuIdx);
             std::cout << "Rescan Presets... " << presetMenu.getSelectedItemIndex() << std::endl;
+            auto presetFiles = presetManager.getUserPresets();
+            if (currentPresetMenuIdx == 1 /*default*/)
+            {
+                loadPresetMenu();
+                presetMenu.setSelectedId (1);
+            }
+            else
+            {
+                auto currentFile = presetFiles[presetArrayIdx (currentPresetMenuIdx)];
+                loadPresetMenu();
+                if (currentFile.existsAsFile())
+                {
+                    auto presetFiles = presetManager.getUserPresets();
+                    int idx = presetFiles.indexOf (currentFile);
+                    // TODO: handle the case when currentFile.existsAsFile() == false here.
+                    presetMenu.setSelectedId (presetMenuId (idx));
+                }
+                else
+                {
+                    presetMenu.setSelectedId (1);
+                }
+            }
         };
         presetMenu.getRootMenu()->addItem (rescanPresetsItem);
     }
@@ -219,6 +248,11 @@ private:
     int presetArrayIdx (int itemId)
     {
         return itemId - 2;
+    }
+
+    int presetMenuId (int presetArrayIdx)
+    {
+        return presetArrayIdx + 2;
     }
 };
 } // namespace onsen

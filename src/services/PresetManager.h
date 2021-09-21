@@ -107,6 +107,7 @@ public:
 
     void loadPreset (juce::File file)
     {
+        // TODO: if the file is not found, load default instead
         currentPresetFile = file;
         std::cout << "loading: " << file.getFullPathName() << std::endl;
         auto xmlDocument = juce::XmlDocument (file);
