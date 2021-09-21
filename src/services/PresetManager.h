@@ -27,30 +27,10 @@ public:
 
     void save()
     {
-        auto state = parameters.copyState();
-        std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
-        // std::cout << "xml->toString()" << xml->toString() << std::endl;
         juce::File file (juce::File::getSpecialLocation (
                              juce::File::SpecialLocationType::userDesktopDirectory)
                              .getChildFile ("test.oapreset"));
-        auto presetXml = std::make_unique<juce::XmlElement> ("Preset");
-
-        auto gadget = new juce::XmlElement ("Gadget");
-        gadget->addTextElement ("OS-251");
-        presetXml->addChildElement (gadget);
-
-        auto savedByVersion = new juce::XmlElement ("SavedByVersion");
-        savedByVersion->addTextElement ("1.0.1"); // TODO: implement
-        presetXml->addChildElement (savedByVersion);
-
-        auto version = new juce::XmlElement ("Version");
-        version->addTextElement ("0");
-        presetXml->addChildElement (version);
-
-        auto stateContainerXml = std::make_unique<juce::XmlElement> ("State");
-        stateContainerXml->addChildElement (stateXml.release());
-        presetXml->addChildElement (stateContainerXml.release());
-        presetXml->writeTo (file);
+        savePreset (file);
     }
 
     juce::String load()
@@ -73,14 +53,10 @@ public:
 
     juce::Array<juce::File> scanUserPresets()
     {
-        // File::findChildFiles
-        // RangedDirectoryIterator
-        juce::File file (juce::File::getSpecialLocation (
-                             juce::File::SpecialLocationType::userApplicationDataDirectory)
-                             .getChildFile ("Onsen Audio/OS-251/presets/user"));
-        file.createDirectory(); // OK if it exists.
+        juce::File dir = getUserPresetDir();
+        dir.createDirectory(); // OK if it exists.
         // file.revealToUser();
-        auto files = file.findChildFiles (juce::File::TypesOfFileToFind::findFilesAndDirectories + juce::File::TypesOfFileToFind::ignoreHiddenFiles, true, "*.oapreset");
+        auto files = dir.findChildFiles (juce::File::TypesOfFileToFind::findFilesAndDirectories + juce::File::TypesOfFileToFind::ignoreHiddenFiles, true, "*.oapreset");
         files.sort();
         std::cout << "User presets" << std::endl;
         for (auto f : files)
@@ -91,9 +67,42 @@ public:
         return presetFiles = files;
     }
 
+    juce::File getUserPresetDir()
+    {
+        juce::File dir (juce::File::getSpecialLocation (
+                            juce::File::SpecialLocationType::userApplicationDataDirectory)
+                            .getChildFile ("Onsen Audio/OS-251/presets/user"));
+        return dir;
+    }
+
     juce::Array<juce::File> getUserPresets()
     {
         return presetFiles;
+    }
+
+    void savePreset (juce::File file)
+    {
+        auto state = parameters.copyState();
+        std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
+
+        auto presetXml = std::make_unique<juce::XmlElement> ("Preset");
+
+        auto gadget = new juce::XmlElement ("Gadget");
+        gadget->addTextElement ("OS-251");
+        presetXml->addChildElement (gadget);
+
+        auto savedByVersion = new juce::XmlElement ("SavedByVersion");
+        savedByVersion->addTextElement ("1.0.1"); // TODO: implement
+        presetXml->addChildElement (savedByVersion);
+
+        auto version = new juce::XmlElement ("Version");
+        version->addTextElement ("0");
+        presetXml->addChildElement (version);
+
+        auto stateContainerXml = std::make_unique<juce::XmlElement> ("State");
+        stateContainerXml->addChildElement (stateXml.release());
+        presetXml->addChildElement (stateContainerXml.release());
+        presetXml->writeTo (file);
     }
 
     void loadPreset (juce::File file)

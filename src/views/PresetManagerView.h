@@ -10,6 +10,7 @@
 
 #include "../services/PresetManager.h"
 #include <JuceHeader.h>
+#include <iostream>
 #include <unordered_map>
 
 namespace onsen
@@ -17,7 +18,7 @@ namespace onsen
 class PresetManagerView : public reactjuce::View, public juce::Button::Listener
 {
 public:
-    PresetManagerView() : presetManager()
+    PresetManagerView() : presetManager(), currentPresetMenuIdx (1)
     {
         addAndMakeVisible (saveButton);
         saveButton.setButtonText ("Save");
@@ -50,10 +51,12 @@ public:
             if (selectedItemId == 1)
             {
                 presetManager.loadDefaultPreset();
+                currentPresetMenuIdx = selectedItemId;
             }
             else if (presetFileIdx <= presetFiles.size() - 1)
             {
                 presetManager.loadPreset (presetFiles[presetFileIdx]);
+                currentPresetMenuIdx = selectedItemId;
             }
         };
         presetMenu.setSelectedId (1);
@@ -69,7 +72,6 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        g.fillAll (juce::Colour (0xA9, 0x99, 0x88));
     }
 
     void resized() override
@@ -129,6 +131,8 @@ private:
 
     juce::ComboBox presetMenu;
     juce::PopupMenu userPresetMenu;
+    int currentPresetMenuIdx;
+    std::unique_ptr<juce::FileChooser> chooser;
     //==============================================================================
     void loadPresetMenu()
     {
@@ -143,10 +147,56 @@ private:
             userPresetMenu.addItem (presetItem);
             id++;
         }
-
         presetMenu.getRootMenu()->addSubMenu ("User Presets", userPresetMenu);
-        presetMenu.addItem ("Save", id++);
-        presetMenu.addItem ("Save as", id++);
+
+        juce::PopupMenu::Item saveItem;
+        saveItem.itemID = id++;
+        saveItem.text = "Save";
+        saveItem.action = [this]() {
+            presetMenu.setSelectedId (currentPresetMenuIdx);
+            std::cout << "saving... " << presetMenu.getSelectedItemIndex() << std::endl;
+            auto files = presetManager.getUserPresets();
+            auto file = files[presetArrayIdx (currentPresetMenuIdx)];
+            presetManager.savePreset (file);
+        };
+        presetMenu.getRootMenu()->addItem (saveItem);
+
+        juce::PopupMenu::Item saveAsItem;
+        saveAsItem.itemID = id++;
+        saveAsItem.text = "Save as...";
+        saveAsItem.action = [this]() {
+            std::cout << "save as... " << presetMenu.getSelectedItemIndex() << std::endl;
+            chooser = std::make_unique<juce::FileChooser> ("Save as...",
+                                                           presetManager.getUserPresetDir(),
+                                                           "*.oapreset");
+            auto chooserFlag = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles;
+            chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser) {
+                juce::File file (chooser.getResult());
+                presetManager.savePreset (file);
+                presetMenu.setSelectedId (currentPresetMenuIdx);
+            });
+        };
+        presetMenu.getRootMenu()->addItem (saveAsItem);
+
+        juce::PopupMenu::Item goToPresetFolderItem;
+        goToPresetFolderItem.itemID = id++;
+        goToPresetFolderItem.text = "Go to Preset Folder...";
+        goToPresetFolderItem.action = [this]() {
+            presetMenu.setSelectedId (currentPresetMenuIdx);
+            std::cout << "Go to preset folder... " << presetMenu.getSelectedItemIndex() << std::endl;
+            juce::File dir = presetManager.getUserPresetDir();
+            dir.revealToUser();
+        };
+        presetMenu.getRootMenu()->addItem (goToPresetFolderItem);
+
+        juce::PopupMenu::Item rescanPresetsItem;
+        rescanPresetsItem.itemID = id++;
+        rescanPresetsItem.text = "Rescan Presets";
+        rescanPresetsItem.action = [this]() {
+            presetMenu.setSelectedId (currentPresetMenuIdx);
+            std::cout << "Rescan Presets... " << presetMenu.getSelectedItemIndex() << std::endl;
+        };
+        presetMenu.getRootMenu()->addItem (rescanPresetsItem);
     }
 
     void prevClicked()
