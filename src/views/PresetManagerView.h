@@ -113,21 +113,52 @@ private:
     int currentPresetMenuIdx;
     std::unique_ptr<juce::FileChooser> chooser;
     //==============================================================================
+    void createPresetMenuTree (juce::PopupMenu& menu,
+                               int& itemId,
+                               juce::Array<juce::File>& presets,
+                               int& presetIdx,
+                               juce::File currentDir)
+    {
+        while (presetIdx < presets.size())
+        {
+            // TODO: Confirm that presets[i] is a file, not a dir.
+            if (currentDir == presets[presetIdx].getParentDirectory())
+            {
+                juce::PopupMenu::Item presetItem;
+                presetItem.itemID = itemId;
+                presetItem.text = PresetManager::getPresetName (presets[presetIdx]);
+                menu.addItem (presetItem);
+                itemId++;
+                presetIdx++;
+            }
+            else if (presets[presetIdx].isAChildOf (currentDir))
+            {
+                juce::PopupMenu childMenu;
+                auto relativePathToPreset = presets[presetIdx].getRelativePathFrom (currentDir);
+                auto separator = juce::File::getSeparatorString();
+                auto tokens = juce::StringArray::fromTokens (relativePathToPreset, separator, juce::StringRef());
+                auto childMenuName = tokens[0];
+                createPresetMenuTree (childMenu, itemId, presets, presetIdx, currentDir.getChildFile (childMenuName));
+                menu.addSubMenu (childMenuName, childMenu);
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
     void loadPresetMenu()
     {
         presetMenu.clear (juce::NotificationType::dontSendNotification);
         userPresetMenu.clear();
-        int id = 1;
+        int id = 1; // Item ID should start from 1
         currentPresetMenuIdx = 1; // default
         presetMenu.addItem ("default", id++);
         auto presetFiles = presetManager.scanUserPresets();
-        for (auto presetFile : presetFiles)
         {
-            juce::PopupMenu::Item presetItem;
-            presetItem.itemID = id;
-            presetItem.text = PresetManager::getPresetName (presetFile);
-            userPresetMenu.addItem (presetItem);
-            id++;
+            int i = 0;
+            createPresetMenuTree (userPresetMenu, id, presetFiles, i, presetManager.getUserPresetDir());
         }
         presetMenu.getRootMenu()->addSubMenu ("User Presets", userPresetMenu);
 

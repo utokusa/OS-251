@@ -22,6 +22,7 @@ public:
                       currentPresetFile(),
                       currentPresetIndex (-1)
     {
+        // TODO: Maybe we can omit this scanUserPresets()?
         scanUserPresets();
     }
 
