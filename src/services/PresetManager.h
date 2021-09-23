@@ -9,59 +9,81 @@
 #pragma once
 
 #include "../GlobalVariables.h"
+#include "FactoryPresets.h"
 #include <JuceHeader.h>
 // #include <iostream>
 
 namespace onsen
 {
+//==============================================================================
 class PresetManager
 {
 public:
     PresetManager() : parameters (*GlobalVariables::parameters),
+                      factoryPresetFiles(),
+                      userPresetFiles(),
                       presetFiles(),
-                      currentPresetFile(),
-                      currentPresetIndex (-1)
+                      currentPresetFile()
     {
         // TODO: Maybe we can omit this scanUserPresets()?
-        scanUserPresets();
+        scanPresets();
     }
 
     juce::String loadDefaultPreset()
     {
         // TODO: Stop using actual file to prevent it from being deleted.
-        loadPreset (juce::File::getSpecialLocation (
-                        juce::File::SpecialLocationType::userApplicationDataDirectory)
-                        .getChildFile ("Onsen Audio/OS-251/presets/default.oapreset"));
+        loadPreset (getDefaultPresetFile());
         return getPresetName (currentPresetFile);
     }
 
-    juce::Array<juce::File> scanUserPresets()
+    void scanPresets()
     {
-        juce::File dir = getUserPresetDir();
-        dir.createDirectory(); // OK if it exists.
-        // file.revealToUser();
-        auto files = dir.findChildFiles (juce::File::TypesOfFileToFind::findFilesAndDirectories + juce::File::TypesOfFileToFind::ignoreHiddenFiles, true, "*.oapreset");
-        files.sort();
-        std::cout << "User presets" << std::endl;
-        for (auto f : files)
-        {
-            std::cout << f.getFullPathName() << std::endl;
-        }
+        restorePresetFoldersAndPresetsIfNecessary();
+        scanPresets (getFactoryPresetDir(), factoryPresetFiles);
+        scanPresets (getUserPresetDir(), userPresetFiles);
+        presetFiles.clear();
+        presetFiles.add (getDefaultPresetFile());
+        presetFiles.addArray (factoryPresetFiles);
+        presetFiles.addArray (userPresetFiles);
+    }
 
-        return presetFiles = files;
+    juce::File getDefaultPresetFile()
+    {
+        // TODO: remove duplicated "Onsen Audio/OS-251/presets"
+        return juce::File::getSpecialLocation (
+                   juce::File::SpecialLocationType::userApplicationDataDirectory)
+            .getChildFile ("Onsen Audio/OS-251/presets/Default.oapreset");
+    }
+
+    juce::File getFactoryPresetDir()
+    {
+        juce::File dir (juce::File::getSpecialLocation (
+                            juce::File::SpecialLocationType::userApplicationDataDirectory)
+                            .getChildFile ("Onsen Audio/OS-251/Presets/Factory"));
+        return dir;
     }
 
     juce::File getUserPresetDir()
     {
         juce::File dir (juce::File::getSpecialLocation (
                             juce::File::SpecialLocationType::userApplicationDataDirectory)
-                            .getChildFile ("Onsen Audio/OS-251/presets/user"));
+                            .getChildFile ("Onsen Audio/OS-251/Presets/User"));
         return dir;
+    }
+
+    juce::Array<juce::File> getPresets()
+    {
+        return presetFiles;
+    }
+
+    juce::Array<juce::File> getFactoryPresets()
+    {
+        return factoryPresetFiles;
     }
 
     juce::Array<juce::File> getUserPresets()
     {
-        return presetFiles;
+        return userPresetFiles;
     }
 
     void savePreset (juce::File file)
@@ -112,8 +134,81 @@ public:
 
 private:
     juce::AudioProcessorValueTreeState& parameters;
+    juce::Array<juce::File> factoryPresetFiles;
+    juce::Array<juce::File> userPresetFiles;
     juce::Array<juce::File> presetFiles;
     juce::File currentPresetFile;
-    int currentPresetIndex;
+
+    //==============================================================================
+
+    juce::Array<juce::File> scanPresets (juce::File dir, juce::Array<juce::File>& presetFiles)
+    {
+        dir.createDirectory(); // OK if it exists.
+        auto files = dir.findChildFiles (juce::File::TypesOfFileToFind::findFilesAndDirectories + juce::File::TypesOfFileToFind::ignoreHiddenFiles, true, "*.oapreset");
+        files.sort();
+
+        return presetFiles = files;
+    }
+
+    void restorePresetFoldersAndPresetsIfNecessary()
+    {
+        // Restore default preset if it doesn't exist.
+        if (! getDefaultPresetFile().existsAsFile())
+        {
+            restoreDefaultPreset();
+        }
+
+        // Restore factory preset folder if it doesn't exist.
+        if (! getFactoryPresetDir().exists() || getFactoryPresetDir().existsAsFile())
+        {
+            restoreFactoryPresets();
+        }
+
+        // Restore user preset folder if it doesn't exist.
+        if (! getUserPresetDir().exists())
+        {
+            restoreUserPresetFolder();
+        }
+    }
+
+    void restoreDefaultPreset()
+    {
+        auto file = getDefaultPresetFile();
+
+        // Try to delete a folder with the same name as default preset file
+        file.deleteRecursively();
+        // This line will create necessary sub folders
+        file.create();
+        auto fs = juce::FileOutputStream (file);
+        fs.write (BinaryData::Default_oapreset, BinaryData::Default_oapresetSize);
+        fs.flush();
+    }
+
+    void restoreFactoryPresets()
+    {
+        // Try to delete a file with the same name as factory preset folder
+        // (Usually it doesn't happen).
+        getFactoryPresetDir().deleteFile();
+
+        auto dir = getFactoryPresetDir();
+        for (auto& factoryPreset : factoryPresets)
+        {
+            auto dir = getFactoryPresetDir();
+            auto file = dir.getChildFile (factoryPreset.path);
+            // This line will create necessary sub folders
+            file.create();
+            auto fs = juce::FileOutputStream (file);
+            fs.write (factoryPreset.data, factoryPreset.size);
+            fs.flush();
+        }
+    }
+
+    void restoreUserPresetFolder()
+    {
+        auto dir = getUserPresetDir();
+        if (dir.exists())
+            return;
+        dir.createDirectory();
+    }
 };
 } // namespace onsen

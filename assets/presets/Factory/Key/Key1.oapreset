@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Preset>
+  <Gadget>OS-251</Gadget>
+  <SavedByVersion>1.0.1</SavedByVersion>
+  <Version>0</Version>
+  <State>
+    <OS-251>
+      <PARAM id="attack" value="0.01000000257045031"/>
+      <PARAM id="chorusOn" value="0.0"/>
+      <PARAM id="decay" value="0.5649999976158142"/>
+      <PARAM id="envForAmpOn" value="1.0"/>
+      <PARAM id="filterEnv" value="0.5"/>
+      <PARAM id="frequency" value="0.6599999666213989"/>
+      <PARAM id="hpfFreq" value="0.0"/>
+      <PARAM id="lfoDelay" value="0.5"/>
+      <PARAM id="lfoFilterFreq" value="0.0"/>
+      <PARAM id="lfoPhase" value="0.0"/>
+      <PARAM id="lfoPitch" value="0.06499999761581421"/>
+      <PARAM id="lfoShape" value="0.0"/>
+      <PARAM id="masterFineTune" value="0.5"/>
+      <PARAM id="masterOctaveTune" value="0.5"/>
+      <PARAM id="masterSemitoneTune" value="0.5"/>
+      <PARAM id="masterVolume" value="0.8399999737739563"/>
+      <PARAM id="noiseGain" value="0.7049999833106995"/>
+      <PARAM id="numVoices" value="1.0"/>
+      <PARAM id="pitchBendWidth" value="0.5"/>
+      <PARAM id="portamento" value="0.0"/>
+      <PARAM id="rate" value="0.5400000214576721"/>
+      <PARAM id="rateSync" value="0.0"/>
+      <PARAM id="release" value="0.175000011920929"/>
+      <PARAM id="resonance" value="0.3649999797344208"/>
+      <PARAM id="sawGain" value="0.0"/>
+      <PARAM id="shape" value="0.5450000166893005"/>
+      <PARAM id="sinGain" value="1.0"/>
+      <PARAM id="squareGain" value="0.9850000143051147"/>
+      <PARAM id="subSquareGain" value="0.0"/>
+      <PARAM id="sustain" value="0.5049999952316284"/>
+      <PARAM id="syncOn" value="0.0"/>
+    </OS-251>
+  </State>
+</Preset>

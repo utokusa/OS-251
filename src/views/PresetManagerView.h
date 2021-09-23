@@ -15,10 +15,11 @@
 
 namespace onsen
 {
+//==============================================================================
 class PresetManagerView : public reactjuce::View, public juce::Button::Listener
 {
 public:
-    PresetManagerView() : presetManager(), currentPresetMenuIdx (1)
+    PresetManagerView() : presetManager(), currentPresetMenuItemId (1)
     {
         addAndMakeVisible (revertButton);
         revertButton.setButtonText ("Revert");
@@ -34,22 +35,14 @@ public:
 
         addAndMakeVisible (presetMenu);
         presetMenu.setJustificationType (juce::Justification::centred);
-        presetMenu.setTextWhenNothingSelected ("Default");
+        presetMenu.setTextWhenNothingSelected ("");
         loadPresetMenu();
         presetMenu.onChange = [this] {
             auto selectedItemId = presetMenu.getSelectedId();
-            auto presetFiles = presetManager.getUserPresets();
+            auto presetFiles = presetManager.getPresets();
             int presetFileIdx = presetArrayIdx (selectedItemId);
-            if (selectedItemId == 1)
-            {
-                presetManager.loadDefaultPreset();
-                currentPresetMenuIdx = selectedItemId;
-            }
-            else if (presetFileIdx <= presetFiles.size() - 1)
-            {
-                presetManager.loadPreset (presetFiles[presetFileIdx]);
-                currentPresetMenuIdx = selectedItemId;
-            }
+            presetManager.loadPreset (presetFiles[presetFileIdx]);
+            currentPresetMenuItemId = selectedItemId;
         };
         presetMenu.setSelectedId (1);
 
@@ -80,15 +73,8 @@ public:
         if (button == &revertButton)
         {
             int selectedItemId = presetMenu.getSelectedId();
-            if (selectedItemId == 1)
-            {
-                presetManager.loadDefaultPreset();
-            }
-            else
-            {
-                auto presetFiles = presetManager.getUserPresets();
-                presetManager.loadPreset (presetFiles[presetArrayIdx (selectedItemId)]);
-            }
+            auto presetFiles = presetManager.getPresets();
+            presetManager.loadPreset (presetFiles[presetArrayIdx (selectedItemId)]);
         }
 
         if (button == &prevButton)
@@ -109,8 +95,9 @@ private:
     juce::TextButton nextButton;
 
     juce::ComboBox presetMenu; // TODO: need to do something like presetMenu.removeListener()?
+    juce::PopupMenu factoryPresetMenu;
     juce::PopupMenu userPresetMenu;
-    int currentPresetMenuIdx;
+    int currentPresetMenuItemId;
     std::unique_ptr<juce::FileChooser> chooser;
     //==============================================================================
     void createPresetMenuTree (juce::PopupMenu& menu,
@@ -150,90 +137,103 @@ private:
 
     void loadPresetMenu()
     {
+        // TODO: Need acync IO for scanning presets?
+        presetManager.scanPresets();
         presetMenu.clear (juce::NotificationType::dontSendNotification);
+        factoryPresetMenu.clear();
         userPresetMenu.clear();
         int id = 1; // Item ID should start from 1
-        currentPresetMenuIdx = 1; // default
-        presetMenu.addItem ("default", id++);
-        auto presetFiles = presetManager.scanUserPresets();
+
+        // Default preset
+        currentPresetMenuItemId = 1; // default
+        presetMenu.addItem ("Default", id++);
+
+        // Factory presets
+        auto factoryPresetFiles = presetManager.getFactoryPresets();
         {
             int i = 0;
-            createPresetMenuTree (userPresetMenu, id, presetFiles, i, presetManager.getUserPresetDir());
+            createPresetMenuTree (factoryPresetMenu, id, factoryPresetFiles, i, presetManager.getFactoryPresetDir());
+        }
+        presetMenu.getRootMenu()->addSubMenu ("Factory Presets", factoryPresetMenu);
+
+        // User presets
+        auto userPresetFiles = presetManager.getUserPresets();
+        {
+            int i = 0;
+            createPresetMenuTree (userPresetMenu, id, userPresetFiles, i, presetManager.getUserPresetDir());
         }
         presetMenu.getRootMenu()->addSubMenu ("User Presets", userPresetMenu);
 
+        // --- Operation menu ---
+        // Save
         juce::PopupMenu::Item saveItem;
         saveItem.itemID = id++;
         saveItem.text = "Save";
         saveItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuIdx);
-            std::cout << "saving... " << presetMenu.getSelectedItemIndex() << std::endl;
-            auto files = presetManager.getUserPresets();
-            auto file = files[presetArrayIdx (currentPresetMenuIdx)];
+            presetMenu.setSelectedId (currentPresetMenuItemId);
+            auto files = presetManager.getPresets();
+            auto file = files[presetArrayIdx (currentPresetMenuItemId)];
             presetManager.savePreset (file);
         };
         presetMenu.getRootMenu()->addItem (saveItem);
 
+        // Save as
         juce::PopupMenu::Item saveAsItem;
         saveAsItem.itemID = id++;
         saveAsItem.text = "Save as...";
         saveAsItem.action = [this]() {
-            std::cout << "save as... " << presetMenu.getSelectedItemIndex() << std::endl;
             // TODO: Remove hard-coded "*.oapreset"
             chooser = std::make_unique<juce::FileChooser> ("Save as...",
                                                            presetManager.getUserPresetDir(),
                                                            "*.oapreset");
             auto chooserFlag = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles;
             chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser) {
+                std::cout << "Save as..." << std::endl;
                 juce::File file (chooser.getResult());
+                std::cout << "file: " << file.getFullPathName() << std::endl;
                 presetManager.savePreset (file);
+                std::cout << "loading start..." << std::endl;
                 loadPresetMenu();
-                auto presetFiles = presetManager.getUserPresets();
+                std::cout << "loading end" << std::endl;
+                auto presetFiles = presetManager.getPresets();
                 int idx = presetFiles.indexOf (file);
                 // TODO: handle the case when currentFile.existsAsFile() == false here.
-                presetMenu.setSelectedId (presetMenuId (idx));
+                presetMenu.setSelectedId (presetMenuItemId (idx));
             });
         };
         presetMenu.getRootMenu()->addItem (saveAsItem);
 
+        // Go to preset folder
         juce::PopupMenu::Item goToPresetFolderItem;
         goToPresetFolderItem.itemID = id++;
         goToPresetFolderItem.text = "Go to Preset Folder...";
         goToPresetFolderItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuIdx);
+            presetMenu.setSelectedId (currentPresetMenuItemId);
             std::cout << "Go to preset folder... " << presetMenu.getSelectedItemIndex() << std::endl;
             juce::File dir = presetManager.getUserPresetDir();
             dir.revealToUser();
         };
         presetMenu.getRootMenu()->addItem (goToPresetFolderItem);
 
+        // Rescan presets
         juce::PopupMenu::Item rescanPresetsItem;
         rescanPresetsItem.itemID = id++;
         rescanPresetsItem.text = "Rescan Presets";
         rescanPresetsItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuIdx);
-            std::cout << "Rescan Presets... " << presetMenu.getSelectedItemIndex() << std::endl;
-            auto presetFiles = presetManager.getUserPresets();
-            if (currentPresetMenuIdx == 1 /*default*/)
+            presetMenu.setSelectedId (currentPresetMenuItemId);
+            auto presetFiles = presetManager.getPresets();
+            auto currentFile = presetFiles[presetArrayIdx (currentPresetMenuItemId)];
+            loadPresetMenu();
+            if (currentFile.existsAsFile())
             {
-                loadPresetMenu();
-                presetMenu.setSelectedId (1);
+                auto presetFiles = presetManager.getPresets();
+                int idx = presetFiles.indexOf (currentFile);
+                // TODO: handle the case when currentFile.existsAsFile() == false here.
+                presetMenu.setSelectedId (presetMenuItemId (idx));
             }
             else
             {
-                auto currentFile = presetFiles[presetArrayIdx (currentPresetMenuIdx)];
-                loadPresetMenu();
-                if (currentFile.existsAsFile())
-                {
-                    auto presetFiles = presetManager.getUserPresets();
-                    int idx = presetFiles.indexOf (currentFile);
-                    // TODO: handle the case when currentFile.existsAsFile() == false here.
-                    presetMenu.setSelectedId (presetMenuId (idx));
-                }
-                else
-                {
-                    presetMenu.setSelectedId (1);
-                }
+                presetMenu.setSelectedId (1);
             }
         };
         presetMenu.getRootMenu()->addItem (rescanPresetsItem);
@@ -250,20 +250,22 @@ private:
     void nextClicked()
     {
         int selectedItemId = presetMenu.getSelectedId();
-        auto presets = presetManager.getUserPresets();
+        auto presets = presetManager.getPresets();
         if (presetArrayIdx (selectedItemId + 1) >= presets.size())
             return;
         presetMenu.setSelectedId (selectedItemId + 1);
     }
 
-    int presetArrayIdx (int itemId)
+    int presetArrayIdx (int presetMenuItemId)
     {
-        return itemId - 2;
+        // juce::Combobox's ID starts from 1
+        return presetMenuItemId - 1;
     }
 
-    int presetMenuId (int presetArrayIdx)
+    int presetMenuItemId (int presetArrayIdx)
     {
-        return presetArrayIdx + 2;
+        // juce::Combobox's ID starts from 1
+        return presetArrayIdx + 1;
     }
 };
 } // namespace onsen
