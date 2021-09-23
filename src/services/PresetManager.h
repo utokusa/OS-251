@@ -11,11 +11,16 @@
 #include "../GlobalVariables.h"
 #include "FactoryPresets.h"
 #include <JuceHeader.h>
-// #include <iostream>
 
 namespace onsen
 {
 //==============================================================================
+
+/*
+PresetManager
+
+Note: scanPresets() need to be called before save/load presets
+*/
 class PresetManager
 {
 public:
@@ -25,13 +30,10 @@ public:
                       presetFiles(),
                       currentPresetFile()
     {
-        // TODO: Maybe we can omit this scanUserPresets()?
-        scanPresets();
     }
 
     juce::String loadDefaultPreset()
     {
-        // TODO: Stop using actual file to prevent it from being deleted.
         loadPreset (getDefaultPresetFile());
         return getPresetName (currentPresetFile);
     }
@@ -49,26 +51,17 @@ public:
 
     juce::File getDefaultPresetFile()
     {
-        // TODO: remove duplicated "Onsen Audio/OS-251/presets"
-        return juce::File::getSpecialLocation (
-                   juce::File::SpecialLocationType::userApplicationDataDirectory)
-            .getChildFile ("Onsen Audio/OS-251/presets/Default.oapreset");
+        return getPresetDir().getChildFile ("Default.oapreset");
     }
 
     juce::File getFactoryPresetDir()
     {
-        juce::File dir (juce::File::getSpecialLocation (
-                            juce::File::SpecialLocationType::userApplicationDataDirectory)
-                            .getChildFile ("Onsen Audio/OS-251/Presets/Factory"));
-        return dir;
+        return getPresetDir().getChildFile ("Factory");
     }
 
     juce::File getUserPresetDir()
     {
-        juce::File dir (juce::File::getSpecialLocation (
-                            juce::File::SpecialLocationType::userApplicationDataDirectory)
-                            .getChildFile ("Onsen Audio/OS-251/Presets/User"));
-        return dir;
+        return getPresetDir().getChildFile ("User");
     }
 
     juce::Array<juce::File> getPresets()
@@ -145,11 +138,17 @@ private:
     juce::File currentPresetFile;
 
     //==============================================================================
+    juce::File getPresetDir()
+    {
+        return juce::File::getSpecialLocation (
+                   juce::File::SpecialLocationType::userApplicationDataDirectory)
+            .getChildFile ("Onsen Audio/OS-251/presets");
+    }
 
     juce::Array<juce::File> scanPresets (juce::File dir, juce::Array<juce::File>& presetFiles)
     {
         dir.createDirectory(); // OK if it exists.
-        auto files = dir.findChildFiles (juce::File::TypesOfFileToFind::findFilesAndDirectories + juce::File::TypesOfFileToFind::ignoreHiddenFiles, true, "*.oapreset");
+        auto files = dir.findChildFiles (juce::File::TypesOfFileToFind::findFiles, true, "*.oapreset");
         files.sort();
 
         return presetFiles = files;
