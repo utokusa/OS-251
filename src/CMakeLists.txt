@@ -66,6 +66,22 @@ juce_add_binary_data(Os251Binaries
 SOURCES
 ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
 ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
+
+${CMAKE_SOURCE_DIR}/assets/presets/Default.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass0.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass1.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass2.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX0.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX1.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX2.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX0.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key0.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key1.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key2.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad0.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad1.oapreset
+${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad2.oapreset
+
 )
 
 target_sources(Os251 PRIVATE
