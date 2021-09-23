@@ -10,7 +10,6 @@
 
 #include "../services/PresetManager.h"
 #include <JuceHeader.h>
-#include <iostream>
 #include <unordered_map>
 
 namespace onsen
@@ -120,7 +119,6 @@ private:
     {
         while (presetIdx < presets.size())
         {
-            // TODO: Confirm that presets[i] is a file, not a dir.
             if (currentDir == presets[presetIdx].getParentDirectory())
             {
                 juce::PopupMenu::Item presetItem;
@@ -182,9 +180,7 @@ private:
         saveItem.itemID = id++;
         saveItem.text = "Save";
         saveItem.action = [this]() {
-            auto files = presetManager.getPresets();
-            auto file = files[presetArrayIdx (currentPresetMenuItemId)];
-            presetManager.savePreset (file);
+            presetManager.savePreset (presetManager.getCurrentPresetFile());
         };
         presetMenu.getRootMenu()->addItem (saveItem);
 
@@ -193,7 +189,6 @@ private:
         saveAsItem.itemID = id++;
         saveAsItem.text = "Save as...";
         saveAsItem.action = [this]() {
-            // TODO: Remove hard-coded "*.oapreset"
             chooser = std::make_unique<juce::FileChooser> ("Save as...",
                                                            presetManager.getUserPresetDir(),
                                                            "*.oapreset");
@@ -206,7 +201,6 @@ private:
                 loadPresetMenu();
                 auto presetFiles = presetManager.getPresets();
                 int idx = presetFiles.indexOf (file);
-                // TODO: handle the case when currentFile.existsAsFile() == false here.
                 presetMenu.setSelectedId (presetMenuItemId (idx));
             });
         };
@@ -233,7 +227,6 @@ private:
             {
                 auto presetFiles = presetManager.getPresets();
                 int idx = presetFiles.indexOf (currentFile);
-                // TODO: handle the case when currentFile.existsAsFile() == false here.
                 currentPresetMenuItemId = presetMenuItemId (idx);
                 presetMenu.setSelectedId (currentPresetMenuItemId, juce::NotificationType::dontSendNotification);
             }
