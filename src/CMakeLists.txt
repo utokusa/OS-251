@@ -10,6 +10,14 @@ else()
     message(STATUS "AAX Build is disabled. To enable, set AAX_SDK_PATH to your environment variable or specify -DAAX_SDK_PATH to CMake configure option.")
 endif()
 
+# default plugin formats
+set(JUCE_FORMATS AU VST3 Standalone ${AAX_BUILD_FLAG})
+# Build LV2 only on Linux
+if(UNIX AND NOT APPLE)
+    message(STATUS "Building LV2 plugin format")
+    list(APPEND JUCE_FORMATS LV2)
+endif()
+
 juce_add_plugin(Os251
         # VERSION ...                                     # Set this if the plugin version is different to the project version
         # ICON_BIG ""   # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
@@ -26,18 +34,13 @@ juce_add_plugin(Os251
         COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
         PLUGIN_MANUFACTURER_CODE htMi               # A four-character manufacturer id with at least one upper-case character
         PLUGIN_CODE osSY                            # A unique four-character plugin id with at least one upper-case character
-        FORMATS
-        # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-        Standalone
-        AU
-        # AUv3
-        VST3
-        # Unity
-        ${AAX_BUILD_FLAG}
+        FORMATS ${JUCE_FORMATS}
         VST3_CATEGORIES "Instrument"
         AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
         # AU_SANDBOX_SAFE TRUE
         # AAX_CATEGORY ""
+        LV2_URI https://github.com/utokusa/OS-251
+        LV2_SHARED_LIBRARY_NAME os251lv2
         # HARDENED_RUNTIME_ENABLED # macOS app settings
         # HARDENED_RUNTIME_OPTIONS
         # APP_SANDBOX_ENABLED

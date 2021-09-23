@@ -1,7 +1,7 @@
 [submodule "lib/JUCE"]
 	path = lib/JUCE
-	url = https://github.com/juce-framework/JUCE
-	branch = juce6
+	url = https://github.com/lv2-porting-project/JUCE
+	branch = 6.1.0-lv2
 	ignore = dirty
 
 [submodule "lib/react-juce"]
