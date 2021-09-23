@@ -127,6 +127,11 @@ public:
                     *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
     }
 
+    juce::File getCurrentPresetFile()
+    {
+        return currentPresetFile;
+    }
+
     static juce::String getPresetName (juce::File file)
     {
         return file.getFileNameWithoutExtension();
