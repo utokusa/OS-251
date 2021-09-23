@@ -41,8 +41,20 @@ public:
             auto selectedItemId = presetMenu.getSelectedId();
             auto presetFiles = presetManager.getPresets();
             int presetFileIdx = presetArrayIdx (selectedItemId);
-            presetManager.loadPreset (presetFiles[presetFileIdx]);
+            if (presetFileIdx >= presetFiles.size())
+            {
+                // Selected item was an operation menu like "Save as".
+                presetMenu.setSelectedId (currentPresetMenuItemId, juce::NotificationType::dontSendNotification);
+                return;
+            }
+
+            if (presetManager.getCurrentPresetFile() == presetFiles[presetFileIdx])
+            {
+                // Avoid to undo changes on current preset
+                return;
+            }
             currentPresetMenuItemId = selectedItemId;
+            presetManager.loadPreset (presetFiles[presetFileIdx]);
         };
         presetMenu.setSelectedId (1);
 
@@ -94,7 +106,7 @@ private:
     juce::TextButton prevButton;
     juce::TextButton nextButton;
 
-    juce::ComboBox presetMenu; // TODO: need to do something like presetMenu.removeListener()?
+    juce::ComboBox presetMenu;
     juce::PopupMenu factoryPresetMenu;
     juce::PopupMenu userPresetMenu;
     int currentPresetMenuItemId;
@@ -170,7 +182,6 @@ private:
         saveItem.itemID = id++;
         saveItem.text = "Save";
         saveItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuItemId);
             auto files = presetManager.getPresets();
             auto file = files[presetArrayIdx (currentPresetMenuItemId)];
             presetManager.savePreset (file);
@@ -188,13 +199,11 @@ private:
                                                            "*.oapreset");
             auto chooserFlag = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles;
             chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser) {
-                std::cout << "Save as..." << std::endl;
                 juce::File file (chooser.getResult());
-                std::cout << "file: " << file.getFullPathName() << std::endl;
+                if (file.getFullPathName() == "")
+                    return;
                 presetManager.savePreset (file);
-                std::cout << "loading start..." << std::endl;
                 loadPresetMenu();
-                std::cout << "loading end" << std::endl;
                 auto presetFiles = presetManager.getPresets();
                 int idx = presetFiles.indexOf (file);
                 // TODO: handle the case when currentFile.existsAsFile() == false here.
@@ -208,8 +217,6 @@ private:
         goToPresetFolderItem.itemID = id++;
         goToPresetFolderItem.text = "Go to Preset Folder...";
         goToPresetFolderItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuItemId);
-            std::cout << "Go to preset folder... " << presetMenu.getSelectedItemIndex() << std::endl;
             juce::File dir = presetManager.getUserPresetDir();
             dir.revealToUser();
         };
@@ -220,20 +227,19 @@ private:
         rescanPresetsItem.itemID = id++;
         rescanPresetsItem.text = "Rescan Presets";
         rescanPresetsItem.action = [this]() {
-            presetMenu.setSelectedId (currentPresetMenuItemId);
-            auto presetFiles = presetManager.getPresets();
-            auto currentFile = presetFiles[presetArrayIdx (currentPresetMenuItemId)];
+            auto currentFile = presetManager.getCurrentPresetFile();
             loadPresetMenu();
             if (currentFile.existsAsFile())
             {
                 auto presetFiles = presetManager.getPresets();
                 int idx = presetFiles.indexOf (currentFile);
                 // TODO: handle the case when currentFile.existsAsFile() == false here.
-                presetMenu.setSelectedId (presetMenuItemId (idx));
+                currentPresetMenuItemId = presetMenuItemId (idx);
+                presetMenu.setSelectedId (currentPresetMenuItemId, juce::NotificationType::dontSendNotification);
             }
             else
             {
-                presetMenu.setSelectedId (1);
+                presetMenu.setSelectedId (1, juce::NotificationType::dontSendNotification);
             }
         };
         presetMenu.getRootMenu()->addItem (rescanPresetsItem);
