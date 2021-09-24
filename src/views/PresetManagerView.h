@@ -22,9 +22,6 @@ Rescan Presets
 Prev, Next, Revert are normal buttons.
 */
 
-// TODO: Use divider for combobox
-//       https://docs.juce.com/master/tutorial_combo_box.html#tutorial_combo_box_sections_dividers
-
 #pragma once
 
 #include "../services/PresetManager.h"
@@ -209,7 +206,12 @@ private:
         // About following callbacks and doNothingOnPresetMenuChangeCallback flag,
         // See presetMenuChanged()'s comment.
 
+        // Separator
+        presetMenu.addSeparator();
+
         // Save
+        // TODO: Hide this menu because it's a bit dangerous (It may accidentally save presets
+        // by mistake).
         saveItem.itemID = itemId++;
         saveItem.text = "Save";
         saveItem.action = [this]() {
