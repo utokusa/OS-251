@@ -28,14 +28,8 @@ public:
                       factoryPresetFiles(),
                       userPresetFiles(),
                       presetFiles(),
-                      currentPresetFile()
+                      currentPresetFile (getDefaultPresetFile())
     {
-    }
-
-    juce::String loadDefaultPreset()
-    {
-        loadPreset (getDefaultPresetFile());
-        return getPresetName (currentPresetFile);
     }
 
     void scanPresets()
@@ -47,6 +41,10 @@ public:
         presetFiles.add (getDefaultPresetFile());
         presetFiles.addArray (factoryPresetFiles);
         presetFiles.addArray (userPresetFiles);
+        if (! validatePresetFile (currentPresetFile))
+        {
+            currentPresetFile = getDefaultPresetFile();
+        }
     }
 
     juce::File getDefaultPresetFile()
@@ -104,20 +102,22 @@ public:
         presetXml->writeTo (file);
     }
 
+    /*
+    Loads preset file. If the file is not found or valid, loads default
+    */
     void loadPreset (juce::File file)
     {
-        // TODO: if the file is not found, load default instead
-        currentPresetFile = file;
+        // TODO: If the file is not found, load default instead
+
         std::cout << "loading: " << file.getFullPathName() << std::endl;
         auto xmlDocument = juce::XmlDocument (file);
         std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
 
-        if (presetXml.get() != nullptr)
-            if (presetXml->hasTagName ("Preset")
-                && presetXml->getChildByName ("State") != nullptr
-                && presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()) != nullptr)
-                parameters.replaceState (juce::ValueTree::fromXml (
-                    *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
+        if (validatePresetXml (presetXml.get()))
+            parameters.replaceState (juce::ValueTree::fromXml (
+                *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
+
+        currentPresetFile = file;
     }
 
     juce::File getCurrentPresetFile()
@@ -130,6 +130,27 @@ public:
         return file.getFileNameWithoutExtension();
     }
 
+    void loadPrev()
+    {
+        // TODO: Use hash table or binary search. Or cache
+        //       currentPresetFile's index (Note that cached index can't be used
+        //       after presetFiles is updated)
+        int idx = presetFiles.indexOf (currentPresetFile);
+        if (idx > 0)
+            loadPreset (presetFiles[idx - 1]);
+        else
+            loadPreset (getDefaultPresetFile());
+    }
+
+    void loadNext()
+    {
+        int idx = presetFiles.indexOf (currentPresetFile);
+        if (idx < presetFiles.size() - 1)
+            loadPreset (presetFiles[idx + 1]);
+        else
+            loadPreset (getDefaultPresetFile());
+    }
+
 private:
     juce::AudioProcessorValueTreeState& parameters;
     juce::Array<juce::File> factoryPresetFiles;
@@ -138,6 +159,27 @@ private:
     juce::File currentPresetFile;
 
     //==============================================================================
+    bool validatePresetFile (juce::File file)
+    {
+        if (file.getFullPathName() == "" || ! file.existsAsFile())
+            return false;
+        auto xmlDocument = juce::XmlDocument (file);
+        std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
+
+        return validatePresetXml (presetXml.get());
+    }
+
+    bool validatePresetXml (juce::XmlElement* presetXml)
+    {
+        if (presetXml != nullptr
+            && presetXml->hasTagName ("Preset")
+            && presetXml->getChildByName ("State") != nullptr
+            && presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()) != nullptr)
+            return true;
+
+        return false;
+    }
+
     juce::File getPresetDir()
     {
         return juce::File::getSpecialLocation (
