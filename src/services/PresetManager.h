@@ -107,17 +107,16 @@ public:
     */
     void loadPreset (juce::File file)
     {
-        // TODO: If the file is not found, load default instead
-
-        std::cout << "loading: " << file.getFullPathName() << std::endl;
         auto xmlDocument = juce::XmlDocument (file);
         std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
 
         if (validatePresetXml (presetXml.get()))
-            parameters.replaceState (juce::ValueTree::fromXml (
-                *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
-
-        currentPresetFile = file;
+        {
+            loadPresetState (presetXml.get());
+            currentPresetFile = file;
+        }
+        else
+            loadDefaultFileSafely();
     }
 
     juce::File getCurrentPresetFile()
@@ -169,7 +168,7 @@ private:
         return validatePresetXml (presetXml.get());
     }
 
-    bool validatePresetXml (juce::XmlElement* presetXml)
+    bool validatePresetXml (juce::XmlElement const* const presetXml)
     {
         if (presetXml != nullptr
             && presetXml->hasTagName ("Preset")
@@ -178,6 +177,36 @@ private:
             return true;
 
         return false;
+    }
+
+    void loadPresetState (juce::XmlElement const* const presetXml)
+    {
+        parameters.replaceState (juce::ValueTree::fromXml (
+            *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
+    }
+
+    void loadDefaultFileSafely()
+    {
+        auto file = getDefaultPresetFile();
+        auto xmlDocument = juce::XmlDocument (getDefaultPresetFile());
+        std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
+
+        if (! validatePresetXml (presetXml.get()))
+        {
+            restoreDefaultPreset();
+
+            // Retry to load the default preset.
+            // To prevent infinate loop, I don't use recursive function call like
+            // putting loadDefaultFileSafely() here.
+            auto newXmlDocument = juce::XmlDocument (getDefaultPresetFile());
+            std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
+            loadPresetState (newPresetXml.get());
+            currentPresetFile = file;
+            return;
+        }
+
+        loadPresetState (presetXml.get());
+        currentPresetFile = file;
     }
 
     juce::File getPresetDir()
@@ -221,7 +250,8 @@ private:
     {
         auto file = getDefaultPresetFile();
 
-        // Try to delete a folder with the same name as default preset file
+        // Try to delete a folder with the same name as default preset file.
+        // It's OK to use for a file.
         file.deleteRecursively();
         // This line will create necessary sub folders
         file.create();
