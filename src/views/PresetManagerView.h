@@ -53,10 +53,6 @@ public:
                           rescanPresetsItem(),
                           doNothingOnPresetMenuChangeCallback (false)
     {
-        addAndMakeVisible (revertButton);
-        revertButton.setButtonText ("Revert");
-        revertButton.addListener (this);
-
         addAndMakeVisible (prevButton);
         prevButton.setButtonText ("Prev");
         prevButton.addListener (this);
@@ -64,6 +60,10 @@ public:
         addAndMakeVisible (nextButton);
         nextButton.setButtonText ("Next");
         nextButton.addListener (this);
+
+        addAndMakeVisible (reloadButton);
+        reloadButton.setButtonText ("Revert");
+        reloadButton.addListener (this);
 
         addAndMakeVisible (presetMenu);
         presetMenu.setJustificationType (juce::Justification::centred);
@@ -79,9 +79,9 @@ public:
 
     ~PresetManagerView()
     {
-        revertButton.removeListener (this);
         prevButton.removeListener (this);
         nextButton.removeListener (this);
+        reloadButton.removeListener (this);
     }
 
     void paint (juce::Graphics& g) override
@@ -90,19 +90,15 @@ public:
 
     void resized() override
     {
-        revertButton.setBounds (getWidth() * 2 / 8, 0, getWidth() / 8, 15);
-        prevButton.setBounds (getWidth() * 3 / 8, 0, getWidth() / 8, 15);
-        nextButton.setBounds (getWidth() * 4 / 8, 0, getWidth() / 8, 15);
-        presetMenu.setBounds (getWidth() * 5 / 8, 0, getWidth() * 3 / 8, 15);
+        constexpr int height = 20;
+        prevButton.setBounds (getWidth() * 2 / 8, 0, getWidth() / 8, height);
+        nextButton.setBounds (getWidth() * 3 / 8, 0, getWidth() / 8, height);
+        presetMenu.setBounds (getWidth() * 4 / 8, 0, getWidth() * 3 / 8, height);
+        reloadButton.setBounds (getWidth() * 7 / 8, 0, getWidth() / 8, height);
     }
 
     void buttonClicked (juce::Button* button) override
     {
-        if (button == &revertButton)
-        {
-            presetManager.loadPreset (presetManager.getCurrentPresetFile());
-        }
-
         if (button == &prevButton)
         {
             prevClicked();
@@ -112,13 +108,18 @@ public:
         {
             nextClicked();
         }
+
+        if (button == &reloadButton)
+        {
+            presetManager.loadPreset (presetManager.getCurrentPresetFile());
+        }
     }
 
 private:
     PresetManager presetManager;
-    juce::TextButton revertButton;
     juce::TextButton prevButton;
     juce::TextButton nextButton;
+    juce::TextButton reloadButton;
 
     juce::ComboBox presetMenu;
     juce::PopupMenu factoryPresetMenu;

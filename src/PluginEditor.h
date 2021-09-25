@@ -53,8 +53,8 @@ private:
     std::vector<std::atomic<bool>> dirtyParamFlags;
 
     static constexpr int bodyWidth = 758;
-    static constexpr int bodyHeight = 408;
-    static constexpr int headerHeight = 34;
+    static constexpr int bodyHeight = 420;
+    static constexpr int headerHeight = 32;
     static constexpr int appWidth = bodyWidth;
     static constexpr int appHeight = bodyHeight + headerHeight;
 

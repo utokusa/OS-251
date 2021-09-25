@@ -258,7 +258,7 @@ const styles = {
     alignItems: 'center'
   },
   content: {
-    height: '95%',
+    height: '93%',
     width: '100%',
     flex: 1.0,
     flexDirection: 'column',
