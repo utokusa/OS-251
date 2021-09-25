@@ -45,6 +45,18 @@ class PresetManagerView : public reactjuce::View, public juce::Button::Listener
     //==============================================================================
 public:
     PresetManagerView() : presetManager(),
+                          prevButtonImage (juce::ImageCache::getFromMemory (BinaryData::left_png, BinaryData::left_pngSize)),
+                          prevButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::left_over_png, BinaryData::left_over_pngSize)),
+                          prevButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::left_down_png, BinaryData::left_down_pngSize)),
+                          prevButton ("Prev"),
+                          nextButtonImage (juce::ImageCache::getFromMemory (BinaryData::right_png, BinaryData::right_pngSize)),
+                          nextButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::right_over_png, BinaryData::right_over_pngSize)),
+                          nextButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::right_down_png, BinaryData::right_down_pngSize)),
+                          nextButton ("Next"),
+                          reloadButtonImage (juce::ImageCache::getFromMemory (BinaryData::reload_png, BinaryData::reload_pngSize)),
+                          reloadButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::reload_over_png, BinaryData::reload_over_pngSize)),
+                          reloadButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::reload_down_png, BinaryData::reload_down_pngSize)),
+                          reloadButton ("Reload"),
                           itemIdByPreset(),
                           presetByItemId(),
                           saveItem(),
@@ -53,16 +65,52 @@ public:
                           rescanPresetsItem(),
                           doNothingOnPresetMenuChangeCallback (false)
     {
+        prevButton.setImages (
+            true,
+            true,
+            true,
+            prevButtonImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            prevButtonOverImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            prevButtonDownImage,
+            1.0f,
+            juce::Colours::transparentWhite);
         addAndMakeVisible (prevButton);
-        prevButton.setButtonText ("Prev");
         prevButton.addListener (this);
 
+        nextButton.setImages (
+            true,
+            true,
+            true,
+            nextButtonImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            nextButtonOverImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            nextButtonDownImage,
+            1.0f,
+            juce::Colours::transparentWhite);
         addAndMakeVisible (nextButton);
-        nextButton.setButtonText ("Next");
         nextButton.addListener (this);
 
+        reloadButton.setImages (
+            true,
+            true,
+            true,
+            reloadButtonImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            reloadButtonOverImage,
+            1.0f,
+            juce::Colours::transparentWhite,
+            reloadButtonDownImage,
+            1.0f,
+            juce::Colours::transparentWhite);
         addAndMakeVisible (reloadButton);
-        reloadButton.setButtonText ("Revert");
         reloadButton.addListener (this);
 
         addAndMakeVisible (presetMenu);
@@ -117,9 +165,21 @@ public:
 
 private:
     PresetManager presetManager;
-    juce::TextButton prevButton;
-    juce::TextButton nextButton;
-    juce::TextButton reloadButton;
+
+    juce::Image prevButtonImage;
+    juce::Image prevButtonOverImage;
+    juce::Image prevButtonDownImage;
+    juce::ImageButton prevButton;
+
+    juce::Image nextButtonImage;
+    juce::Image nextButtonOverImage;
+    juce::Image nextButtonDownImage;
+    juce::ImageButton nextButton;
+
+    juce::Image reloadButtonImage;
+    juce::Image reloadButtonOverImage;
+    juce::Image reloadButtonDownImage;
+    juce::ImageButton reloadButton;
 
     juce::ComboBox presetMenu;
     juce::PopupMenu factoryPresetMenu;

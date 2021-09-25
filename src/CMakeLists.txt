@@ -70,6 +70,20 @@ SOURCES
 ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
 ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
 
+
+
+${CMAKE_SOURCE_DIR}/assets/images/left.png
+${CMAKE_SOURCE_DIR}/assets/images/left_over.png
+${CMAKE_SOURCE_DIR}/assets/images/left_down.png
+
+${CMAKE_SOURCE_DIR}/assets/images/right.png
+${CMAKE_SOURCE_DIR}/assets/images/right_over.png
+${CMAKE_SOURCE_DIR}/assets/images/right_down.png
+
+${CMAKE_SOURCE_DIR}/assets/images/reload.png
+${CMAKE_SOURCE_DIR}/assets/images/reload_over.png
+${CMAKE_SOURCE_DIR}/assets/images/reload_down.png
+
 ${CMAKE_SOURCE_DIR}/assets/presets/Default.oapreset
 ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass0.oapreset
 ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass1.oapreset
