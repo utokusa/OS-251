@@ -41,7 +41,7 @@ const styles = {
     color: textColor
   },
   preset_manager: {
-    height: 15,
+    height: 20,
     width: 460,
     marginTop: 1,
     marginLeft: 180
