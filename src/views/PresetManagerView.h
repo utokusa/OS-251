@@ -25,6 +25,7 @@ Prev, Next, Revert are normal buttons.
 #pragma once
 
 #include "../services/PresetManager.h"
+#include "PresetMenuLookAndFeel.h"
 #include <JuceHeader.h>
 #include <functional>
 #include <string>
@@ -45,6 +46,7 @@ class PresetManagerView : public reactjuce::View, public juce::Button::Listener
     //==============================================================================
 public:
     PresetManagerView() : presetManager(),
+                          presetMenuLookAndFeel(),
                           prevButtonImage (juce::ImageCache::getFromMemory (BinaryData::left_png, BinaryData::left_pngSize)),
                           prevButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::left_over_png, BinaryData::left_over_pngSize)),
                           prevButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::left_down_png, BinaryData::left_down_pngSize)),
@@ -113,6 +115,7 @@ public:
         addAndMakeVisible (reloadButton);
         reloadButton.addListener (this);
 
+        presetMenu.setLookAndFeel (&presetMenuLookAndFeel);
         addAndMakeVisible (presetMenu);
         presetMenu.setJustificationType (juce::Justification::centred);
         presetMenu.setTextWhenNothingSelected ("");
@@ -165,6 +168,8 @@ public:
 
 private:
     PresetManager presetManager;
+
+    PresetMenuLookAndFeel presetMenuLookAndFeel;
 
     juce::Image prevButtonImage;
     juce::Image prevButtonOverImage;
