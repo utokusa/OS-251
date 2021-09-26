@@ -23,22 +23,11 @@
     highlightedFill,
     menuText
 }
-Dark
-{
-    0xff3b3b3b,
-    0xff2e2e2e,
-    0xff3b3b3b,
-    0xff949494,
-    0xffffffff,
-    0xff42a2c8,
-    0xffffffff,
-    0xff181f22,
-    0xffffffff
-}
-
 */
 
+#include "colors.h"
 #include <JuceHeader.h>
+
 namespace onsen
 {
 //==============================================================================
@@ -48,7 +37,17 @@ class GlobalLookAndFeel : public juce::LookAndFeel_V4
 
 public:
     GlobalLookAndFeel() : colorScheme (
-        { 0xff282423, 0xff282423, 0xff282423, 0xff949494, 0xffffffff, 0xff42a2c8, 0xffffffff, 0xff181f22, 0xffffffff })
+        {
+            colors::darkGray,
+            colors::darkGray,
+            colors::darkGray2,
+            colors::grey,
+            colors::white,
+            colors::blue,
+            colors::white,
+            colors::almostBlack,
+            colors::white,
+        })
     {
         setDefaultSansSerifTypeface (getCustomFont().getTypeface());
         setColourScheme (colorScheme);
