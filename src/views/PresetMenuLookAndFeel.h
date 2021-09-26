@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "colors.h"
 #include <JuceHeader.h>
+
 namespace onsen
 {
 //==============================================================================
@@ -35,20 +37,47 @@ class PresetMenuLookAndFeel : public juce::LookAndFeel_V4
 
 public:
     PresetMenuLookAndFeel() : colorScheme (
-        { 0xff282423,
-          0xff262123,
-          0xff2e2e2e,
-          0xffA99988,
-          0xffE4D3B0,
-          0xff42a2c8,
-          0xffE4D3B0,
-          0xff181f22,
-          0xffE4D3B0 })
+        { colors::backgroundColor,
+          colors::backgroundColorDark,
+          colors::darkGray2,
+          colors::textColorDark,
+          colors::textColor,
+          colors::backgroundColorDark,
+          colors::textColor,
+          colors::almostBlack,
+          colors::textColor })
     {
         setColourScheme (colorScheme);
     }
 
     ~PresetMenuLookAndFeel() {}
+
+    void drawComboBox (juce::Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, juce::ComboBox& box) override
+    {
+        auto cornerSize = 4.0f;
+        juce::Rectangle<int> boxBounds (0, 0, width, height);
+
+        g.setColour (box.findColour (juce::ComboBox::backgroundColourId));
+        g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
+
+        g.setColour (box.findColour (juce::ComboBox::outlineColourId));
+        g.drawRoundedRectangle (boxBounds.toFloat().reduced (0.5f, 0.5f), cornerSize, 2.0f);
+    }
+
+    void positionComboBoxText (juce::ComboBox& box, juce::Label& label) override
+    {
+        label.setBounds (1, 1, box.getWidth() - 4, box.getHeight() - 2);
+
+        label.setFont (getComboBoxFont (box));
+    }
+
+    juce::Path getTickShape (float height) override
+    {
+        juce::Path path;
+        path.addEllipse (0, 0, height, height);
+
+        return path;
+    }
 
 private:
     Laf::ColourScheme colorScheme;
