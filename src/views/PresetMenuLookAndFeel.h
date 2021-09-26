@@ -71,6 +71,11 @@ public:
         label.setFont (getComboBoxFont (box));
     }
 
+    juce::Font getComboBoxFont (juce::ComboBox& box) override
+    {
+        return { std::min (13.0f, static_cast<float> (box.getHeight()) * 0.85f) };
+    }
+
     juce::Path getTickShape (float height) override
     {
         juce::Path path;

@@ -70,8 +70,6 @@ SOURCES
 ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
 ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
 
-
-
 ${CMAKE_SOURCE_DIR}/assets/images/left.png
 ${CMAKE_SOURCE_DIR}/assets/images/left_over.png
 ${CMAKE_SOURCE_DIR}/assets/images/left_down.png
