@@ -137,7 +137,7 @@ public:
         int idx = presetFiles.indexOf (currentPresetFile);
         if (idx > 0)
             loadPreset (presetFiles[idx - 1]);
-        else
+        else // Usually it doesn't happen
             loadPreset (getDefaultPresetFile());
     }
 
@@ -146,7 +146,7 @@ public:
         int idx = presetFiles.indexOf (currentPresetFile);
         if (idx < presetFiles.size() - 1)
             loadPreset (presetFiles[idx + 1]);
-        else
+        else if (idx < 0) // Usually it doesn't happen
             loadPreset (getDefaultPresetFile());
     }
 
