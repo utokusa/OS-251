@@ -135,17 +135,17 @@ public:
         reloadButton.removeListener (this);
     }
 
-    void paint (juce::Graphics& g) override
-    {
-    }
+    // void paint (juce::Graphics& g) override
+    // {
+    // }
 
     void resized() override
     {
         constexpr int height = 20;
-        prevButton.setBounds (getWidth() * 2 / 8, 0, getWidth() / 8, height);
-        nextButton.setBounds (getWidth() * 3 / 8, 0, getWidth() / 8, height);
-        presetMenu.setBounds (getWidth() * 4 / 8, 0, getWidth() * 3 / 8, height);
-        reloadButton.setBounds (getWidth() * 7 / 8, 0, getWidth() / 8, height);
+        prevButton.setBounds (0, 0, height, height);
+        nextButton.setBounds (getWidth() * 1 / 8, 0, height, height);
+        presetMenu.setBounds (getWidth() * 2 / 8, 0, getWidth() * 4 / 8 + 15, height);
+        reloadButton.setBounds (getWidth() * 7 / 8, 0, height, height);
     }
 
     void buttonClicked (juce::Button* button) override
