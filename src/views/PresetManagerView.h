@@ -72,7 +72,7 @@ private:
     std::unique_ptr<juce::FileChooser> chooser;
     std::unordered_map<juce::File, int, JuceFileHash> itemIdByPreset;
     std::unordered_map<int, juce::File> presetByItemId;
-    juce::PopupMenu::Item saveItem; // TODO: remove these member vars?
+    juce::PopupMenu::Item saveItem;
     juce::PopupMenu::Item saveAsItem;
     juce::PopupMenu::Item goToPresetFolderItem;
     juce::PopupMenu::Item rescanPresetsItem;
