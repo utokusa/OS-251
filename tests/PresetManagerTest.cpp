@@ -239,6 +239,24 @@ TEST_F (PresetManagerTest, SaveOutsideOfPresetFolder)
     EXPECT_EQ (presetManager.getCurrentPresetFile(), presetManager.getDefaultPresetFile());
 }
 
+TEST_F (PresetManagerTest, CheckSavedPresetFormat)
+{
+    presetManager.scanPresets();
+    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    int initialNumPresets = presetManager.getPresets().size();
+    auto file = presetManager.getUserPresetDir().getChildFile ("Test0.oapreset");
+    presetManager.savePreset (file);
+
+    // Other element should be checked when we load preset anywas.
+    // So we only check the actual "SavedByVersion" value here.
+    juce::XmlDocument xmlDocument (file);
+    std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
+    EXPECT_EQ (presetXml->getChildByName ("SavedByVersion")
+                   ->getFirstChildElement()
+                   ->getText(),
+               OS_251_PROJECT_VERSION);
+}
+
 TEST_F (PresetManagerTest, TrackPresetsUsingRescan)
 {
     presetManager.scanPresets();
