@@ -162,6 +162,16 @@ bool PresetManager::validatePresetXml (juce::XmlElement const* const presetXml)
 {
     if (presetXml != nullptr
         && presetXml->hasTagName ("Preset")
+        && presetXml->getChildByName ("Gadget") != nullptr
+        && presetXml->getChildByName ("Gadget")->getFirstChildElement() != nullptr
+        && presetXml->getChildByName ("Gadget")->getFirstChildElement()->isTextElement()
+        && presetXml->getChildByName ("Gadget")->getFirstChildElement()->getText() == "OS-251"
+        && presetXml->getChildByName ("SavedByVersion") != nullptr
+        && presetXml->getChildByName ("SavedByVersion")->getFirstChildElement() != nullptr
+        && presetXml->getChildByName ("SavedByVersion")->getFirstChildElement()->isTextElement()
+        && presetXml->getChildByName ("Version") != nullptr
+        && presetXml->getChildByName ("Version")->getFirstChildElement()->isTextElement()
+        && presetXml->getChildByName ("Version")->getFirstChildElement()->getText() == "0"
         && presetXml->getChildByName ("State") != nullptr
         && presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName()) != nullptr)
         return true;
