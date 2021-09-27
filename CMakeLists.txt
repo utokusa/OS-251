@@ -6,6 +6,8 @@ PROJECT(OS_251
         VERSION 1.0.1
         )
 
+add_compile_definitions(OS_251_PROJECT_VERSION="${PROJECT_VERSION}")
+
 
 # for clang-tidy(this enable to find system header files).
 if(APPLE AND CMAKE_EXPORT_COMPILE_COMMANDS)

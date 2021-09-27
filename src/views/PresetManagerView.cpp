@@ -209,8 +209,6 @@ void PresetManagerView::loadPresetMenu()
     presetMenu.addSeparator();
 
     // Save
-    // TODO: Hide this menu because it's a bit dangerous (It may accidentally save presets
-    // by mistake).
     saveItem.itemID = itemId++;
     saveItem.text = "Save";
     saveItem.action = [this]() {

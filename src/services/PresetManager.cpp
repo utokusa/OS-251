@@ -85,7 +85,7 @@ void PresetManager::savePreset (juce::File file)
     presetXml->addChildElement (gadget);
 
     auto savedByVersion = new juce::XmlElement ("SavedByVersion");
-    savedByVersion->addTextElement ("1.0.1"); // TODO: implement
+    savedByVersion->addTextElement (OS_251_PROJECT_VERSION);
     presetXml->addChildElement (savedByVersion);
 
     auto version = new juce::XmlElement ("Version");
@@ -129,7 +129,7 @@ juce::String PresetManager::getPresetName (juce::File file)
 
 void PresetManager::loadPrev()
 {
-    // TODO: Use hash table or binary search. Or cache
+    // TODO: If it's slow, Use hash table or binary search. Or cache
     //       currentPresetFile's index (Note that cached index can't be used
     //       after presetFiles is updated)
     int idx = presetFiles.indexOf (currentPresetFile);
