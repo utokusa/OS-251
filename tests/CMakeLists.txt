@@ -39,6 +39,7 @@ target_compile_definitions(Os251_TestsUsingJuce
         )
 
 target_sources(Os251_TestsUsingJuce PRIVATE
+        ../src/services/PresetManager.cpp
         PresetManagerTest.cpp
         )
 

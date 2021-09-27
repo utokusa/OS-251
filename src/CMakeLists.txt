@@ -105,6 +105,8 @@ target_sources(Os251 PRIVATE
         Envelope.cpp
         SynthEngine.cpp
         SynthVoice.cpp
+        services/PresetManager.cpp
+        views/PresetManagerView.cpp
         )
 
 # Add an explicit include path here so that react-juce's EcmascriptEngine can find
