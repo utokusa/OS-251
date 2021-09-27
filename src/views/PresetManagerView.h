@@ -24,6 +24,7 @@ Prev, Next, Revert are normal buttons.
 
 #pragma once
 
+#include "../IAudioProcessorState.h"
 #include "../services/PresetManager.h"
 #include "PresetMenuLookAndFeel.h"
 #include <JuceHeader.h>
@@ -45,27 +46,28 @@ class PresetManagerView : public reactjuce::View, public juce::Button::Listener
     };
     //==============================================================================
 public:
-    PresetManagerView() : presetManager(),
-                          presetMenuLookAndFeel(),
-                          prevButtonImage (juce::ImageCache::getFromMemory (BinaryData::left_png, BinaryData::left_pngSize)),
-                          prevButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::left_over_png, BinaryData::left_over_pngSize)),
-                          prevButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::left_down_png, BinaryData::left_down_pngSize)),
-                          prevButton ("Prev"),
-                          nextButtonImage (juce::ImageCache::getFromMemory (BinaryData::right_png, BinaryData::right_pngSize)),
-                          nextButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::right_over_png, BinaryData::right_over_pngSize)),
-                          nextButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::right_down_png, BinaryData::right_down_pngSize)),
-                          nextButton ("Next"),
-                          reloadButtonImage (juce::ImageCache::getFromMemory (BinaryData::reload_png, BinaryData::reload_pngSize)),
-                          reloadButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::reload_over_png, BinaryData::reload_over_pngSize)),
-                          reloadButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::reload_down_png, BinaryData::reload_down_pngSize)),
-                          reloadButton ("Reload"),
-                          itemIdByPreset(),
-                          presetByItemId(),
-                          saveItem(),
-                          saveAsItem(),
-                          goToPresetFolderItem(),
-                          rescanPresetsItem(),
-                          doNothingOnPresetMenuChangeCallback (false)
+    PresetManagerView (IAudioProcessorState* processorState)
+        : presetManager (processorState, juce::File::getSpecialLocation (juce::File::SpecialLocationType::userApplicationDataDirectory).getChildFile ("Onsen Audio/OS-251/presets")),
+          presetMenuLookAndFeel(),
+          prevButtonImage (juce::ImageCache::getFromMemory (BinaryData::left_png, BinaryData::left_pngSize)),
+          prevButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::left_over_png, BinaryData::left_over_pngSize)),
+          prevButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::left_down_png, BinaryData::left_down_pngSize)),
+          prevButton ("Prev"),
+          nextButtonImage (juce::ImageCache::getFromMemory (BinaryData::right_png, BinaryData::right_pngSize)),
+          nextButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::right_over_png, BinaryData::right_over_pngSize)),
+          nextButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::right_down_png, BinaryData::right_down_pngSize)),
+          nextButton ("Next"),
+          reloadButtonImage (juce::ImageCache::getFromMemory (BinaryData::reload_png, BinaryData::reload_pngSize)),
+          reloadButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::reload_over_png, BinaryData::reload_over_pngSize)),
+          reloadButtonDownImage (juce::ImageCache::getFromMemory (BinaryData::reload_down_png, BinaryData::reload_down_pngSize)),
+          reloadButton ("Reload"),
+          itemIdByPreset(),
+          presetByItemId(),
+          saveItem(),
+          saveAsItem(),
+          goToPresetFolderItem(),
+          rescanPresetsItem(),
+          doNothingOnPresetMenuChangeCallback (false)
     {
         prevButton.setImages (
             true,
@@ -409,7 +411,6 @@ private:
                 return;
             }
             presetManager.savePreset (file);
-            presetManager.loadPreset (file);
             loadPresetMenu();
             selectCurrentPreset();
         });

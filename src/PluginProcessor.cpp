@@ -7,7 +7,6 @@
 */
 
 #include "PluginProcessor.h"
-#include "GlobalVariables.h"
 #include "PluginEditor.h"
 
 //==============================================================================
@@ -29,7 +28,6 @@ Os251AudioProcessor::Os251AudioProcessor()
       synthEngine (&synthParams, &jucePositionInfo),
       laf()
 {
-    onsen::GlobalVariables::parameters = &parameters;
     // ---
     // Parameter value conversion from [0, 1.0] float to juce::String.
 

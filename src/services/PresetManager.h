@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../GlobalVariables.h"
+#include "../IAudioProcessorState.h"
 #include "FactoryPresets.h"
 #include <JuceHeader.h>
 
@@ -24,11 +24,13 @@ Note: scanPresets() need to be called before save/load presets
 class PresetManager
 {
 public:
-    PresetManager() : parameters (*GlobalVariables::parameters),
-                      factoryPresetFiles(),
-                      userPresetFiles(),
-                      presetFiles(),
-                      currentPresetFile (getDefaultPresetFile())
+    PresetManager (IAudioProcessorState* _processorState, juce::File _presetDir)
+        : processorState (_processorState),
+          presetDir (_presetDir),
+          factoryPresetFiles(),
+          userPresetFiles(),
+          presetFiles(),
+          currentPresetFile (getDefaultPresetFile())
     {
     }
 
@@ -77,9 +79,15 @@ public:
         return userPresetFiles;
     }
 
+    /*
+    Save preset
+
+    Folder should exist before calling it.
+    */
     void savePreset (juce::File file)
     {
-        auto state = parameters.copyState();
+        // TODO: Handle error causing while it's writing file
+        auto state = processorState->copyState();
         std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
 
         auto presetXml = std::make_unique<juce::XmlElement> ("Preset");
@@ -100,6 +108,8 @@ public:
         stateContainerXml->addChildElement (stateXml.release());
         presetXml->addChildElement (stateContainerXml.release());
         presetXml->writeTo (file);
+
+        currentPresetFile = file;
     }
 
     /*
@@ -107,7 +117,7 @@ public:
     */
     void loadPreset (juce::File file)
     {
-        auto xmlDocument = juce::XmlDocument (file);
+        juce::XmlDocument xmlDocument (file);
         std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
 
         if (validatePresetXml (presetXml.get()))
@@ -151,7 +161,8 @@ public:
     }
 
 private:
-    juce::AudioProcessorValueTreeState& parameters;
+    IAudioProcessorState* processorState;
+    const juce::File presetDir;
     juce::Array<juce::File> factoryPresetFiles;
     juce::Array<juce::File> userPresetFiles;
     juce::Array<juce::File> presetFiles;
@@ -162,7 +173,7 @@ private:
     {
         if (file.getFullPathName() == "" || ! file.existsAsFile())
             return false;
-        auto xmlDocument = juce::XmlDocument (file);
+        juce::XmlDocument xmlDocument (file);
         std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
 
         return validatePresetXml (presetXml.get());
@@ -173,7 +184,7 @@ private:
         if (presetXml != nullptr
             && presetXml->hasTagName ("Preset")
             && presetXml->getChildByName ("State") != nullptr
-            && presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()) != nullptr)
+            && presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName()) != nullptr)
             return true;
 
         return false;
@@ -181,14 +192,14 @@ private:
 
     void loadPresetState (juce::XmlElement const* const presetXml)
     {
-        parameters.replaceState (juce::ValueTree::fromXml (
-            *(presetXml->getChildByName ("State")->getChildByName (parameters.state.getType()))));
+        processorState->replaceState (juce::ValueTree::fromXml (
+            *(presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName()))));
     }
 
     void loadDefaultFileSafely()
     {
         auto file = getDefaultPresetFile();
-        auto xmlDocument = juce::XmlDocument (getDefaultPresetFile());
+        juce::XmlDocument xmlDocument (getDefaultPresetFile());
         std::unique_ptr<juce::XmlElement> presetXml (xmlDocument.getDocumentElement());
 
         if (! validatePresetXml (presetXml.get()))
@@ -198,7 +209,7 @@ private:
             // Retry to load the default preset.
             // To prevent infinate loop, I don't use recursive function call like
             // putting loadDefaultFileSafely() here.
-            auto newXmlDocument = juce::XmlDocument (getDefaultPresetFile());
+            juce::XmlDocument newXmlDocument (getDefaultPresetFile());
             std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
             loadPresetState (newPresetXml.get());
             currentPresetFile = file;
@@ -211,9 +222,7 @@ private:
 
     juce::File getPresetDir()
     {
-        return juce::File::getSpecialLocation (
-                   juce::File::SpecialLocationType::userApplicationDataDirectory)
-            .getChildFile ("Onsen Audio/OS-251/presets");
+        return presetDir;
     }
 
     juce::Array<juce::File> scanPresets (juce::File dir, juce::Array<juce::File>& presetFiles)
@@ -255,7 +264,7 @@ private:
         file.deleteRecursively();
         // This line will create necessary sub folders
         file.create();
-        auto fs = juce::FileOutputStream (file);
+        juce::FileOutputStream fs (file);
         fs.write (BinaryData::Default_oapreset, BinaryData::Default_oapresetSize);
         fs.flush();
     }
@@ -273,7 +282,7 @@ private:
             auto file = dir.getChildFile (factoryPreset.path);
             // This line will create necessary sub folders
             file.create();
-            auto fs = juce::FileOutputStream (file);
+            juce::FileOutputStream fs (file);
             fs.write (factoryPreset.data, factoryPreset.size);
             fs.flush();
         }

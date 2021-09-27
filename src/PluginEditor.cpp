@@ -12,10 +12,10 @@
 #include <iostream>
 
 //==============================================================================
-Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState& params)
+Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState& state)
     : juce::AudioProcessorEditor (&proc),
       audioProcessor (proc),
-      parameters (params),
+      processorState (state),
       engine (std::make_shared<reactjuce::EcmascriptEngine>()),
       appRoot (engine),
       harness (std::make_unique<reactjuce::AppHarness> (appRoot)),
@@ -145,7 +145,7 @@ void Os251AudioProcessorEditor::beforeBundleEvaluated()
     appRoot.registerViewType (
         "PresetManagerView",
         [this]() -> reactjuce::ViewManager::ViewPair {
-            auto view = std::make_unique<onsen::PresetManagerView>();
+            auto view = std::make_unique<onsen::PresetManagerView> (&processorState);
             auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
 
             return { std::move (view), std::move (shadowView) };
