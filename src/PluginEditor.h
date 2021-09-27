@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "JuceAudioProcessorState.h"
 #include "PluginProcessor.h"
 #include <JuceHeader.h>
 #include <atomic>
@@ -42,7 +43,7 @@ private:
     //==============================================================================
 
     Os251AudioProcessor& audioProcessor;
-    juce::AudioProcessorValueTreeState& parameters;
+    onsen::JuceAudioProcessorState processorState;
 
     std::shared_ptr<reactjuce::EcmascriptEngine> engine;
     reactjuce::ReactApplicationRoot appRoot;

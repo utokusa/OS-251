@@ -192,10 +192,12 @@ jobs:
       name: Run Tests (Windows)
       run: |
         & .\build\tests\${Env:PROJECT_NAME}_Tests.exe
+        & .\build\tests\${Env:PROJECT_NAME}_TestsUsingJuce_artefacts\${Env:BUILD_TYPE}\${Env:PROJECT_NAME}_TestsUsingJuce.exe
     - if: ${{ runner.os!='Windows' }}
       name: Run Tests (Unix)
       run: |
         ./build/tests/${PROJECT_NAME}_Tests
+        ./build/tests/${PROJECT_NAME}_TestsUsingJuce_artefacts/${BUILD_TYPE}/${PROJECT_NAME}_TestsUsingJuce
     - if: ${{ runner.os=='Windows' }}
       name: Run Benchmark (Windows)
       run: |
