@@ -6,6 +6,7 @@
   <Version>0</Version>
   <State>
     <OS-251>
+      <CurrentPreset path="Factory/Pad/Pad1.oapreset"/>
       <PARAM id="attack" value="0.2750000059604645"/>
       <PARAM id="chorusOn" value="1.0"/>
       <PARAM id="decay" value="0.5600000023841858"/>

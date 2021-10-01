@@ -46,6 +46,13 @@
         "configurations": [
             {
                 "type": "lldb",
+                "request": "attach",
+                "name": "Attach",
+                "pid": "${command:pickMyProcess}", // use ${command:pickProcess} to pick other users' processes
+                "stdio": [null, "log.txt", null]
+            },
+            {
+                "type": "lldb",
                 "request": "launch",
                 "name": "CMake Debug",
                 "program": "${command:cmake.launchTargetPath}",

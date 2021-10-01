@@ -163,10 +163,11 @@ TEST_F (PresetManagerTest, LoadPrevAndNext)
 
     // ---------------------------------------------------------
     // Try to load the previous when the first preset is loaded and edited.
+    // (Load should not happen)
     auto statePtr = processorState.getState();
     // std::cout << "attack before" << statePtr->getChild (0).toXmlString() << std::endl;
-    // std::cout << "attack value:" << statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString() << std::endl;
-    statePtr->getChild (0 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
+    // std::cout << "attack value:" << statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString() << std::endl;
+    statePtr->getChild (1 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
     // std::cout << "attack after" << statePtr->getChild (0).toXmlString() << std::endl;
     presetManager.loadPrev();
     EXPECT_EQ (presetManager.getCurrentPresetFile(), firstPreset);
@@ -174,7 +175,7 @@ TEST_F (PresetManagerTest, LoadPrevAndNext)
     // Check attack value is not changed
     auto state = processorState.copyState();
     auto stateXml = state.createXml();
-    EXPECT_EQ (stateXml->getChildByAttribute ("id", "attack")->getAttributeValue (1 /*value*/).toStdString(), "0.0");
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "attack")->getAttributeValue (1 /*value*/).toStdString(), "0.123");
 
     // ---------------------------------------------------------
     // Try to load the next when the last preset is loaded.
@@ -184,7 +185,8 @@ TEST_F (PresetManagerTest, LoadPrevAndNext)
 
     // ---------------------------------------------------------
     // Try to load the next when the last preset is loaded and edited.
-    statePtr->getChild (0 /*attack*/).setProperty (juce::Identifier ("value"), "0.123" /*original value should not be this value*/, nullptr);
+    // (Load should not happen)
+    statePtr->getChild (1 /*attack*/).setProperty (juce::Identifier ("value"), "0.123" /*original value should not be this value*/, nullptr);
     presetManager.loadNext();
     EXPECT_EQ (presetManager.getCurrentPresetFile(), lastPreset);
 
@@ -197,10 +199,10 @@ TEST_F (PresetManagerTest, LoadPrevAndNext)
 TEST_F (PresetManagerTest, SavePreset)
 {
     presetManager.scanPresets();
-    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
 
     auto statePtr = processorState.getState();
-    statePtr->getChild (0 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
+    statePtr->getChild (1 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
 
     // "Save as..."
     auto newPresetFile = presetManager.getUserPresetDir().getChildFile ("Test.oapreset");
@@ -208,24 +210,24 @@ TEST_F (PresetManagerTest, SavePreset)
     EXPECT_EQ (presetManager.getCurrentPresetFile(), newPresetFile);
 
     presetManager.loadPreset (presetManager.getDefaultPresetFile());
-    EXPECT_EQ (statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.0");
+    EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.0");
 
     presetManager.loadPreset (newPresetFile);
-    EXPECT_EQ (statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.123");
+    EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.123");
 
     // "Save"
-    statePtr->getChild (0 /*attack*/).setProperty (juce::Identifier ("value"), "0.456", nullptr);
+    statePtr->getChild (1 /*attack*/).setProperty (juce::Identifier ("value"), "0.456", nullptr);
     presetManager.savePreset (newPresetFile);
     presetManager.loadPreset (presetManager.getDefaultPresetFile());
-    EXPECT_EQ (statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.0");
+    EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.0");
     presetManager.loadPreset (newPresetFile);
-    EXPECT_EQ (statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.456");
+    EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.456");
 }
 
 TEST_F (PresetManagerTest, SaveOutsideOfPresetFolder)
 {
     presetManager.scanPresets();
-    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
 
     auto file = presetManager.getDefaultPresetFile().getParentDirectory().getChildFile ("outsider.oapreset");
     presetManager.savePreset (file);
@@ -242,7 +244,7 @@ TEST_F (PresetManagerTest, SaveOutsideOfPresetFolder)
 TEST_F (PresetManagerTest, CheckSavedPresetFormat)
 {
     presetManager.scanPresets();
-    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
     int initialNumPresets = presetManager.getPresets().size();
     auto file = presetManager.getUserPresetDir().getChildFile ("Test0.oapreset");
     presetManager.savePreset (file);
@@ -260,7 +262,7 @@ TEST_F (PresetManagerTest, CheckSavedPresetFormat)
 TEST_F (PresetManagerTest, TrackPresetsUsingRescan)
 {
     presetManager.scanPresets();
-    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
     int initialNumPresets = presetManager.getPresets().size();
     auto test0 = presetManager.getUserPresetDir().getChildFile ("Test0.oapreset");
     auto test1 = presetManager.getUserPresetDir().getChildFile ("Test1.oapreset");
@@ -286,11 +288,11 @@ TEST_F (PresetManagerTest, TrackPresetsUsingRescan)
 TEST_F (PresetManagerTest, RescanPresetAfterDeletingCurrentPreset)
 {
     presetManager.scanPresets();
-    presetManager.loadPreset (presetManager.getCurrentPresetFile());
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
 
     // Create Test0 preset
     auto statePtr = processorState.getState();
-    statePtr->getChild (0 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
+    statePtr->getChild (1 /*attack*/).setProperty (juce::Identifier ("value"), "0.123", nullptr);
     auto test0 = presetManager.getUserPresetDir().getChildFile ("Test0.oapreset");
     presetManager.savePreset (test0);
     presetManager.scanPresets(); // TODO: Make it not mandatory after saving presets?
@@ -300,8 +302,8 @@ TEST_F (PresetManagerTest, RescanPresetAfterDeletingCurrentPreset)
 
     // Even after scan, we keep the value as it is
     presetManager.scanPresets();
-    EXPECT_EQ (presetManager.getCurrentPresetFile(), presetManager.getDefaultPresetFile());
-    EXPECT_EQ (statePtr->getChild (0 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.123");
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), juce::String (""));
+    EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.123");
     EXPECT_EQ (presetManager.getPresets().size(), numPresets - 1);
 }
 

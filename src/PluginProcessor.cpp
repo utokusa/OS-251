@@ -26,6 +26,12 @@ Os251AudioProcessor::Os251AudioProcessor()
       positionInfo(),
       jucePositionInfo (&positionInfo),
       synthEngine (&synthParams, &jucePositionInfo),
+      processorState (parameters),
+      presetManager (
+          &processorState,
+          juce::File::getSpecialLocation (
+              juce::File::SpecialLocationType::userApplicationDataDirectory)
+              .getChildFile ("Onsen Audio/OS-251/presets")),
       laf()
 {
     // ---
@@ -256,6 +262,11 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("numVoices", this);
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
+
+    // Preset management
+    juce::ValueTree preset (juce::Identifier ("CurrentPreset"));
+    preset.setProperty (juce::Identifier ("path"), "", nullptr);
+    parameters.state.addChild (preset, 0, nullptr);
 }
 
 Os251AudioProcessor::~Os251AudioProcessor()
@@ -415,7 +426,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
     // Look and feel
     juce::LookAndFeel::setDefaultLookAndFeel (&laf);
-    return new Os251AudioProcessorEditor (*this, parameters);
+    return new Os251AudioProcessorEditor (*this, parameters, presetManager);
 }
 
 //==============================================================================
@@ -439,7 +450,10 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
 
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName (parameters.state.getType()))
+        {
             parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+            presetManager.requireToUpdatePresetNameOnUI();
+        }
 }
 
 void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)

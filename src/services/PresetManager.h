@@ -49,6 +49,10 @@ public:
     static juce::String getPresetName (juce::File file);
     void loadPrev();
     void loadNext();
+    void requireToUpdatePresetNameOnUI();
+
+    //==============================================================================
+    std::function<void()> onNeedToUpdateUI;
 
 private:
     IAudioProcessorState* processorState;
@@ -69,5 +73,6 @@ private:
     void restoreDefaultPreset();
     void restoreFactoryPresets();
     void restoreUserPresetFolder();
+    void updateCurrentPresetBasedOnProcessorState();
 };
 } // namespace onsen
