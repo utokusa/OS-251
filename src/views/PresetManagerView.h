@@ -46,13 +46,13 @@ class PresetManagerView : public reactjuce::View, public juce::Button::Listener
     };
     //==============================================================================
 public:
-    PresetManagerView (IAudioProcessorState* processorState);
+    PresetManagerView (PresetManager&);
     ~PresetManagerView();
     void resized() override;
     void buttonClicked (juce::Button* button) override;
 
 private:
-    PresetManager presetManager;
+    PresetManager& presetManager;
     PresetMenuLookAndFeel presetMenuLookAndFeel;
     juce::Image prevButtonImage;
     juce::Image prevButtonOverImage;

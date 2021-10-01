@@ -11,8 +11,8 @@
 namespace onsen
 {
 //==============================================================================
-PresetManagerView::PresetManagerView (IAudioProcessorState* processorState)
-    : presetManager (processorState, juce::File::getSpecialLocation (juce::File::SpecialLocationType::userApplicationDataDirectory).getChildFile ("Onsen Audio/OS-251/presets")),
+PresetManagerView::PresetManagerView (PresetManager& _presetManager)
+    : presetManager (_presetManager),
       presetMenuLookAndFeel(),
       prevButtonImage (juce::ImageCache::getFromMemory (BinaryData::left_png, BinaryData::left_pngSize)),
       prevButtonOverImage (juce::ImageCache::getFromMemory (BinaryData::left_over_png, BinaryData::left_over_pngSize)),
@@ -91,8 +91,11 @@ PresetManagerView::PresetManagerView (IAudioProcessorState* processorState)
     };
 
     loadPresetMenu();
-    presetManager.loadPreset (presetManager.getDefaultPresetFile());
     selectCurrentPreset();
+
+    presetManager.onNeedToUpdateUI = [this] {
+        selectCurrentPreset();
+    };
 }
 
 PresetManagerView::~PresetManagerView()
@@ -126,6 +129,7 @@ void PresetManagerView::buttonClicked (juce::Button* button)
     if (button == &reloadButton)
     {
         presetManager.loadPreset (presetManager.getCurrentPresetFile());
+        selectCurrentPreset();
     }
 }
 
@@ -360,8 +364,15 @@ void PresetManagerView::rescanPresetsClicked()
 
 void PresetManagerView::selectCurrentPreset()
 {
-    presetMenu.setSelectedId (itemIdByPreset[presetManager.getCurrentPresetFile()],
-                              juce::NotificationType::dontSendNotification);
+    if (itemIdByPreset.count (presetManager.getCurrentPresetFile()))
+    {
+        presetMenu.setSelectedId (itemIdByPreset[presetManager.getCurrentPresetFile()],
+                                  juce::NotificationType::dontSendNotification);
+    }
+    else
+    {
+        presetMenu.setSelectedId (-1 /*Select Nothing*/, juce::NotificationType::dontSendNotification);
+    }
 }
 
 int PresetManagerView::presetArrayIdx (int presetMenuItemId)

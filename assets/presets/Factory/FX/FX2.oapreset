@@ -6,6 +6,7 @@
   <Version>0</Version>
   <State>
     <OS-251>
+      <CurrentPreset path="Factory/FX/FX2.oapreset"/>
       <PARAM id="attack" value="0.0"/>
       <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="0.3899999856948853"/>

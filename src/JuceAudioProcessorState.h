@@ -37,6 +37,23 @@ public:
         return processorState.copyState();
     }
 
+    juce::ValueTree* getState() override
+    {
+        return &processorState.state;
+    }
+
+    void setPreset (juce::String relativePresetPath) override
+    {
+        AudioProcessorStateUtil::setPreset (processorState.state, relativePresetPath);
+    }
+
+    /*
+    Returns relative preset path
+    */
+    juce::String getPreset() override
+    {
+        return AudioProcessorStateUtil::getPreset (processorState.state);
+    }
     //==============================================================================
 private:
     juce::AudioProcessorValueTreeState& processorState;

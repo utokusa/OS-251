@@ -20,6 +20,7 @@ PresetManager::PresetManager (IAudioProcessorState* _processorState, juce::File 
       presetFiles(),
       currentPresetFile (getDefaultPresetFile())
 {
+    updateCurrentPresetBasedOnProcessorState();
 }
 //==============================================================================
 void PresetManager::scanPresets()
@@ -31,10 +32,6 @@ void PresetManager::scanPresets()
     presetFiles.add (getDefaultPresetFile());
     presetFiles.addArray (factoryPresetFiles);
     presetFiles.addArray (userPresetFiles);
-    if (! validatePresetFile (currentPresetFile))
-    {
-        currentPresetFile = getDefaultPresetFile();
-    }
 }
 
 juce::File PresetManager::getDefaultPresetFile()
@@ -75,6 +72,9 @@ juce::Array<juce::File> PresetManager::getUserPresets()
 void PresetManager::savePreset (juce::File file)
 {
     // TODO: Handle error causing while it's writing file
+    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
+    processorState->setPreset (presetRelativePath);
+
     auto state = processorState->copyState();
     std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
 
@@ -114,11 +114,12 @@ void PresetManager::loadPreset (juce::File file)
         currentPresetFile = file;
     }
     else
-        loadDefaultFileSafely();
+        loadDefaultFileSafely(); // TODO: change behavior?
 }
 
 juce::File PresetManager::getCurrentPresetFile()
 {
+    updateCurrentPresetBasedOnProcessorState();
     return currentPresetFile;
 }
 
@@ -135,7 +136,7 @@ void PresetManager::loadPrev()
     int idx = presetFiles.indexOf (currentPresetFile);
     if (idx > 0)
         loadPreset (presetFiles[idx - 1]);
-    else // Usually it doesn't happen
+    else if (idx < 0) // Usually it doesn't happen
         loadPreset (getDefaultPresetFile());
 }
 
@@ -147,7 +148,9 @@ void PresetManager::loadNext()
     else if (idx < 0) // Usually it doesn't happen
         loadPreset (getDefaultPresetFile());
 }
+
 //==============================================================================
+
 bool PresetManager::validatePresetFile (juce::File file)
 {
     if (file.getFullPathName() == "" || ! file.existsAsFile())
@@ -160,6 +163,7 @@ bool PresetManager::validatePresetFile (juce::File file)
 
 bool PresetManager::validatePresetXml (juce::XmlElement const* const presetXml)
 {
+    // TODO: check current preset
     if (presetXml != nullptr
         && presetXml->hasTagName ("Preset")
         && presetXml->getChildByName ("Gadget") != nullptr
@@ -183,6 +187,12 @@ void PresetManager::loadPresetState (juce::XmlElement const* const presetXml)
 {
     processorState->replaceState (juce::ValueTree::fromXml (
         *(presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName()))));
+}
+
+void PresetManager::requireToUpdatePresetNameOnUI()
+{
+    if (onNeedToUpdateUI != nullptr)
+        onNeedToUpdateUI();
 }
 
 void PresetManager::loadDefaultFileSafely()
@@ -283,5 +293,22 @@ void PresetManager::restoreUserPresetFolder()
     if (dir.exists())
         return;
     dir.createDirectory();
+}
+
+void PresetManager::updateCurrentPresetBasedOnProcessorState()
+{
+    auto relativePresetPath = processorState->getPreset();
+    if (relativePresetPath == "")
+    {
+        currentPresetFile = getDefaultPresetFile();
+    }
+    else
+    {
+        currentPresetFile = getPresetDir().getChildFile (relativePresetPath);
+        if (! validatePresetFile (currentPresetFile))
+        {
+            currentPresetFile = "";
+        }
+    }
 }
 } // namespace onsen
