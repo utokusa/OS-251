@@ -224,6 +224,33 @@ TEST_F (PresetManagerTest, SavePreset)
     EXPECT_EQ (statePtr->getChild (1 /*attack*/).getProperty (juce::Identifier ("value")).toString().toStdString(), "0.456");
 }
 
+TEST_F (PresetManagerTest, SavePresetUsingPathWithoutExtension)
+{
+    presetManager.scanPresets();
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
+
+    // If the .oapreset extension is not provided, it should add the extension.
+    presetManager.savePreset (presetManager.getUserPresetDir().getChildFile ("without_extension"));
+    EXPECT_EQ (presetManager.getCurrentPresetFile(),
+               presetManager.getUserPresetDir().getChildFile ("without_extension.oapreset"));
+}
+
+TEST_F (PresetManagerTest, SavePresetUsingPathWithWrongExtension)
+{
+    presetManager.scanPresets();
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
+
+    // If wrong extension is not provided, it should add the proper extension.
+    presetManager.savePreset (presetManager.getUserPresetDir().getChildFile ("file.wrong"));
+    EXPECT_EQ (presetManager.getCurrentPresetFile(),
+               presetManager.getUserPresetDir().getChildFile ("file.wrong.oapreset"));
+
+    // If wrong extension is not provided, it should add the proper extension.
+    presetManager.savePreset (presetManager.getUserPresetDir().getChildFile ("file.wrong.wrong"));
+    EXPECT_EQ (presetManager.getCurrentPresetFile(),
+               presetManager.getUserPresetDir().getChildFile ("file.wrong.wrong.oapreset"));
+}
+
 TEST_F (PresetManagerTest, SaveOutsideOfPresetFolder)
 {
     presetManager.scanPresets();
