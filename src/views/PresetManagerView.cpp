@@ -232,7 +232,14 @@ void PresetManagerView::loadPresetMenu()
 
     // Go to preset folder
     goToPresetFolderItem.itemID = itemId++;
+
+#if JUCE_MAC || JUCE_WINDOWS
     goToPresetFolderItem.text = "Go to Preset Folder...";
+#else
+    // For Linux, copy preset folder's path to the clipboard
+    goToPresetFolderItem.text = "Copy Preset Folder Path";
+#endif
+
     goToPresetFolderItem.action = [this]() {
         doNothingOnPresetMenuChangeCallback = true;
         goToPresetFolderClicked();
@@ -353,7 +360,12 @@ void PresetManagerView::goToPresetFolderClicked()
 {
     selectCurrentPreset();
     juce::File dir = presetManager.getUserPresetDir();
+
+#if JUCE_MAC || JUCE_WINDOWS
     dir.revealToUser();
+#else
+    juce::SystemClipboard::copyTextToClipboard (dir.getFullPathName());
+#endif
 }
 
 void PresetManagerView::rescanPresetsClicked()
