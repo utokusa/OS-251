@@ -23,8 +23,16 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
       dirtyParamFlags ((processor.getParameters().size()))
 {
     setUpParameters();
-    harness->onBeforeAll = [this]() { beforeBundleEvaluated(); };
-    harness->onAfterAll = [this]() { afterBundleEvaluated(); };
+    harness->onBeforeAll = [this]()
+    {
+        beforeBundleEvaluated();
+    };
+
+    harness->onAfterAll = [this]()
+    {
+        afterBundleEvaluated();
+    };
+
     harness->watch (getBundle());
 
 #if JUCE_DEBUG
@@ -144,7 +152,8 @@ void Os251AudioProcessorEditor::beforeBundleEvaluated()
 {
     appRoot.registerViewType (
         "PresetManagerView",
-        [this]() -> reactjuce::ViewManager::ViewPair {
+        [this]() -> reactjuce::ViewManager::ViewPair
+        {
             auto view = std::make_unique<onsen::PresetManagerView> (presetManager);
             auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
 
@@ -153,7 +162,8 @@ void Os251AudioProcessorEditor::beforeBundleEvaluated()
 
     engine->registerNativeMethod (
         "beginParameterChangeGesture",
-        [this] (const juce::var::NativeFunctionArgs& args) {
+        [this] (const juce::var::NativeFunctionArgs& args)
+        {
             auto paramId = args.arguments[0].toString();
             auto it = parameterById.find (paramId);
             if (it != parameterById.end())
@@ -164,7 +174,8 @@ void Os251AudioProcessorEditor::beforeBundleEvaluated()
 
     engine->registerNativeMethod (
         "setParameterValueNotifyingHost",
-        [this] (const juce::var::NativeFunctionArgs& args) {
+        [this] (const juce::var::NativeFunctionArgs& args)
+        {
             auto paramId = args.arguments[0].toString();
             auto newValue = args.arguments[1];
             auto it = parameterById.find (paramId);
@@ -176,7 +187,8 @@ void Os251AudioProcessorEditor::beforeBundleEvaluated()
 
     engine->registerNativeMethod (
         "endParameterChangeGesture",
-        [this] (const juce::var::NativeFunctionArgs& args) {
+        [this] (const juce::var::NativeFunctionArgs& args)
+        {
             auto paramId = args.arguments[0].toString();
             auto it = parameterById.find (paramId);
             if (it != parameterById.end())
