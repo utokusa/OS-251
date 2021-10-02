@@ -71,6 +71,14 @@ juce::Array<juce::File> PresetManager::getUserPresets()
     */
 void PresetManager::savePreset (juce::File file)
 {
+    // This check is necessary for file managers that can't force to
+    // add the extension.
+    if (! file.hasFileExtension (".oapreset"))
+    {
+        file = file.getParentDirectory().getChildFile (
+            file.getFileName() + ".oapreset");
+    }
+
     // TODO: Handle error causing while it's writing file
     auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
     processorState->setPreset (presetRelativePath);
