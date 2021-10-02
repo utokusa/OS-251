@@ -306,17 +306,10 @@ void PresetManager::restoreUserPresetFolder()
 void PresetManager::updateCurrentPresetBasedOnProcessorState()
 {
     auto relativePresetPath = processorState->getPreset();
-    if (relativePresetPath == "")
+    currentPresetFile = getPresetDir().getChildFile (relativePresetPath);
+    if (! validatePresetFile (currentPresetFile))
     {
-        currentPresetFile = getDefaultPresetFile();
-    }
-    else
-    {
-        currentPresetFile = getPresetDir().getChildFile (relativePresetPath);
-        if (! validatePresetFile (currentPresetFile))
-        {
-            currentPresetFile = "";
-        }
+        currentPresetFile = "";
     }
 }
 } // namespace onsen
