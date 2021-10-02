@@ -7,7 +7,7 @@
   <State>
     <OS-251>
       <CurrentPreset path="Factory/Key/Key0.oapreset"/>
-      <PARAM id="attack" value="0.0"/>
+      <PARAM id="attack" value="0.009999999776482582"/>
       <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="0.6999999284744263"/>
       <PARAM id="envForAmpOn" value="1.0"/>

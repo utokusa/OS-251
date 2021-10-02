@@ -7,8 +7,8 @@
   <State>
     <OS-251>
       <CurrentPreset path="Factory/Pad/Pad2.oapreset"/>
-      <PARAM id="attack" value="0.2199999988079071"/>
-      <PARAM id="chorusOn" value="1.0"/>
+      <PARAM id="attack" value="1.0"/>
+      <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="1.0"/>
       <PARAM id="envForAmpOn" value="1.0"/>
       <PARAM id="filterEnv" value="0.5"/>
