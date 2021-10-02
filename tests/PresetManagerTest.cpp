@@ -48,14 +48,14 @@ TEST_F (PresetManagerTest, BeforeFirstScan)
 {
     // Before scan
     EXPECT_FALSE (testPresetDir.exists());
-    EXPECT_EQ (presetManager.getCurrentPresetFile(), presetManager.getDefaultPresetFile());
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), juce::String (""));
 }
 
 TEST_F (PresetManagerTest, FirstScan)
 {
     presetManager.scanPresets();
     EXPECT_TRUE (testPresetDir.exists());
-    EXPECT_EQ (presetManager.getCurrentPresetFile(), presetManager.getDefaultPresetFile());
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), juce::String (""));
 }
 
 TEST_F (PresetManagerTest, LoadDefaultPreset)
@@ -140,6 +140,7 @@ TEST_F (PresetManagerTest, LoadBrokenDefaultPreset)
 TEST_F (PresetManagerTest, LoadPrevAndNext)
 {
     presetManager.scanPresets();
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
     auto presets = presetManager.getPresets();
     auto firstPreset = presetManager.getDefaultPresetFile();
     auto secondPreset = presetManager.getFactoryPresetDir().getChildFile ("Bass/Bass0.oapreset");
