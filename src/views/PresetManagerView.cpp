@@ -86,16 +86,14 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
     addAndMakeVisible (presetMenu);
     presetMenu.setJustificationType (juce::Justification::centred);
     presetMenu.setTextWhenNothingSelected ("");
-    presetMenu.onChange = [this]
-    {
+    presetMenu.onChange = [this] {
         presetMenuChanged();
     };
 
     loadPresetMenu();
     selectCurrentPreset();
 
-    presetManager.onNeedToUpdateUI = [this]
-    {
+    presetManager.onNeedToUpdateUI = [this] {
         selectCurrentPreset();
     };
 }
@@ -217,8 +215,7 @@ void PresetManagerView::loadPresetMenu()
     // Save
     saveItem.itemID = itemId++;
     saveItem.text = "Save";
-    saveItem.action = [this]()
-    {
+    saveItem.action = [this]() {
         doNothingOnPresetMenuChangeCallback = true;
         saveClicked();
     };
@@ -227,8 +224,7 @@ void PresetManagerView::loadPresetMenu()
     // Save as
     saveAsItem.itemID = itemId++;
     saveAsItem.text = "Save as...";
-    saveAsItem.action = [this]()
-    {
+    saveAsItem.action = [this]() {
         doNothingOnPresetMenuChangeCallback = true;
         saveAsClicked();
     };
@@ -244,8 +240,7 @@ void PresetManagerView::loadPresetMenu()
     goToPresetFolderItem.text = "Copy Preset Folder Path";
 #endif
 
-    goToPresetFolderItem.action = [this]()
-    {
+    goToPresetFolderItem.action = [this]() {
         doNothingOnPresetMenuChangeCallback = true;
         goToPresetFolderClicked();
     };
@@ -254,8 +249,7 @@ void PresetManagerView::loadPresetMenu()
     // Rescan presets
     rescanPresetsItem.itemID = itemId++;
     rescanPresetsItem.text = "Rescan Presets";
-    rescanPresetsItem.action = [this]()
-    {
+    rescanPresetsItem.action = [this]() {
         doNothingOnPresetMenuChangeCallback = true;
         rescanPresetsClicked();
     };
@@ -349,18 +343,17 @@ void PresetManagerView::saveAsClicked()
                                                    presetManager.getUserPresetDir(),
                                                    "*.oapreset");
     auto chooserFlag = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles;
-    chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser)
-                          {
-                              juce::File file (chooser.getResult());
-                              if (file.getFullPathName() == "")
-                              {
-                                  selectCurrentPreset();
-                                  return;
-                              }
-                              presetManager.savePreset (file);
-                              loadPresetMenu();
-                              selectCurrentPreset();
-                          });
+    chooser->launchAsync (chooserFlag, [this] (const juce::FileChooser& chooser) {
+        juce::File file (chooser.getResult());
+        if (file.getFullPathName() == "")
+        {
+            selectCurrentPreset();
+            return;
+        }
+        presetManager.savePreset (file);
+        loadPresetMenu();
+        selectCurrentPreset();
+    });
 }
 
 void PresetManagerView::goToPresetFolderClicked()

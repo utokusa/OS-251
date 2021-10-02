@@ -39,52 +39,42 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Map [0, 1.0] to ["0", "0.1"]
     constexpr int numDecimal = 4;
-    auto valueToTextFunction = [numDecimal] (float value)
-    { return juce::String (value, numDecimal); };
-    auto valueToMinusOneToOneFunction = [numDecimal] (float value)
-    { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
+    auto valueToTextFunction = [numDecimal] (float value) { return juce::String (value, numDecimal); };
+    auto valueToMinusOneToOneFunction = [numDecimal] (float value) { return juce::String (onsen::DspUtil::valMinusOneToOne (value), numDecimal); };
 
     // Synced Rate
-    auto syncedRateTextFunction = [] (float value)
-    { return juce::String (
-                 onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal(), true))
-             + juce::String ("/")
-             + juce::String (onsen::LfoParams::rateSyncDenominatorVal()); };
+    auto syncedRateTextFunction = [] (float value) { return juce::String (
+                                                                onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, onsen::LfoParams::lowestRateSyncNumeratorVal(), onsen::LfoParams::highestRateSyncNumeratorVal(), true))
+                                                            + juce::String ("/")
+                                                            + juce::String (onsen::LfoParams::rateSyncDenominatorVal()); };
 
     // Frequency
     constexpr float lowestFreqVal = onsen::FilterParams::lowestFreqVal();
     constexpr float freqBaseNumber = onsen::FilterParams::freqBaseNumber();
-    auto valueToFreqFunction = [lowestFreqVal, freqBaseNumber] (float value)
-    { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
+    auto valueToFreqFunction = [lowestFreqVal, freqBaseNumber] (float value) { return juce::String ((int) (pow (freqBaseNumber, value) * lowestFreqVal)) + juce::String (" Hz"); };
 
     // Resonance
     constexpr float lowestResVal = onsen::FilterParams::lowestResVal();
     constexpr float resBaseNumber = onsen::FilterParams::resBaseNumber();
-    auto valueToResFunction = [lowestResVal, resBaseNumber, numDecimal] (float value)
-    { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
+    auto valueToResFunction = [lowestResVal, resBaseNumber, numDecimal] (float value) { return juce::String (pow (resBaseNumber, value) * lowestResVal, numDecimal); };
 
     // ON / OFF
-    auto valueToOnOff = [] (float value)
-    { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
+    auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
 
     // Master octave tuning
-    auto pitchBendWidtValToStr = [] (float value)
-    { return juce::String (
-          onsen::DspUtil::mapFlnumToInt (
-              value, 0.0, 1.0, 0, onsen::MasterParams::maxPitchBendWidth)); };
-    auto masterOctaveTuningValToStr = [] (float value)
-    { return juce::String (
-          onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxOctaveTuneVal, onsen::MasterParams::maxOctaveTuneVal)); };
-    auto masterSemitoneTuningValToStr = [] (float value)
-    { return juce::String (
-                 onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxSemitoneTuneVal, onsen::MasterParams::maxSemitoneTuneVal))
-             + juce::String (" st"); };
+    auto pitchBendWidtValToStr = [] (float value) { return juce::String (
+                                                        onsen::DspUtil::mapFlnumToInt (
+                                                            value, 0.0, 1.0, 0, onsen::MasterParams::maxPitchBendWidth)); };
+    auto masterOctaveTuningValToStr = [] (float value) { return juce::String (
+                                                             onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxOctaveTuneVal, onsen::MasterParams::maxOctaveTuneVal)); };
+    auto masterSemitoneTuningValToStr = [] (float value) { return juce::String (
+                                                                      onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxSemitoneTuneVal, onsen::MasterParams::maxSemitoneTuneVal))
+                                                                  + juce::String (" st"); };
 
     // Number of voices
-    auto numVoicesToStr = [] (float value)
-    { return juce::String (
-          onsen::DspUtil::mapFlnumToInt (
-              value, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices)); };
+    auto numVoicesToStr = [] (float value) { return juce::String (
+                                                 onsen::DspUtil::mapFlnumToInt (
+                                                     value, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices)); };
     // ---
 
     // ---
