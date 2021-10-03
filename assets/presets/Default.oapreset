@@ -6,7 +6,6 @@
   <Version>0</Version>
   <State>
     <OS-251>
-      <CurrentPreset path="Default.oapreset"/>
       <PARAM id="attack" value="0.0"/>
       <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="1.0"/>
