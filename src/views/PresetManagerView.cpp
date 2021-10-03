@@ -100,6 +100,7 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
 
 PresetManagerView::~PresetManagerView()
 {
+    presetManager.onNeedToUpdateUI = nullptr;
     prevButton.removeListener (this);
     nextButton.removeListener (this);
     reloadButton.removeListener (this);
