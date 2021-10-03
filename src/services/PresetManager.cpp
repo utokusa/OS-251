@@ -85,6 +85,8 @@ void PresetManager::savePreset (juce::File file)
 
     auto state = processorState->copyState();
     std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
+    // Presets don't need <CurrentPreset> tag in the processor state
+    stateXml->deleteAllChildElementsWithTagName ("CurrentPreset");
 
     auto presetXml = std::make_unique<juce::XmlElement> ("Preset");
 
@@ -119,6 +121,8 @@ void PresetManager::loadPreset (juce::File file)
     if (validatePresetXml (presetXml.get()))
     {
         loadPresetState (presetXml.get());
+        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
+        processorState->setPreset (presetRelativePath);
         currentPresetFile = file;
     }
     else
@@ -171,7 +175,6 @@ bool PresetManager::validatePresetFile (juce::File file)
 
 bool PresetManager::validatePresetXml (juce::XmlElement const* const presetXml)
 {
-    // TODO: check current preset
     if (presetXml != nullptr
         && presetXml->hasTagName ("Preset")
         && presetXml->getChildByName ("Gadget") != nullptr
@@ -219,11 +222,16 @@ void PresetManager::loadDefaultFileSafely()
         juce::XmlDocument newXmlDocument (getDefaultPresetFile());
         std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
         loadPresetState (newPresetXml.get());
+        // TODO: Remove duplication. The following 2 lines appear repeatedly.
+        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
+        processorState->setPreset (presetRelativePath);
         currentPresetFile = file;
         return;
     }
 
     loadPresetState (presetXml.get());
+    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
+    processorState->setPreset (presetRelativePath);
     currentPresetFile = file;
 }
 
