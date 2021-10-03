@@ -22,7 +22,7 @@
       <PARAM id="masterFineTune" value="0.5"/>
       <PARAM id="masterOctaveTune" value="0.6499999761581421"/>
       <PARAM id="masterSemitoneTune" value="0.5"/>
-      <PARAM id="masterVolume" value="1.0"/>
+      <PARAM id="masterVolume" value="0.6600000262260437"/>
       <PARAM id="noiseGain" value="1.0"/>
       <PARAM id="numVoices" value="0.0"/>
       <PARAM id="pitchBendWidth" value="0.5"/>
