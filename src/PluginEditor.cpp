@@ -39,6 +39,10 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
     harness->once();
 #endif
 
+    // Delete tmp file as soon as possible
+    auto tmpUiBundle = juce::File (tmpUiBundlePath);
+    tmpUiBundle.deleteFile();
+
     addAndMakeVisible (appRoot);
 
     setSize (appWidth, appHeight);
@@ -47,9 +51,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
 {
-    juce::File bundle = juce::File (tmpUiBundlePath);
-    bundle.deleteFile();
-
     for (auto& param : audioProcessor.getParameters())
     {
         param->removeListener (this);
