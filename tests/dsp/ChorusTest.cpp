@@ -6,9 +6,9 @@
   ==============================================================================
 */
 
-#include "../src/Chorus.h"
-#include "../src/AudioBufferMock.h"
-#include "TestAudioBufferInput.h"
+#include "../../src/dsp/Chorus.h"
+#include "util/AudioBufferMock.h"
+#include "util/TestAudioBufferInput.h"
 #include <gtest/gtest.h>
 
 namespace onsen

@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "../synth/SynthParams.h"
 #include "DspCommon.h"
 #include "IPositionInfo.h"
-#include "SynthParams.h"
 #include <vector>
 
 namespace onsen

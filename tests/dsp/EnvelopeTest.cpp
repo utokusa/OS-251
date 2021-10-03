@@ -6,8 +6,8 @@
   ==============================================================================
 */
 
-#include "../src/Envelope.h"
-#include "../src/params/EnvelopeParamsMock.h"
+#include "../../src/dsp/Envelope.h"
+#include "../../src/params/EnvelopeParamsMock.h"
 #include <gtest/gtest.h>
 
 namespace onsen

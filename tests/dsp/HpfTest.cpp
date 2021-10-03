@@ -6,10 +6,10 @@
   ==============================================================================
 */
 
-#include "../src/Hpf.h"
-#include "../src/AudioBufferMock.h"
-#include "../src/params/HpfParamsMock.h"
-#include "TestAudioBufferInput.h"
+#include "../../src/dsp/Hpf.h"
+#include "../../src/params/HpfParamsMock.h"
+#include "util/AudioBufferMock.h"
+#include "util/TestAudioBufferInput.h"
 #include <gtest/gtest.h>
 
 namespace onsen

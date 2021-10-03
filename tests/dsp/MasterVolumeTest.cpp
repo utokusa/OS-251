@@ -6,10 +6,10 @@
   ==============================================================================
 */
 
-#include "../src/MasterVolume.h"
-#include "../src/AudioBufferMock.h"
-#include "../src/params/MasterParamsMock.h"
-#include "TestAudioBufferInput.h"
+#include "../../src/dsp/MasterVolume.h"
+#include "../../src/params/MasterParamsMock.h"
+#include "util/AudioBufferMock.h"
+#include "util/TestAudioBufferInput.h"
 #include <gtest/gtest.h>
 
 namespace onsen

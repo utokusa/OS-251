@@ -6,9 +6,9 @@
   ==============================================================================
 */
 
-#include "../src/Lfo.h"
-#include "../src/PositionInfoMock.h"
-#include "../src/params/LfoParamsMock.h"
+#include "../../src/dsp/Lfo.h"
+#include "../../src/params/LfoParamsMock.h"
+#include "util/PositionInfoMock.h"
 #include <cmath>
 #include <gtest/gtest.h>
 #include <vector>

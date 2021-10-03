@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include "../synth/SynthParams.h"
 #include "DspCommon.h"
-#include "SynthParams.h"
 
 namespace onsen
 {

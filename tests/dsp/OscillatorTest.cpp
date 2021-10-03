@@ -6,8 +6,8 @@
   ==============================================================================
 */
 
-#include "../src/Oscillator.h"
-#include "../src/params/OscillatorParamsMock.h"
+#include "../../src/dsp/Oscillator.h"
+#include "../../src/params/OscillatorParamsMock.h"
 #include <gtest/gtest.h>
 #include <vector>
 

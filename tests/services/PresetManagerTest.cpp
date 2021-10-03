@@ -4,8 +4,8 @@
   ==============================================================================
 */
 
-#include "../src/services/PresetManager.h"
-#include "../src/AudioProcessorStateMock.h"
+#include "../../src/services/PresetManager.h"
+#include "AudioProcessorStateMock.h"
 #include <JuceHeader.h>
 #include <gtest/gtest.h>
 #include <iostream>

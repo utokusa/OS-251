@@ -15,10 +15,10 @@ target_compile_definitions(Os251_Benchmark
 
 target_sources(Os251_Benchmark PRIVATE
         Main.cpp
-        ../src/Chorus.cpp
-        ../src/Envelope.cpp
-        ../src/SynthEngine.cpp
-        ../src/SynthVoice.cpp
+        ../src/dsp/Chorus.cpp
+        ../src/dsp/Envelope.cpp
+        ../src/synth/SynthEngine.cpp
+        ../src/synth/SynthVoice.cpp
         )
 
 target_link_libraries(Os251_Benchmark PUBLIC

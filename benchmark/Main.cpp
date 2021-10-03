@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
-#include "../src/PositionInfoMock.h"
-#include "../src/SynthEngine.h"
+#include "../src/synth/SynthEngine.h"
+#include "../tests/dsp/util/PositionInfoMock.h"
 
 //==============================================================================
 // Constants

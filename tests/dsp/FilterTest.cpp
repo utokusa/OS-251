@@ -6,11 +6,11 @@
   ==============================================================================
 */
 
-#include "../src/Filter.h"
-#include "../src/PositionInfoMock.h"
-#include "../src/params/EnvelopeParamsMock.h"
-#include "../src/params/FilterParamsMock.h"
-#include "../src/params/LfoParamsMock.h"
+#include "../../src/dsp/Filter.h"
+#include "../../src/params/EnvelopeParamsMock.h"
+#include "../../src/params/FilterParamsMock.h"
+#include "../../src/params/LfoParamsMock.h"
+#include "util/PositionInfoMock.h"
 #include <gtest/gtest.h>
 
 namespace onsen

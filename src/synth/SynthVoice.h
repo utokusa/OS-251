@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "DspCommon.h"
-#include "Filter.h"
-#include "Oscillator.h"
+#include "../dsp/DspCommon.h"
+#include "../dsp/Filter.h"
+#include "../dsp/Oscillator.h"
 #include "SynthParams.h"
 #include "SynthSound.h"
 #include <JuceHeader.h>

@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include "../synth/SynthParams.h"
 #include "DspCommon.h"
 #include "Envelope.h"
 #include "IAudioBuffer.h"
 #include "Lfo.h"
-#include "SynthParams.h"
 
 namespace onsen
 {

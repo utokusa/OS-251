@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "IAudioProcessorState.h"
+#include "../../src/IAudioProcessorState.h"
 #include <JuceHeader.h>
 
 namespace onsen

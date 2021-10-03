@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "DspCommon.h"
-#include "IPositionInfo.h"
+#include "../../../src/dsp/DspCommon.h"
+#include "../../../src/dsp/IPositionInfo.h"
 
 namespace onsen
 {

@@ -7,7 +7,7 @@
 */
 
 #include "SynthEngine.h"
-#include "JuceAudioBuffer.h"
+#include "../dsp/JuceAudioBuffer.h"
 
 namespace onsen
 {

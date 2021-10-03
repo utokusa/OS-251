@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include "DspCommon.h"
-#include "params/ChorusParams.h"
-#include "params/EnvelopeParams.h"
-#include "params/FilterParams.h"
-#include "params/HpfParams.h"
-#include "params/LfoParams.h"
-#include "params/MasterParams.h"
-#include "params/OscillatorParams.h"
+#include "../dsp/DspCommon.h"
+#include "../params/ChorusParams.h"
+#include "../params/EnvelopeParams.h"
+#include "../params/FilterParams.h"
+#include "../params/HpfParams.h"
+#include "../params/LfoParams.h"
+#include "../params/MasterParams.h"
+#include "../params/OscillatorParams.h"
 
 namespace onsen
 {

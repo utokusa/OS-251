@@ -6,8 +6,8 @@
   ==============================================================================
 */
 
-#include "../src/DspCommon.h"
-#include "../src/IAudioBuffer.h"
+#include "../../../src/dsp/DspCommon.h"
+#include "../../../src/dsp/IAudioBuffer.h"
 
 namespace onsen
 {

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../DspCommon.h"
+#include "../dsp/DspCommon.h"
 #include "HpfParams.h"
 
 namespace onsen

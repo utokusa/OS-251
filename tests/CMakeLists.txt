@@ -10,16 +10,16 @@ target_link_libraries(Os251_Tests PUBLIC
         gtest_main)
 
 target_sources(Os251_Tests PRIVATE
-        ChorusTest.cpp
-        EnvelopeTest.cpp
-        OscillatorTest.cpp
-        LfoTest.cpp
-        FilterTest.cpp
-        HpfTest.cpp
-        MasterVolumeTest.cpp
-        TestAudioBufferInput.cpp
-        ../src/Chorus.cpp
-        ../src/Envelope.cpp
+        dsp/ChorusTest.cpp
+        dsp/EnvelopeTest.cpp
+        dsp/OscillatorTest.cpp
+        dsp/LfoTest.cpp
+        dsp/FilterTest.cpp
+        dsp/HpfTest.cpp
+        dsp/MasterVolumeTest.cpp
+        dsp/util/TestAudioBufferInput.cpp
+        ../src/dsp/Chorus.cpp
+        ../src/dsp/Envelope.cpp
         )
 
 gtest_discover_tests(Os251_Tests)
@@ -40,7 +40,7 @@ target_compile_definitions(Os251_TestsUsingJuce
 
 target_sources(Os251_TestsUsingJuce PRIVATE
         ../src/services/PresetManager.cpp
-        PresetManagerTest.cpp
+        services/PresetManagerTest.cpp
         )
 
 target_link_libraries(Os251_TestsUsingJuce PUBLIC

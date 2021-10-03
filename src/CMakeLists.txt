@@ -104,10 +104,10 @@ juce_add_binary_data(Os251Binaries
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp
         PluginEditor.cpp
-        Chorus.cpp
-        Envelope.cpp
-        SynthEngine.cpp
-        SynthVoice.cpp
+        dsp/Chorus.cpp
+        dsp/Envelope.cpp
+        synth/SynthEngine.cpp
+        synth/SynthVoice.cpp
         services/PresetManager.cpp
         views/PresetManagerView.cpp
         )

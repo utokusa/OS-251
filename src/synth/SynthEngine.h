@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "Chorus.h"
-#include "DspCommon.h"
-#include "Hpf.h"
-#include "IPositionInfo.h"
-#include "Lfo.h"
-#include "MasterVolume.h"
+#include "../dsp/Chorus.h"
+#include "../dsp/DspCommon.h"
+#include "../dsp/Hpf.h"
+#include "../dsp/IPositionInfo.h"
+#include "../dsp/Lfo.h"
+#include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
 #include "SynthVoice.h"
 #include <JuceHeader.h>
