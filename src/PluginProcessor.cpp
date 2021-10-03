@@ -267,6 +267,10 @@ Os251AudioProcessor::Os251AudioProcessor()
     juce::ValueTree preset (juce::Identifier ("CurrentPreset"));
     preset.setProperty (juce::Identifier ("path"), "Default.oapreset", nullptr);
     parameters.state.addChild (preset, 0, nullptr);
+
+    // Try to load default preset file so that users can
+    // have their own default preset.
+    presetManager.loadPreset (presetManager.getDefaultPresetFile());
 }
 
 Os251AudioProcessor::~Os251AudioProcessor()
