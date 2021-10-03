@@ -47,9 +47,14 @@ public:
             colors::white,
             colors::almostBlack,
             colors::white,
-        })
+        }),
+                          // Recursive-Regular.ttf
+                          typeface (
+                              juce::Typeface::createSystemTypefaceFor (
+                                  BinaryData::RecursiveRegular_ttf,
+                                  BinaryData::RecursiveRegular_ttfSize))
     {
-        setDefaultSansSerifTypeface (getCustomFont().getTypeface());
+        setDefaultSansSerifTypeface (typeface);
         setColourScheme (colorScheme);
     }
 
@@ -57,17 +62,11 @@ public:
 
     juce::Typeface::Ptr getTypefaceForFont (const juce::Font& f) override
     {
-        return getCustomFont().getTypeface();
-    }
-
-    static const juce::Font getCustomFont()
-    {
-        // Recursive-Regular.ttf
-        static auto typeface = juce::Typeface::createSystemTypefaceFor (BinaryData::RecursiveRegular_ttf, BinaryData::RecursiveRegular_ttfSize);
-        return juce::Font (typeface);
+        return typeface;
     }
 
 private:
     Laf::ColourScheme colorScheme;
+    juce::Typeface::Ptr typeface;
 };
 } // namespace onsen
