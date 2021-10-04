@@ -5,6 +5,7 @@
 */
 
 #include "../../src/services/PresetManager.h"
+#include "../../src/services/TmpFileManager.h"
 #include "AudioProcessorStateMock.h"
 #include <JuceHeader.h>
 #include <gtest/gtest.h>
@@ -20,18 +21,17 @@ protected:
     void SetUp() override
     {
         // Clean up preset folder
-        testPresetDir.deleteRecursively();
+        testDir.deleteRecursively();
     }
 
     void TearDown() override
     {
         // Clean up preset folder
-        testPresetDir.deleteRecursively();
+        testDir.deleteRecursively();
     }
 
-    const juce::File testPresetDir { juce::File::getSpecialLocation (
-                                         juce::File::SpecialLocationType::tempDirectory)
-                                         .getChildFile ("Onsen Audio/OS-251/presets") };
+    const juce::File testDir { onsen::TmpFileManager::getTmpDir().getChildFile ("preset_test") };
+    const juce::File testPresetDir { testDir.getChildFile ("presets") };
     AudioProcessorStateMock processorState;
     PresetManager presetManager { &processorState, testPresetDir };
 };

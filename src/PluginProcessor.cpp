@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "services/TmpFileManager.h"
 
 //==============================================================================
 Os251AudioProcessor::Os251AudioProcessor()
@@ -275,6 +276,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
 Os251AudioProcessor::~Os251AudioProcessor()
 {
+    onsen::TmpFileManager::cleanUpTmpDir (onsen::TmpFileManager::getTmpDir());
 }
 
 //==============================================================================

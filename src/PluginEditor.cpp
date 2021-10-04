@@ -8,6 +8,7 @@
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
+#include "services/TmpFileManager.h"
 #include "views/PresetManagerView.h"
 #include <iostream>
 
@@ -39,6 +40,10 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
     harness->once();
 #endif
 
+    // Delete tmp file as soon as possible
+    auto tmpUiBundle = juce::File (tmpUiBundlePath);
+    tmpUiBundle.deleteFile();
+
     addAndMakeVisible (appRoot);
 
     setSize (appWidth, appHeight);
@@ -47,9 +52,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
 
 Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
 {
-    juce::File bundle = juce::File (tmpUiBundlePath);
-    bundle.deleteFile();
-
     for (auto& param : audioProcessor.getParameters())
     {
         param->removeListener (this);
@@ -86,12 +88,13 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 //==============================================================================
 juce::File Os251AudioProcessorEditor::getBundle()
 {
-    const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
+    const juce::File dir = onsen::TmpFileManager::getTmpDir();
     const juce::String jsFileName = "main.js";
-    juce::File bundle = dir.createTempFile (jsFileName);
-    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted in destructor
+    juce::File bundle = onsen::TmpFileManager::createTempFile (dir, jsFileName);
+    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted on the caller
 
     {
+        dir.createDirectory();
         juce::FileOutputStream fs = juce::FileOutputStream (bundle);
         fs.write (BinaryData::main_js, BinaryData::main_jsSize);
         fs.flush();
