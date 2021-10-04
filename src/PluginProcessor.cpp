@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "services/TmpFileManager.h"
 
 //==============================================================================
 Os251AudioProcessor::Os251AudioProcessor()
@@ -275,26 +276,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
 Os251AudioProcessor::~Os251AudioProcessor()
 {
-    // Clean up the tmp folder
-    //
-    // We have a rule about how to use the tmp folder that we
-    // should not keep using one tmp file for more than a day.
-    // So we delete files which are more than a day old.
-
-    const auto tmpDir = juce::File::getSpecialLocation (juce::File::tempDirectory);
-    // Currently OS-251 use the tmp folder only for the js bundle.
-    // The file name is something like "temp_6e09bcc5.main.js".
-    auto files = tmpDir.findChildFiles (juce::File::TypesOfFileToFind::findFiles, false, "*.js");
-    for (auto f : files)
-    {
-        long long createdAt = f.getCreationTime().toMilliseconds();
-        long long current = juce::Time::getCurrentTime().toMilliseconds();
-        constexpr long long millisecondsInDay = 1000 * 60 * 60 * 24; // 86400000
-        if (current > createdAt)
-        {
-            f.deleteFile();
-        }
-    }
+    onsen::TmpFileManager::cleanUpTmpDir (onsen::TmpFileManager::getTmpDir());
 }
 
 //==============================================================================

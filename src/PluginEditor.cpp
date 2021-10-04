@@ -8,6 +8,7 @@
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
+#include "services/TmpFileManager.h"
 #include "views/PresetManagerView.h"
 #include <iostream>
 
@@ -87,12 +88,13 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 //==============================================================================
 juce::File Os251AudioProcessorEditor::getBundle()
 {
-    const juce::File dir = juce::File::getSpecialLocation (juce::File::tempDirectory);
+    const juce::File dir = onsen::TmpFileManager::getTmpDir();
     const juce::String jsFileName = "main.js";
-    juce::File bundle = dir.createTempFile (jsFileName);
-    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted in destructor
+    juce::File bundle = onsen::TmpFileManager::createTempFile (dir, jsFileName);
+    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted on the caller
 
     {
+        dir.createDirectory();
         juce::FileOutputStream fs = juce::FileOutputStream (bundle);
         fs.write (BinaryData::main_js, BinaryData::main_jsSize);
         fs.flush();
