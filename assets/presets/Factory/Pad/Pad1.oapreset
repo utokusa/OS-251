@@ -23,12 +23,12 @@
       <PARAM id="masterSemitoneTune" value="0.5199999809265137"/>
       <PARAM id="masterVolume" value="0.185000017285347"/>
       <PARAM id="noiseGain" value="0.0"/>
-      <PARAM id="numVoices" value="0.5249999761581421"/>
+      <PARAM id="numVoices" value="1.0"/>
       <PARAM id="pitchBendWidth" value="0.5"/>
       <PARAM id="portamento" value="0.0"/>
       <PARAM id="rate" value="0.5399999618530273"/>
       <PARAM id="rateSync" value="0.9249999523162842"/>
-      <PARAM id="release" value="0.4549999833106995"/>
+      <PARAM id="release" value="0.6200000047683716"/>
       <PARAM id="resonance" value="0.4049999415874481"/>
       <PARAM id="sawGain" value="0.0"/>
       <PARAM id="shape" value="0.5799999833106995"/>
