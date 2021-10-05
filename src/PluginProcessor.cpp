@@ -258,7 +258,7 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // Number of voices
     // TODO: We need a smarter way to set the initial value.
-    constexpr float defaultFlnumNumVoices = 0.3; // The number will be converted to 4. OS-251 has 4 voices as default.
+    constexpr float defaultFlnumNumVoices = 0.285; // The number will be converted to 8. OS-251 has 8 voices as default.
     parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
     parameters.addParameterListener ("numVoices", this);
 

@@ -23,7 +23,7 @@
       <PARAM id="masterSemitoneTune" value="0.5"/>
       <PARAM id="masterVolume" value="0.5"/>
       <PARAM id="noiseGain" value="0.0"/>
-      <PARAM id="numVoices" value="0.300000011920929"/>
+      <PARAM id="numVoices" value="0.285"/>
       <PARAM id="pitchBendWidth" value="0.5"/>
       <PARAM id="portamento" value="0.0"/>
       <PARAM id="rate" value="0.0"/>
