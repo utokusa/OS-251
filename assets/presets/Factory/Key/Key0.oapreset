@@ -6,9 +6,9 @@
   <Version>0</Version>
   <State>
     <OS-251>
-      <PARAM id="attack" value="0.0"/>
+      <PARAM id="attack" value="0.01000000070780516"/>
       <PARAM id="chorusOn" value="0.0"/>
-      <PARAM id="decay" value="0.6999999284744263"/>
+      <PARAM id="decay" value="0.1549999266862869"/>
       <PARAM id="envForAmpOn" value="1.0"/>
       <PARAM id="filterEnv" value="0.7350000143051147"/>
       <PARAM id="frequency" value="0.9149999022483826"/>
@@ -23,7 +23,7 @@
       <PARAM id="masterSemitoneTune" value="0.5"/>
       <PARAM id="masterVolume" value="1.0"/>
       <PARAM id="noiseGain" value="0.0"/>
-      <PARAM id="numVoices" value="1.0"/>
+      <PARAM id="numVoices" value="0.375"/>
       <PARAM id="pitchBendWidth" value="0.5"/>
       <PARAM id="portamento" value="0.0"/>
       <PARAM id="rate" value="0.625"/>
