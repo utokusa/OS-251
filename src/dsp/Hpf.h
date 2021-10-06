@@ -36,15 +36,28 @@ public:
         : p (hpfParams),
           sampleRate (DEFAULT_SAMPLE_RATE),
           numChannels (_numChannels),
-          filterBuffers (numChannels)
+          filterBuffers (numChannels),
+          smoothedFreq (0.0, 0.999)
     {
+        smoothedFreq.reset (p->getFrequency());
     }
 
     void render (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
         // Set biquad parameter coefficients
         // https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
-        flnum omega0 = 2.0f * 3.14159265f * p->getFrequency() / sampleRate;
+
+        flnum targetFreq = p->getFrequency();
+        smoothedFreq.set (targetFreq);
+
+        int numInputChannels = outputAudio->getNumChannels();
+        int bufferSize = outputAudio->getNumSamples();
+        for (int i = startSample; i < bufferSize && i < startSample + numSamples; i++)
+        {
+            smoothedFreq.update();
+        }
+
+        flnum omega0 = 2.0f * 3.14159265f * smoothedFreq.get() / sampleRate;
         flnum sinw0 = std::sin (omega0);
         flnum cosw0 = std::cos (omega0);
         constexpr flnum resonance = 1.0;
@@ -57,8 +70,7 @@ public:
         flnum b2 = (1 + cosw0) / 2.0;
 
         // Calculate output
-        int numInputChannels = outputAudio->getNumChannels();
-        int bufferSize = outputAudio->getNumSamples();
+
         for (int channel = 0; channel < std::min (numChannels, numInputChannels); channel++)
         {
             FilterBuffer& fb = filterBuffers[channel];
@@ -81,6 +93,7 @@ public:
     void setCurrentPlaybackSampleRate (double _sampleRate)
     {
         sampleRate = static_cast<flnum> (_sampleRate);
+        smoothedFreq.prepareToPlay (_sampleRate);
     }
 
 private:
@@ -89,5 +102,6 @@ private:
     int numChannels;
     // The length of this vector equals to max number of the channels;
     std::vector<FilterBuffer> filterBuffers;
+    SmoothFlnum smoothedFreq;
 };
 } // namespace onsen
