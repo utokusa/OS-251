@@ -51,6 +51,11 @@ public:
         smoothedShape.prepareToPlay (sampleRate);
     }
 
+    void resetState()
+    {
+        smoothedShape.reset (0.0);
+    }
+
 private:
     IOscillatorParams* const p;
     std::random_device seedGen;

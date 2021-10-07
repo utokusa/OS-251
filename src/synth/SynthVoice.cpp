@@ -112,6 +112,7 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
                 smoothedAmp.reset (0.0);
                 angleDelta = 0.0;
                 smoothedAngleDelta.reset (angleDelta);
+                osc.resetState();
                 clearCurrentNote();
                 break;
             }
