@@ -71,6 +71,9 @@ juce::Array<juce::File> PresetManager::getUserPresets()
     */
 void PresetManager::savePreset (juce::File file)
 {
+    if (file.getFullPathName() == "")
+        return;
+
     // This check is necessary for file managers that can't force to
     // add the extension.
     if (! file.hasFileExtension (".oapreset"))

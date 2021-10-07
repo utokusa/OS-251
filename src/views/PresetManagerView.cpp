@@ -334,7 +334,15 @@ void PresetManagerView::nextClicked()
 void PresetManagerView::saveClicked()
 {
     selectCurrentPreset();
-    presetManager.savePreset (presetManager.getCurrentPresetFile());
+    auto file = presetManager.getCurrentPresetFile();
+    if (file.getFullPathName() == "")
+    {
+        // If file is not set to the preset manager,
+        // we handle this event as "Save as ..."
+        saveAsClicked();
+        return;
+    }
+    presetManager.savePreset (file);
 }
 
 void PresetManagerView::saveAsClicked()
