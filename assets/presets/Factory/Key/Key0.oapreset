@@ -6,12 +6,12 @@
   <Version>0</Version>
   <State>
     <OS-251>
-      <PARAM id="attack" value="0.01000000070780516"/>
+      <PARAM id="attack" value="0.0"/>
       <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="0.1549999266862869"/>
       <PARAM id="envForAmpOn" value="1.0"/>
-      <PARAM id="filterEnv" value="0.7350000143051147"/>
-      <PARAM id="frequency" value="0.9149999022483826"/>
+      <PARAM id="filterEnv" value="0.574999988079071"/>
+      <PARAM id="frequency" value="0.5999998450279236"/>
       <PARAM id="hpfFreq" value="0.0"/>
       <PARAM id="lfoDelay" value="0.5450000166893005"/>
       <PARAM id="lfoFilterFreq" value="0.0"/>
@@ -29,7 +29,7 @@
       <PARAM id="rate" value="0.625"/>
       <PARAM id="rateSync" value="0.0"/>
       <PARAM id="release" value="0.4550000429153442"/>
-      <PARAM id="resonance" value="0.4800000488758087"/>
+      <PARAM id="resonance" value="0.435000091791153"/>
       <PARAM id="sawGain" value="0.0"/>
       <PARAM id="shape" value="0.0"/>
       <PARAM id="sinGain" value="1.0"/>
