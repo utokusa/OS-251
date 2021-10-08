@@ -65,41 +65,51 @@ target_compile_definitions(Os251
         DONT_SET_USING_JUCE_NAMESPACE=1
         )
 
+set(BINARY_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
+    ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
+
+    ${CMAKE_SOURCE_DIR}/assets/images/left.png
+    ${CMAKE_SOURCE_DIR}/assets/images/left_over.png
+    ${CMAKE_SOURCE_DIR}/assets/images/left_down.png
+
+    ${CMAKE_SOURCE_DIR}/assets/images/right.png
+    ${CMAKE_SOURCE_DIR}/assets/images/right_over.png
+    ${CMAKE_SOURCE_DIR}/assets/images/right_down.png
+
+    ${CMAKE_SOURCE_DIR}/assets/images/reload.png
+    ${CMAKE_SOURCE_DIR}/assets/images/reload_over.png
+    ${CMAKE_SOURCE_DIR}/assets/images/reload_down.png
+
+    ${CMAKE_SOURCE_DIR}/assets/presets/Default.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass0.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass1.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass2.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass3.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX0.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX1.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX2.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX3.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key0.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key1.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key2.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key3.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad0.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad1.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad2.oapreset
+    ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad3.oapreset
+)
+
+if (UNIX)
+    list(APPEND BINARY_SOURCES ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf)
+else()
+    list(APPEND BINARY_SOURCES ${CMAKE_SOURCE_DIR}/assets/Os251Font125Percent.ttf)
+endif()
+
 juce_add_binary_data(Os251Binaries
-        SOURCES
-        ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
-        ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
-
-        ${CMAKE_SOURCE_DIR}/assets/images/left.png
-        ${CMAKE_SOURCE_DIR}/assets/images/left_over.png
-        ${CMAKE_SOURCE_DIR}/assets/images/left_down.png
-
-        ${CMAKE_SOURCE_DIR}/assets/images/right.png
-        ${CMAKE_SOURCE_DIR}/assets/images/right_over.png
-        ${CMAKE_SOURCE_DIR}/assets/images/right_down.png
-
-        ${CMAKE_SOURCE_DIR}/assets/images/reload.png
-        ${CMAKE_SOURCE_DIR}/assets/images/reload_over.png
-        ${CMAKE_SOURCE_DIR}/assets/images/reload_down.png
-
-        ${CMAKE_SOURCE_DIR}/assets/presets/Default.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass0.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass1.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass2.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Bass/Bass3.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX0.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX1.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX2.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/FX/FX3.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key0.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key1.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key2.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Key/Key3.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad0.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad1.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad2.oapreset
-        ${CMAKE_SOURCE_DIR}/assets/presets/Factory/Pad/Pad3.oapreset
-        )
+    SOURCES
+    ${BINARY_SOURCES}
+)
 
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp

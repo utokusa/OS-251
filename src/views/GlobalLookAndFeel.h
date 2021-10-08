@@ -48,11 +48,19 @@ public:
             colors::almostBlack,
             colors::white,
         }),
+#if JUCE_WINDOWS
+                          // For Windows we use edited version of Recursive-Regular.ttf
+                          typeface (
+                              juce::Typeface::createSystemTypefaceFor (
+                                  BinaryData::Os251Font125Percent_ttf,
+                                  BinaryData::Os251Font125Percent_ttfSize))
+#else
                           // Recursive-Regular.ttf
                           typeface (
                               juce::Typeface::createSystemTypefaceFor (
                                   BinaryData::RecursiveRegular_ttf,
                                   BinaryData::RecursiveRegular_ttfSize))
+#endif
     {
         setDefaultSansSerifTypeface (typeface);
         setColourScheme (colorScheme);
