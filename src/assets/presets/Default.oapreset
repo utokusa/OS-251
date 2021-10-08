@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--  -->
 <Preset>
   <Gadget>OS-251</Gadget>
   <SavedByVersion>1.1.0</SavedByVersion>
   <Version>0</Version>
   <State>
     <OS-251>
-      <PARAM id="attack" value="0.2199999988079071"/>
-      <PARAM id="chorusOn" value="1.0"/>
+      <PARAM id="attack" value="1.0"/>
+      <PARAM id="chorusOn" value="0.0"/>
       <PARAM id="decay" value="1.0"/>
       <PARAM id="envForAmpOn" value="1.0"/>
       <PARAM id="filterEnv" value="0.5"/>
-      <PARAM id="frequency" value="0.6200000047683716"/>
-      <PARAM id="hpfFreq" value="0.1500000059604645"/>
+      <PARAM id="frequency" value="1.0"/>
+      <PARAM id="hpfFreq" value="0.0"/>
       <PARAM id="lfoDelay" value="0.5"/>
       <PARAM id="lfoFilterFreq" value="0.0"/>
       <PARAM id="lfoPhase" value="0.0"/>
@@ -21,20 +21,20 @@
       <PARAM id="masterFineTune" value="0.5"/>
       <PARAM id="masterOctaveTune" value="0.5"/>
       <PARAM id="masterSemitoneTune" value="0.5"/>
-      <PARAM id="masterVolume" value="0.3499999940395355"/>
-      <PARAM id="noiseGain" value="0.5450000166893005"/>
-      <PARAM id="numVoices" value="0.379999965429306"/>
+      <PARAM id="masterVolume" value="0.5"/>
+      <PARAM id="noiseGain" value="0.0"/>
+      <PARAM id="numVoices" value="0.285"/>
       <PARAM id="pitchBendWidth" value="0.5"/>
-      <PARAM id="portamento" value="0.6200000047683716"/>
-      <PARAM id="rate" value="0.4350000023841858"/>
+      <PARAM id="portamento" value="0.0"/>
+      <PARAM id="rate" value="0.0"/>
       <PARAM id="rateSync" value="0.0"/>
       <PARAM id="release" value="0.5"/>
-      <PARAM id="resonance" value="0.4199999868869781"/>
+      <PARAM id="resonance" value="0.3499999940395355"/>
       <PARAM id="sawGain" value="1.0"/>
-      <PARAM id="shape" value="0.3199999928474426"/>
-      <PARAM id="sinGain" value="0.8650000095367432"/>
-      <PARAM id="squareGain" value="0.0"/>
-      <PARAM id="subSquareGain" value="0.7950000166893005"/>
+      <PARAM id="shape" value="0.0"/>
+      <PARAM id="sinGain" value="1.0"/>
+      <PARAM id="squareGain" value="1.0"/>
+      <PARAM id="subSquareGain" value="1.0"/>
       <PARAM id="sustain" value="1.0"/>
       <PARAM id="syncOn" value="0.0"/>
     </OS-251>
