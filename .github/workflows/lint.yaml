@@ -9,6 +9,7 @@ jobs:
       - name: Install clang-format
         run: |
           sudo apt install clang-format
+          clang-format --version
       - name: Run clang-format
         run: |
           find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' |
