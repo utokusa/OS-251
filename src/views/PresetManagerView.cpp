@@ -34,6 +34,7 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
       rescanPresetsItem(),
       doNothingOnPresetMenuChangeCallback (false)
 {
+    setWantsKeyboardFocus (false);
     prevButton.setImages (
         true,
         true,
@@ -47,6 +48,7 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
         prevButtonDownImage,
         1.0f,
         juce::Colours::transparentWhite);
+    prevButton.setWantsKeyboardFocus (false);
     addAndMakeVisible (prevButton);
     prevButton.addListener (this);
 
@@ -63,6 +65,7 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
         nextButtonDownImage,
         1.0f,
         juce::Colours::transparentWhite);
+    nextButton.setWantsKeyboardFocus (false);
     addAndMakeVisible (nextButton);
     nextButton.addListener (this);
 
@@ -79,10 +82,12 @@ PresetManagerView::PresetManagerView (PresetManager& _presetManager)
         reloadButtonDownImage,
         1.0f,
         juce::Colours::transparentWhite);
+    reloadButton.setWantsKeyboardFocus (false);
     addAndMakeVisible (reloadButton);
     reloadButton.addListener (this);
 
     presetMenu.setLookAndFeel (&presetMenuLookAndFeel);
+    presetMenu.setWantsKeyboardFocus (false);
     addAndMakeVisible (presetMenu);
     presetMenu.setJustificationType (juce::Justification::centred);
     presetMenu.setTextWhenNothingSelected ("");

@@ -44,6 +44,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
     auto tmpUiBundle = juce::File (tmpUiBundlePath);
     tmpUiBundle.deleteFile();
 
+    appRoot.setWantsKeyboardFocus (false);
     addAndMakeVisible (appRoot);
 
     setSize (appWidth, appHeight);
