@@ -18,6 +18,7 @@ You can down load pre-built binaries from [release](https://github.com/utokusa/O
   ```
 
 - Build the UI (Node.js and [react-juce](https://github.com/nick-thompson/react-juce))
+  Use Node.js version 14.
 
   ```bash
   cd ./src/jsui
@@ -32,6 +33,7 @@ You can down load pre-built binaries from [release](https://github.com/utokusa/O
 ### Lint
 
 Lint checking for both C++ and Node.js is available.
+For C++, we use clang-format 13.
 See details by running `./lint.sh -h`.
 
 ### Code completion
