@@ -4,7 +4,7 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "Build as universal bina
 
 PROJECT(OS_251
         LANGUAGES CXX C
-        VERSION 1.1.0
+        VERSION 1.1.1
         )
 
 add_compile_definitions(OS_251_PROJECT_VERSION="${PROJECT_VERSION}")
