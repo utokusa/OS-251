@@ -7,7 +7,7 @@ on: [push, pull_request]
 
 env:
   PROJECT_NAME: Os251
-  CMAKE_VERSION: 3.16.2
+  CMAKE_VERSION: 3.22.2
   NINJA_VERSION: 1.9.0
   BUILD_TYPE: Release
   CCACHE_VERSION: 3.7.7
@@ -61,16 +61,16 @@ jobs:
         message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
         if ("${{ runner.os }}" STREQUAL "Windows")
           set(ninja_suffix "win.zip")
-          set(cmake_suffix "win64-x64.zip")
-          set(cmake_dir "cmake-${cmake_version}-win64-x64/bin")
+          set(cmake_suffix "windows-x86_64.zip")
+          set(cmake_dir "cmake-${cmake_version}-windows-x86_64/bin")
         elseif ("${{ runner.os }}" STREQUAL "Linux")
           set(ninja_suffix "linux.zip")
-          set(cmake_suffix "Linux-x86_64.tar.gz")
-          set(cmake_dir "cmake-${cmake_version}-Linux-x86_64/bin")
+          set(cmake_suffix "linux-x86_64.tar.gz")
+          set(cmake_dir "cmake-${cmake_version}-linux-x86_64/bin")
         elseif ("${{ runner.os }}" STREQUAL "macOS")
           set(ninja_suffix "mac.zip")
-          set(cmake_suffix "Darwin-x86_64.tar.gz")
-          set(cmake_dir "cmake-${cmake_version}-Darwin-x86_64/CMake.app/Contents/bin")
+          set(cmake_suffix "macos-universal.tar.gz")
+          set(cmake_dir "cmake-${cmake_version}-macos-universal/CMake.app/Contents/bin")
         endif()
         set(ninja_url "https://github.com/ninja-build/ninja/releases/download/v${ninja_version}/ninja-${ninja_suffix}")
         file(DOWNLOAD "${ninja_url}" ./ninja.zip SHOW_PROGRESS)
