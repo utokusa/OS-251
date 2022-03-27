@@ -22,7 +22,7 @@ jobs:
         config:
         - {
             name: "Windows Latest MSVC",
-            os: windows-latest,
+            os: windows-2019,
             cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
@@ -242,7 +242,7 @@ jobs:
         # Mount packages image
         hdiutil attach Packages.dmg
         # Install Packages
-        sudo installer -pkg /Volumes/Packages\ 1.2.9/Install\ Packages.pkg -target /
+        sudo installer -pkg /Volumes/Packages\ 1.2.10/Install\ Packages.pkg -target /
     - if: ${{ runner.os=='macOS' }}
       name: Create .pkg (macOS)
       run: |
@@ -267,8 +267,11 @@ jobs:
     - if: ${{ runner.os=='macOS' }}
       name: Install gon via HomeBrew for code signing and app notarization
       run: |
-        brew tap mitchellh/gon
-        brew install mitchellh/gon/gon
+        # We need to use a fork because of https://github.com/mitchellh/homebrew-gon/pull/1
+        # brew tap mitchellh/gon
+        # brew install mitchellh/gon/gon
+        brew tap mistydemeo/gon
+        brew install mistydemeo/gon/gon
     - if: ${{ runner.os=='macOS' }}
       name: Nortalize .pkg with Gon
       env:
