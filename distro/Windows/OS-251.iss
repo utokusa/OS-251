@@ -1,6 +1,6 @@
 [Setup]
 AppName=OS-251
-AppVersion=1.1.0
+AppVersion=1.1.1
 DefaultDirName={commonpf}\Onsen Audio\OS-251
 DefaultGroupName=OS-251
 OutputBaseFilename=OS-251-Windows
