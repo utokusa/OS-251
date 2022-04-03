@@ -1,5 +1,5 @@
 CONFIG?=Debug
-BUILD_DIR?=cmake-build
+BUILD_DIR?=build
 GENERATOR_OPTION?=-G "Ninja"
 
 # For Release build, set environment variable CONFIG.
