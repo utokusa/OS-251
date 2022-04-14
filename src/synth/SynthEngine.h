@@ -29,6 +29,7 @@ public:
           lfo (_lfo),
           voice (params, lfo),
           pitchBendValue (8192 /*no pitchbend*/),
+          currentNoteNumber (INIT_NOTE_NUMBER),
           hpf (params->hpf(), 2),
           chorus(),
           masterVolume (synthParams->master()) {}
@@ -65,14 +66,24 @@ public:
                 int midiStatusByte = (int) (*(midiMsg.getRawData()));
                 if (midiMsg.isNoteOff())
                 {
-                    voice.stopNote (0.0, true);
-                    lfo->noteOff();
-                    std::cout << "Midi note off..." << std::endl;
+                    if (midiMsg.getNoteNumber() == currentNoteNumber)
+                    {
+                        voice.stopNote (0.0, true);
+                        lfo->noteOff();
+                        currentNoteNumber = INIT_NOTE_NUMBER;
+                        std::cout << "Midi note off..." << std::endl;
+                    }
                 }
                 else if (midiMsg.isNoteOn())
                 {
+                    if (currentNoteNumber != INIT_NOTE_NUMBER)
+                    {
+                        voice.stopNote (0.0, false);
+                        lfo->noteOff();
+                    }
                     int intVelocity = static_cast<int> (midiMsg.getVelocity());
                     flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
+                    currentNoteNumber = midiMsg.getNoteNumber();
                     voice.startNote (midiMsg.getNoteNumber(), velocity, nullptr, pitchBendValue);
                     lfo->noteOn();
                     std::cout << "Note on... note number:" << midiMsg.getNoteNumber() << std::endl;
@@ -105,6 +116,8 @@ private:
     Chorus chorus;
     MasterVolume masterVolume;
     int pitchBendValue;
+    int currentNoteNumber;
+    static constexpr int INIT_NOTE_NUMBER = -1;
 
     void renderHelper (juce::AudioBuffer<float>& outputAudio, int startSample, int numSamples)
     {
