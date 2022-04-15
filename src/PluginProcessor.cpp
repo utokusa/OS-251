@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "dsp/JuceAudioBuffer.h"
 #include "services/TmpFileManager.h"
 
 //==============================================================================
@@ -419,7 +420,8 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
         buffer.clear (channel, 0, buffer.getNumSamples());
     }
 
-    synthEngine.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
+    onsen::JuceAudioBuffer audioBuffer (&buffer);
+    synthEngine.renderNextBlock (&audioBuffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================

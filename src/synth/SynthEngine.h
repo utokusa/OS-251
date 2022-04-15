@@ -11,8 +11,8 @@
 #include "../dsp/Chorus.h"
 #include "../dsp/DspCommon.h"
 #include "../dsp/Hpf.h"
+#include "../dsp/IAudioBuffer.h"
 #include "../dsp/IPositionInfo.h"
-#include "../dsp/JuceAudioBuffer.h"
 #include "../dsp/Lfo.h"
 #include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
@@ -45,7 +45,7 @@ public:
         lfo->setSamplesPerBlock (samplesPerBlock);
     }
 
-    void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
+    void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         if (! inputMidi.getNumEvents())
         {
@@ -84,7 +84,7 @@ public:
                     int intVelocity = static_cast<int> (midiMsg.getVelocity());
                     flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
                     currentNoteNumber = midiMsg.getNoteNumber();
-                    voice.startNote (midiMsg.getNoteNumber(), velocity, nullptr, pitchBendValue);
+                    voice.startNote (midiMsg.getNoteNumber(), velocity, pitchBendValue);
                     lfo->noteOn();
                     std::cout << "Note on... note number:" << midiMsg.getNoteNumber() << std::endl;
                     std::cout << "velocity:" << (int) (midiMsg.getVelocity()) << std::endl;
@@ -119,57 +119,16 @@ private:
     int currentNoteNumber;
     static constexpr int INIT_NOTE_NUMBER = -1;
 
-    void renderHelper (juce::AudioBuffer<float>& outputAudio, int startSample, int numSamples)
+    void renderHelper (IAudioBuffer* outputAudioBuffer, int startSample, int numSamples)
     {
-        JuceAudioBuffer outputAudioBuffer (&outputAudio);
         lfo->renderLfo (startSample, numSamples);
         lfo->renderLfoSync (startSample, numSamples);
-        voice.renderNextBlock (outputAudio, startSample, numSamples);
-        hpf.render (&outputAudioBuffer, startSample, numSamples);
+        voice.renderNextBlock (outputAudioBuffer, startSample, numSamples);
+        hpf.render (outputAudioBuffer, startSample, numSamples);
         if (params->chorus()->getChorusOn())
-            chorus.render (&outputAudioBuffer, startSample, numSamples);
-        masterVolume.render (&outputAudioBuffer, startSample, numSamples);
+            chorus.render (outputAudioBuffer, startSample, numSamples);
+        masterVolume.render (outputAudioBuffer, startSample, numSamples);
     }
-};
-
-//==============================================================================
-class FancySynth : public juce::Synthesiser
-{
-    using flnum = float;
-
-public:
-    FancySynth() = delete;
-    FancySynth (SynthParams* const synthParams, Lfo* const _lfo)
-        : params (synthParams),
-          lfo (_lfo),
-          hpf (params->hpf(), 2),
-          chorus(),
-          masterVolume (synthParams->master())
-    {
-    }
-
-    void setCurrentPlaybackSampleRate (double sampleRate) override;
-    void setSamplesPerBlock (int samplesPerBlock);
-    void noteOn (int midiChannel,
-                 int midiNoteNumber,
-                 float velocity) override;
-    void noteOff (int midiChannel,
-                  int midiNoteNumber,
-                  float velocity,
-                  bool allowTailOff) override;
-    void allNotesOff (int midiChannel,
-                      bool allowTailOff) override;
-
-private:
-    SynthParams* const params;
-    Lfo* const lfo;
-    Hpf hpf;
-    Chorus chorus;
-    MasterVolume masterVolume;
-
-    void renderVoices (juce::AudioBuffer<flnum>& outputAudio,
-                       int startSample,
-                       int numSamples) override;
 };
 
 //==============================================================================
@@ -193,12 +152,11 @@ public:
     {
         synth.setCurrentPlaybackSampleRate (sampleRate);
         synth.setSamplesPerBlock (samplesPerBlockExpected);
-        midiCollector.reset (sampleRate);
     }
 
     void releaseResources() {}
 
-    void renderNextBlock (juce::AudioBuffer<float>& outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
+    void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
         synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
     }
@@ -221,7 +179,6 @@ private:
     IPositionInfo* positionInfo;
     Lfo lfo;
     OnsenSynth synth;
-    juce::MidiMessageCollector midiCollector;
 
     void addNumberOfVoices (int num)
     {

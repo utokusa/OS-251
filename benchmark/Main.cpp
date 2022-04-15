@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
+#include "../src/dsp/JuceAudioBuffer.h"
 #include "../src/synth/SynthEngine.h"
 #include "../tests/dsp/util/PositionInfoMock.h"
 
@@ -114,7 +115,8 @@ public:
 
     void render()
     {
-        synthEngine.renderNextBlock (outputAudio, inputMidiBuffer, 0, NUM_SAMPLE);
+        onsen::JuceAudioBuffer audioBuffer (&outputAudio);
+        synthEngine.renderNextBlock (&audioBuffer, inputMidiBuffer, 0, NUM_SAMPLE);
     }
 
     //==============================================================================
