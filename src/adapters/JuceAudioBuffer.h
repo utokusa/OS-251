@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "DspCommon.h"
-#include "IAudioBuffer.h"
+#include "../dsp/DspCommon.h"
+#include "../dsp/IAudioBuffer.h"
 #include <JuceHeader.h>
 
 namespace onsen

@@ -8,7 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "dsp/JuceAudioBuffer.h"
+#include "adapters/JuceAudioBuffer.h"
 #include "services/TmpFileManager.h"
 
 //==============================================================================

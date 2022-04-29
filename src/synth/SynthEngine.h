@@ -21,10 +21,10 @@
 
 namespace onsen
 {
-class OnsenSynth
+class SynthEngine
 {
 public:
-    OnsenSynth (SynthParams* const synthParams, IPositionInfo* const positionInfo)
+    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo)
         : params (synthParams),
           lfo (params->lfo(), positionInfo),
           voice (params, &lfo),

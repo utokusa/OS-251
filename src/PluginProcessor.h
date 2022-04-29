@@ -9,8 +9,8 @@
 #pragma once
 
 #include "JuceAudioProcessorState.h"
+#include "adapters/JucePositionInfo.h"
 #include "adapters/JuceSynthEngineAdapter.h"
-#include "dsp/JucePositionInfo.h"
 #include "services/PresetManager.h"
 #include "views/GlobalLookAndFeel.h"
 #include <JuceHeader.h>

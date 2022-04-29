@@ -79,7 +79,7 @@ public:
     }
 
 private:
-    OnsenSynth synth;
+    SynthEngine synth;
 
     void addNumberOfVoices (int num)
     {

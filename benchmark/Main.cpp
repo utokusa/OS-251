@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
+#include "../src/adapters/JuceAudioBuffer.h"
 #include "../src/adapters/JuceSynthEngineAdapter.h"
-#include "../src/dsp/JuceAudioBuffer.h"
 #include "../tests/dsp/util/PositionInfoMock.h"
 
 //==============================================================================
