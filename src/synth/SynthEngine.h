@@ -45,67 +45,54 @@ public:
         lfo->setSamplesPerBlock (samplesPerBlock);
     }
 
-    void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
+    void renderNextBlock (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
-        if (! inputMidi.getNumEvents())
+        lfo->renderLfo (startSample, numSamples);
+        lfo->renderLfoSync (startSample, numSamples);
+        voice.renderNextBlock (outputAudio, startSample, numSamples);
+        hpf.render (outputAudio, startSample, numSamples);
+        if (params->chorus()->getChorusOn())
+            chorus.render (outputAudio, startSample, numSamples);
+        masterVolume.render (outputAudio, startSample, numSamples);
+    }
+
+    void noteOn (int noteNumber, int intVelocity)
+    {
+        if (currentNoteNumber != INIT_NOTE_NUMBER)
         {
-            renderHelper (outputAudio, startSample, numSamples);
-            return;
+            voice.stopNote (0.0, false);
+            lfo->noteOff();
         }
-        int firstEventTime = inputMidi.getFirstEventTime();
-        renderHelper (outputAudio, startSample, std::max (0, firstEventTime - startSample));
-        auto it = inputMidi.begin();
-        while (it != inputMidi.end())
+        flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
+        currentNoteNumber = noteNumber;
+        voice.startNote (noteNumber, velocity, pitchBendValue);
+        lfo->noteOn();
+        std::cout << "Note on... note number:" << noteNumber << std::endl;
+        std::cout << "velocity:" << intVelocity << std::endl;
+    }
+
+    void noteOff (int noteNumber)
+    {
+        if (noteNumber == currentNoteNumber)
         {
-            auto metadata = *it;
-            int curSample = metadata.samplePosition;
-            while (it != inputMidi.end() && curSample == (*it).samplePosition)
-            {
-                // consume event
-                auto midiMsg = (*it).getMessage();
-                int midiStatusByte = (int) (*(midiMsg.getRawData()));
-                if (midiMsg.isNoteOff())
-                {
-                    if (midiMsg.getNoteNumber() == currentNoteNumber)
-                    {
-                        voice.stopNote (0.0, true);
-                        lfo->noteOff();
-                        currentNoteNumber = INIT_NOTE_NUMBER;
-                        std::cout << "Midi note off..." << std::endl;
-                    }
-                }
-                else if (midiMsg.isNoteOn())
-                {
-                    if (currentNoteNumber != INIT_NOTE_NUMBER)
-                    {
-                        voice.stopNote (0.0, false);
-                        lfo->noteOff();
-                    }
-                    int intVelocity = static_cast<int> (midiMsg.getVelocity());
-                    flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
-                    currentNoteNumber = midiMsg.getNoteNumber();
-                    voice.startNote (midiMsg.getNoteNumber(), velocity, pitchBendValue);
-                    lfo->noteOn();
-                    std::cout << "Note on... note number:" << midiMsg.getNoteNumber() << std::endl;
-                    std::cout << "velocity:" << (int) (midiMsg.getVelocity()) << std::endl;
-                }
-                else if (midiMsg.isAllNotesOff())
-                {
-                    voice.stopNote (0.0, true);
-                    lfo->allNoteOff();
-                    std::cout << "Midi all notes off..." << std::endl;
-                }
-                else if (midiMsg.isPitchWheel())
-                {
-                    pitchBendValue = midiMsg.getPitchWheelValue();
-                    voice.pitchWheelMoved (pitchBendValue);
-                }
-                it++;
-            }
-            // render audio
-            int numSamplesOfSection = it == inputMidi.end() ? startSample + numSamples - curSample : (*it).samplePosition - curSample;
-            renderHelper (outputAudio, curSample, numSamplesOfSection);
+            voice.stopNote (0.0, true);
+            lfo->noteOff();
+            currentNoteNumber = INIT_NOTE_NUMBER;
+            std::cout << "Midi note off..." << std::endl;
         }
+    }
+
+    void allNoteOff()
+    {
+        voice.stopNote (0.0, true);
+        lfo->allNoteOff();
+        std::cout << "Midi all notes off..." << std::endl;
+    }
+
+    void updatePitchWheel (int val)
+    {
+        pitchBendValue = val;
+        voice.pitchWheelMoved (pitchBendValue);
     }
 
 private:
@@ -118,20 +105,10 @@ private:
     int pitchBendValue;
     int currentNoteNumber;
     static constexpr int INIT_NOTE_NUMBER = -1;
-
-    void renderHelper (IAudioBuffer* outputAudioBuffer, int startSample, int numSamples)
-    {
-        lfo->renderLfo (startSample, numSamples);
-        lfo->renderLfoSync (startSample, numSamples);
-        voice.renderNextBlock (outputAudioBuffer, startSample, numSamples);
-        hpf.render (outputAudioBuffer, startSample, numSamples);
-        if (params->chorus()->getChorusOn())
-            chorus.render (outputAudioBuffer, startSample, numSamples);
-        masterVolume.render (outputAudioBuffer, startSample, numSamples);
-    }
 };
 
 //==============================================================================
+// TODO: Rename it to SynthEngineAdopter
 class SynthEngine
 {
 public:
@@ -158,7 +135,46 @@ public:
 
     void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
-        synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
+        // synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
+        if (! inputMidi.getNumEvents())
+        {
+            synth.renderNextBlock (outputAudio, startSample, numSamples);
+            return;
+        }
+        int firstEventTime = inputMidi.getFirstEventTime();
+        synth.renderNextBlock (outputAudio, startSample, std::max (0, firstEventTime - startSample));
+        auto it = inputMidi.begin();
+        while (it != inputMidi.end())
+        {
+            auto metadata = *it;
+            int curSample = metadata.samplePosition;
+            while (it != inputMidi.end() && curSample == (*it).samplePosition)
+            {
+                // consume event
+                auto midiMsg = (*it).getMessage();
+                int midiStatusByte = (int) (*(midiMsg.getRawData()));
+                if (midiMsg.isNoteOff())
+                {
+                    synth.noteOff (midiMsg.getNoteNumber());
+                }
+                else if (midiMsg.isNoteOn())
+                {
+                    synth.noteOn (midiMsg.getNoteNumber(), static_cast<int> (midiMsg.getVelocity()));
+                }
+                else if (midiMsg.isAllNotesOff())
+                {
+                    synth.allNoteOff();
+                }
+                else if (midiMsg.isPitchWheel())
+                {
+                    synth.updatePitchWheel (midiMsg.getPitchWheelValue());
+                }
+                it++;
+            }
+            // render audio
+            int numSamplesOfSection = it == inputMidi.end() ? startSample + numSamples - curSample : (*it).samplePosition - curSample;
+            synth.renderNextBlock (outputAudio, curSample, numSamplesOfSection);
+        }
     }
 
     void changeNumberOfVoices (int num)
