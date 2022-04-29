@@ -9,9 +9,9 @@
 #pragma once
 
 #include "JuceAudioProcessorState.h"
+#include "adapters/JuceSynthEngineAdapter.h"
 #include "dsp/JucePositionInfo.h"
 #include "services/PresetManager.h"
-#include "synth/SynthEngine.h"
 #include "views/GlobalLookAndFeel.h"
 #include <JuceHeader.h>
 
@@ -64,7 +64,7 @@ private:
     onsen::SynthParams synthParams;
     juce::AudioPlayHead::CurrentPositionInfo positionInfo;
     onsen::JucePositionInfo jucePositionInfo;
-    onsen::SynthEngine synthEngine;
+    onsen::JuceSynthEngineAdapter synthEngine;
     onsen::JuceAudioProcessorState processorState;
     onsen::PresetManager presetManager;
     onsen::GlobalLookAndFeel laf;

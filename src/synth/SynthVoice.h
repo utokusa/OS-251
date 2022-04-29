@@ -13,7 +13,6 @@
 #include "../dsp/IAudioBuffer.h"
 #include "../dsp/Oscillator.h"
 #include "SynthParams.h"
-#include <JuceHeader.h>
 
 namespace onsen
 {
@@ -65,5 +64,6 @@ private:
     bool isNoteOverlapped;
 
     void setPitchBend (int pitchWheelValue);
+    flnum midiNoteToHertz (int midiNote);
 };
 } // namespace onsen

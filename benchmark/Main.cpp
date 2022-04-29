@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
+#include "../src/adapters/JuceSynthEngineAdapter.h"
 #include "../src/dsp/JuceAudioBuffer.h"
-#include "../src/synth/SynthEngine.h"
 #include "../tests/dsp/util/PositionInfoMock.h"
 
 //==============================================================================
@@ -124,7 +124,7 @@ private:
     // Private member variables
     onsen::SynthParams synthParams;
     onsen::PositionInfoMock positionInfo;
-    onsen::SynthEngine synthEngine;
+    onsen::JuceSynthEngineAdapter synthEngine;
 
     std::atomic<flnum> sinGain = { 0.5f };
     std::atomic<flnum> squareGain = { 0.5f };

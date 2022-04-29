@@ -29,7 +29,7 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, int current
     envManager.noteOn();
 
     flnum adjustOctave = 2.0;
-    flnum cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
+    flnum cyclesPerSecond = midiNoteToHertz (midiNoteNumber) / adjustOctave;
     flnum cyclesPerSample = cyclesPerSecond / sampleRate;
 
     angleDelta = cyclesPerSample * 2.0 * pi;
@@ -135,5 +135,10 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
     {
         pitchBend = 1.0 / (1.0 + (p->getPitchBendWidthInFreqRatio() - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
     }
+}
+
+flnum FancySynthVoice::midiNoteToHertz (int midiNote)
+{
+    return 440.0 * std::pow (2.0, (midiNote - 69) / 12.0);
 }
 } // namespace onsen

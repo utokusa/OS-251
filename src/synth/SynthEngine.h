@@ -17,7 +17,7 @@
 #include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
 #include "SynthVoice.h"
-#include <JuceHeader.h>
+#include <iostream>
 
 namespace onsen
 {
@@ -106,83 +106,5 @@ private:
     int currentNoteNumber;
     static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
     static constexpr int INIT_NOTE_NUMBER = -1;
-};
-
-//==============================================================================
-// TODO: Rename it to SynthEngineAdopter
-class SynthEngine
-{
-public:
-    SynthEngine() = delete;
-    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo)
-        : synth (synthParams, positionInfo)
-    {
-    }
-
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
-    {
-        synth.setCurrentPlaybackSampleRate (sampleRate);
-        synth.setSamplesPerBlock (samplesPerBlockExpected);
-    }
-
-    void releaseResources() {}
-
-    void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
-    {
-        if (! inputMidi.getNumEvents())
-        {
-            synth.renderNextBlock (outputAudio, startSample, numSamples);
-            return;
-        }
-        int firstEventTime = inputMidi.getFirstEventTime();
-        synth.renderNextBlock (outputAudio, startSample, std::max (0, firstEventTime - startSample));
-        auto it = inputMidi.begin();
-        while (it != inputMidi.end())
-        {
-            auto metadata = *it;
-            int curSample = metadata.samplePosition;
-            while (it != inputMidi.end() && curSample == (*it).samplePosition)
-            {
-                // consume event
-                auto midiMsg = (*it).getMessage();
-                int midiStatusByte = (int) (*(midiMsg.getRawData()));
-                if (midiMsg.isNoteOff())
-                {
-                    synth.noteOff (midiMsg.getNoteNumber());
-                }
-                else if (midiMsg.isNoteOn())
-                {
-                    synth.noteOn (midiMsg.getNoteNumber(), static_cast<int> (midiMsg.getVelocity()));
-                }
-                else if (midiMsg.isAllNotesOff())
-                {
-                    synth.allNoteOff();
-                }
-                else if (midiMsg.isPitchWheel())
-                {
-                    synth.updatePitchWheel (midiMsg.getPitchWheelValue());
-                }
-                it++;
-            }
-            // render audio
-            int numSamplesOfSection = it == inputMidi.end() ? startSample + numSamples - curSample : (*it).samplePosition - curSample;
-            synth.renderNextBlock (outputAudio, curSample, numSamplesOfSection);
-        }
-    }
-
-    void changeNumberOfVoices (int num)
-    {
-    }
-
-private:
-    OnsenSynth synth;
-
-    void addNumberOfVoices (int num)
-    {
-    }
-
-    void subNumberOfVoices (int num)
-    {
-    }
 };
 } // namespace onsen
