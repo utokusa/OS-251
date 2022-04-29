@@ -24,31 +24,31 @@ namespace onsen
 class OnsenSynth
 {
 public:
-    OnsenSynth (SynthParams* const synthParams, Lfo* const _lfo)
+    OnsenSynth (SynthParams* const synthParams, IPositionInfo* const positionInfo)
         : params (synthParams),
-          lfo (_lfo),
-          voice (params, lfo),
-          pitchBendValue (8192 /*no pitchbend*/),
+          lfo (params->lfo(), positionInfo),
+          voice (params, &lfo),
+          pitchBendValue (INIT_PITCHBEND_VALUE),
           currentNoteNumber (INIT_NOTE_NUMBER),
           hpf (params->hpf(), 2),
           chorus(),
           masterVolume (synthParams->master()) {}
     void setCurrentPlaybackSampleRate (double sampleRate)
     {
-        lfo->setCurrentPlaybackSampleRate (sampleRate);
+        lfo.setCurrentPlaybackSampleRate (sampleRate);
         voice.setCurrentPlaybackSampleRate (sampleRate);
         chorus.setCurrentPlaybackSampleRate (sampleRate);
         hpf.setCurrentPlaybackSampleRate (sampleRate);
     }
     void setSamplesPerBlock (int samplesPerBlock)
     {
-        lfo->setSamplesPerBlock (samplesPerBlock);
+        lfo.setSamplesPerBlock (samplesPerBlock);
     }
 
     void renderNextBlock (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
-        lfo->renderLfo (startSample, numSamples);
-        lfo->renderLfoSync (startSample, numSamples);
+        lfo.renderLfo (startSample, numSamples);
+        lfo.renderLfoSync (startSample, numSamples);
         voice.renderNextBlock (outputAudio, startSample, numSamples);
         hpf.render (outputAudio, startSample, numSamples);
         if (params->chorus()->getChorusOn())
@@ -61,12 +61,12 @@ public:
         if (currentNoteNumber != INIT_NOTE_NUMBER)
         {
             voice.stopNote (0.0, false);
-            lfo->noteOff();
+            lfo.noteOff();
         }
         flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
         currentNoteNumber = noteNumber;
         voice.startNote (noteNumber, velocity, pitchBendValue);
-        lfo->noteOn();
+        lfo.noteOn();
         std::cout << "Note on... note number:" << noteNumber << std::endl;
         std::cout << "velocity:" << intVelocity << std::endl;
     }
@@ -76,7 +76,7 @@ public:
         if (noteNumber == currentNoteNumber)
         {
             voice.stopNote (0.0, true);
-            lfo->noteOff();
+            lfo.noteOff();
             currentNoteNumber = INIT_NOTE_NUMBER;
             std::cout << "Midi note off..." << std::endl;
         }
@@ -85,7 +85,7 @@ public:
     void allNoteOff()
     {
         voice.stopNote (0.0, true);
-        lfo->allNoteOff();
+        lfo.allNoteOff();
         std::cout << "Midi all notes off..." << std::endl;
     }
 
@@ -97,13 +97,14 @@ public:
 
 private:
     SynthParams* const params;
-    Lfo* const lfo;
+    Lfo lfo;
     FancySynthVoice voice;
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
     int pitchBendValue;
     int currentNoteNumber;
+    static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
     static constexpr int INIT_NOTE_NUMBER = -1;
 };
 
@@ -113,16 +114,9 @@ class SynthEngine
 {
 public:
     SynthEngine() = delete;
-    SynthEngine (SynthParams* const _synthParams, IPositionInfo* const _positionInfo)
-        : synthParams (_synthParams),
-          positionInfo (_positionInfo),
-          lfo (synthParams->lfo(), positionInfo),
-          synth (synthParams, &lfo)
+    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo)
+        : synth (synthParams, positionInfo)
     {
-        // for (auto i = 0; i < 4; ++i)
-        //     synth.addVoice (new FancySynthVoice (synthParams, &lfo));
-
-        // synth.addSound (new FancySynthSound());
     }
 
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate)
@@ -135,7 +129,6 @@ public:
 
     void renderNextBlock (IAudioBuffer* outputAudio, const juce::MidiBuffer& inputMidi, int startSample, int numSamples)
     {
-        // synth.renderNextBlock (outputAudio, inputMidi, startSample, numSamples);
         if (! inputMidi.getNumEvents())
         {
             synth.renderNextBlock (outputAudio, startSample, numSamples);
@@ -179,35 +172,17 @@ public:
 
     void changeNumberOfVoices (int num)
     {
-        // int numVoices = synth.getNumVoices();
-        // if (num == numVoices)
-        //     return;
-        // if (num > numVoices)
-        //     addNumberOfVoices (num - numVoices);
-        // else
-        //     subNumberOfVoices (numVoices - num);
-
-        // assert (num == synth.getNumVoices());
     }
 
 private:
-    SynthParams* const synthParams;
-    IPositionInfo* positionInfo;
-    Lfo lfo;
     OnsenSynth synth;
 
     void addNumberOfVoices (int num)
     {
-        //  for (auto i = 0; i < num; ++i)
-        //      synth.addVoice (new FancySynthVoice (synthParams, &lfo));
     }
 
     void subNumberOfVoices (int num)
     {
-        // int numVoices = synth.getNumVoices();
-        // assert (numVoices >= num);
-        // for (auto i = 0; i < num; ++i)
-        //     synth.removeVoice (numVoices - 1 - i);
     }
 };
 } // namespace onsen
