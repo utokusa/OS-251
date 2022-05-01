@@ -18,8 +18,11 @@ target_sources(Os251_Tests PRIVATE
         dsp/HpfTest.cpp
         dsp/MasterVolumeTest.cpp
         dsp/util/TestAudioBufferInput.cpp
+        synth/SynthEngineTest.cpp
         ../src/dsp/Chorus.cpp
         ../src/dsp/Envelope.cpp
+        ../src/synth/SynthVoice.cpp
+        ../src/synth/SynthEngine.cpp
         )
 
 gtest_discover_tests(Os251_Tests)

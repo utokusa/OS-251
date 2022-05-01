@@ -17,17 +17,16 @@
 #include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
 #include "SynthVoice.h"
-#include <iostream>
 
 namespace onsen
 {
 class SynthEngine
 {
 public:
-    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo)
+    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo, Lfo* lfo, ISynthVoice* voice)
         : params (synthParams),
-          lfo (params->lfo(), positionInfo),
-          voice (params, &lfo),
+          lfo (lfo),
+          voice (voice),
           pitchBendValue (INIT_PITCHBEND_VALUE),
           currentNoteNumber (INIT_NOTE_NUMBER),
           hpf (params->hpf(), 2),
@@ -35,21 +34,21 @@ public:
           masterVolume (synthParams->master()) {}
     void setCurrentPlaybackSampleRate (double sampleRate)
     {
-        lfo.setCurrentPlaybackSampleRate (sampleRate);
-        voice.setCurrentPlaybackSampleRate (sampleRate);
+        lfo->setCurrentPlaybackSampleRate (sampleRate);
+        voice->setCurrentPlaybackSampleRate (sampleRate);
         chorus.setCurrentPlaybackSampleRate (sampleRate);
         hpf.setCurrentPlaybackSampleRate (sampleRate);
     }
     void setSamplesPerBlock (int samplesPerBlock)
     {
-        lfo.setSamplesPerBlock (samplesPerBlock);
+        lfo->setSamplesPerBlock (samplesPerBlock);
     }
 
     void renderNextBlock (IAudioBuffer* outputAudio, int startSample, int numSamples)
     {
-        lfo.renderLfo (startSample, numSamples);
-        lfo.renderLfoSync (startSample, numSamples);
-        voice.renderNextBlock (outputAudio, startSample, numSamples);
+        lfo->renderLfo (startSample, numSamples);
+        lfo->renderLfoSync (startSample, numSamples);
+        voice->renderNextBlock (outputAudio, startSample, numSamples);
         hpf.render (outputAudio, startSample, numSamples);
         if (params->chorus()->getChorusOn())
             chorus.render (outputAudio, startSample, numSamples);
@@ -60,45 +59,41 @@ public:
     {
         if (currentNoteNumber != INIT_NOTE_NUMBER)
         {
-            voice.stopNote (0.0, false);
-            lfo.noteOff();
+            voice->stopNote (0.0, false);
+            lfo->noteOff();
         }
         flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
         currentNoteNumber = noteNumber;
-        voice.startNote (noteNumber, velocity, pitchBendValue);
-        lfo.noteOn();
-        std::cout << "Note on... note number:" << noteNumber << std::endl;
-        std::cout << "velocity:" << intVelocity << std::endl;
+        voice->startNote (noteNumber, velocity, pitchBendValue);
+        lfo->noteOn();
     }
 
     void noteOff (int noteNumber)
     {
         if (noteNumber == currentNoteNumber)
         {
-            voice.stopNote (0.0, true);
-            lfo.noteOff();
+            voice->stopNote (0.0, true);
+            lfo->noteOff();
             currentNoteNumber = INIT_NOTE_NUMBER;
-            std::cout << "Midi note off..." << std::endl;
         }
     }
 
     void allNoteOff()
     {
-        voice.stopNote (0.0, true);
-        lfo.allNoteOff();
-        std::cout << "Midi all notes off..." << std::endl;
+        voice->stopNote (0.0, true);
+        lfo->allNoteOff();
     }
 
     void updatePitchWheel (int val)
     {
         pitchBendValue = val;
-        voice.pitchWheelMoved (pitchBendValue);
+        voice->pitchWheelMoved (pitchBendValue);
     }
 
 private:
     SynthParams* const params;
-    Lfo lfo;
-    FancySynthVoice voice;
+    Lfo* lfo;
+    ISynthVoice* voice;
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;

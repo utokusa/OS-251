@@ -17,7 +17,21 @@
 namespace onsen
 {
 //==============================================================================
-class FancySynthVoice
+class ISynthVoice
+{
+    using flnum = float;
+
+public:
+    virtual ~ISynthVoice() = default;
+    virtual void setCurrentPlaybackSampleRate (const double newRate) = 0;
+    virtual void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) = 0;
+    virtual void stopNote (flnum /*velocity*/, bool allowTailOff) = 0;
+    virtual void pitchWheelMoved (int newPitchWheelValue) = 0;
+    virtual void controllerMoved (int, int) = 0;
+    virtual void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) = 0;
+};
+//==============================================================================
+class FancySynthVoice : public ISynthVoice
 {
     using flnum = float;
 
@@ -39,12 +53,12 @@ public:
     {
     }
 
-    void setCurrentPlaybackSampleRate (const double newRate);
-    void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition);
-    void stopNote (float /*velocity*/, bool allowTailOff);
-    void pitchWheelMoved (int newPitchWheelValue);
-    void controllerMoved (int, int) {}
-    void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples);
+    void setCurrentPlaybackSampleRate (const double newRate) override;
+    void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) override;
+    void stopNote (flnum /*velocity*/, bool allowTailOff) override;
+    void pitchWheelMoved (int newPitchWheelValue) override;
+    void controllerMoved (int, int) override {}
+    void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override;
 
 private:
     double sampleRate;

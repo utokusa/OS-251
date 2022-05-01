@@ -19,7 +19,9 @@ class JuceSynthEngineAdapter
 public:
     JuceSynthEngineAdapter() = delete;
     JuceSynthEngineAdapter (SynthParams* const synthParams, IPositionInfo* const positionInfo)
-        : synth (synthParams, positionInfo)
+        : lfo (synthParams->lfo(), positionInfo),
+          voice (synthParams, &lfo),
+          synth (synthParams, positionInfo, &lfo, &voice)
     {
     }
 
@@ -79,6 +81,8 @@ public:
     }
 
 private:
+    Lfo lfo;
+    FancySynthVoice voice;
     SynthEngine synth;
 
     void addNumberOfVoices (int num)
