@@ -17,16 +17,22 @@
 #include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
 #include "SynthVoice.h"
+#include <memory>
+#include <vector>
 
 namespace onsen
 {
 class SynthEngine
 {
 public:
-    SynthEngine (SynthParams* const synthParams, IPositionInfo* const positionInfo, Lfo* lfo, ISynthVoice* voice)
+    SynthEngine (
+        SynthParams* const synthParams,
+        IPositionInfo* const positionInfo,
+        Lfo* lfo,
+        std::vector<std::shared_ptr<ISynthVoice>>& voices)
         : params (synthParams),
           lfo (lfo),
-          voice (voice),
+          voices (voices),
           pitchBendValue (INIT_PITCHBEND_VALUE),
           currentNoteNumber (INIT_NOTE_NUMBER),
           hpf (params->hpf(), 2),
@@ -35,7 +41,7 @@ public:
     void setCurrentPlaybackSampleRate (double sampleRate)
     {
         lfo->setCurrentPlaybackSampleRate (sampleRate);
-        voice->setCurrentPlaybackSampleRate (sampleRate);
+        voices[0]->setCurrentPlaybackSampleRate (sampleRate);
         chorus.setCurrentPlaybackSampleRate (sampleRate);
         hpf.setCurrentPlaybackSampleRate (sampleRate);
     }
@@ -48,7 +54,7 @@ public:
     {
         lfo->renderLfo (startSample, numSamples);
         lfo->renderLfoSync (startSample, numSamples);
-        voice->renderNextBlock (outputAudio, startSample, numSamples);
+        voices[0]->renderNextBlock (outputAudio, startSample, numSamples);
         hpf.render (outputAudio, startSample, numSamples);
         if (params->chorus()->getChorusOn())
             chorus.render (outputAudio, startSample, numSamples);
@@ -59,12 +65,12 @@ public:
     {
         if (currentNoteNumber != INIT_NOTE_NUMBER)
         {
-            voice->stopNote (0.0, false);
+            voices[0]->stopNote (0.0, false);
             lfo->noteOff();
         }
         flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
         currentNoteNumber = noteNumber;
-        voice->startNote (noteNumber, velocity, pitchBendValue);
+        voices[0]->startNote (noteNumber, velocity, pitchBendValue);
         lfo->noteOn();
     }
 
@@ -72,7 +78,7 @@ public:
     {
         if (noteNumber == currentNoteNumber)
         {
-            voice->stopNote (0.0, true);
+            voices[0]->stopNote (0.0, true);
             lfo->noteOff();
             currentNoteNumber = INIT_NOTE_NUMBER;
         }
@@ -80,25 +86,31 @@ public:
 
     void allNoteOff()
     {
-        voice->stopNote (0.0, true);
+        voices[0]->stopNote (0.0, true);
         lfo->allNoteOff();
     }
 
     void updatePitchWheel (int val)
     {
         pitchBendValue = val;
-        voice->pitchWheelMoved (pitchBendValue);
+        voices[0]->pitchWheelMoved (pitchBendValue);
+    }
+
+    static constexpr int getMaxNumVoices()
+    {
+        return MAX_NUM_VOICES;
     }
 
 private:
     SynthParams* const params;
     Lfo* lfo;
-    ISynthVoice* voice;
+    std::vector<std::shared_ptr<ISynthVoice>>& voices;
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
     int pitchBendValue;
     int currentNoteNumber;
+    static constexpr int MAX_NUM_VOICES = 24;
     static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
     static constexpr int INIT_NOTE_NUMBER = -1;
 };

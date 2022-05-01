@@ -24,6 +24,17 @@ public:
     SynthVoiceMock() = delete;
     SynthVoiceMock (int voiceId, std::vector<std::string>& logs) : voiceId (voiceId), logs (logs) {}
 
+    static std::vector<std::shared_ptr<ISynthVoice>> buildVoices (int maxNumVoices, std::vector<std::string>& logs)
+    {
+        std::vector<std::shared_ptr<ISynthVoice>> voices (maxNumVoices);
+        for (int i = 0; i < maxNumVoices; i++)
+        {
+            voices[i] = std::make_shared<SynthVoiceMock> (0, logs);
+            std::dynamic_pointer_cast<SynthVoiceMock> (voices[i])->setVoiceId (i);
+        }
+        return voices;
+    };
+
     void setCurrentPlaybackSampleRate (const double newRate) override {};
     void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) override
     {
@@ -46,6 +57,9 @@ public:
     }
     void controllerMoved (int, int) override {}
     void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override {}
+
+    void setVoiceId (int id) { voiceId = id; }
+    int getVoiceId() { return voiceId; }
 
 private:
     int voiceId;

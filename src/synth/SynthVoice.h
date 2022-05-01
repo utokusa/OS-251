@@ -13,6 +13,7 @@
 #include "../dsp/IAudioBuffer.h"
 #include "../dsp/Oscillator.h"
 #include "SynthParams.h"
+#include <memory>
 
 namespace onsen
 {
@@ -52,6 +53,16 @@ public:
           isNoteOverlapped (false)
     {
     }
+
+    static std::vector<std::shared_ptr<ISynthVoice>> buildVoices (int maxNumVoices, SynthParams* const synthParams, Lfo* const _lfo)
+    {
+        std::vector<std::shared_ptr<ISynthVoice>> voices (maxNumVoices);
+        for (int i = 0; i < maxNumVoices; i++)
+        {
+            voices[i] = std::make_shared<FancySynthVoice> (synthParams, _lfo);
+        }
+        return voices;
+    };
 
     void setCurrentPlaybackSampleRate (const double newRate) override;
     void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) override;

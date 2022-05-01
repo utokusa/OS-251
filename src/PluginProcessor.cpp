@@ -76,7 +76,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     // Number of voices
     auto numVoicesToStr = [] (float value) { return juce::String (
                                                  onsen::DspUtil::mapFlnumToInt (
-                                                     value, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices)); };
+                                                     value, 0.0, 1.0, 1, onsen::SynthEngine::getMaxNumVoices())); };
     // ---
 
     // ---
@@ -484,7 +484,7 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
 
     if (parameterID == "numVoices")
     {
-        const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::MasterParams::maxNumVoices);
+        const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::SynthEngine::getMaxNumVoices());
         synthEngine.changeNumberOfVoices (num);
     }
 }

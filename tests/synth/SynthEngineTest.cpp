@@ -30,8 +30,8 @@ protected:
     PositionInfoMock positionInfo {};
     Lfo lfo { synthParams->lfo(), &positionInfo };
     std::vector<std::string> logs;
-    SynthVoiceMock voice { 0, logs };
-    SynthEngine synth { synthParams.get(), &positionInfo, &lfo, &voice };
+    std::vector<std::shared_ptr<ISynthVoice>> voices { SynthVoiceMock::buildVoices (SynthEngine::getMaxNumVoices(), logs) };
+    SynthEngine synth { synthParams.get(), &positionInfo, &lfo, voices };
 };
 
 TEST_F (SynthEngineTest, SynthAssignNotesToVoiceSimple1)
@@ -71,5 +71,13 @@ TEST_F (SynthEngineTest, SynthAssignNotesToVoiceComplex1)
     ASSERT_EQ (logs.size(), 2);
     ASSERT_EQ (logs[0], "startNote: 0 69 0.79 8192");
     ASSERT_EQ (logs[1], "stopNote: 0 1");
+}
+
+TEST_F (SynthEngineTest, ConfirmMockVoicesAreCreatedCorrectly)
+{
+    for (int i = 0; i < SynthEngine::getMaxNumVoices(); i++)
+    {
+        ASSERT_EQ (std::dynamic_pointer_cast<SynthVoiceMock> (voices[i])->getVoiceId(), i);
+    }
 }
 } // namespace onsen

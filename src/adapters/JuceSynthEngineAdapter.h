@@ -20,8 +20,8 @@ public:
     JuceSynthEngineAdapter() = delete;
     JuceSynthEngineAdapter (SynthParams* const synthParams, IPositionInfo* const positionInfo)
         : lfo (synthParams->lfo(), positionInfo),
-          voice (synthParams, &lfo),
-          synth (synthParams, positionInfo, &lfo, &voice)
+          voices (FancySynthVoice::buildVoices (SynthEngine::getMaxNumVoices(), synthParams, &lfo)),
+          synth (synthParams, positionInfo, &lfo, voices)
     {
     }
 
@@ -82,7 +82,7 @@ public:
 
 private:
     Lfo lfo;
-    FancySynthVoice voice;
+    std::vector<std::shared_ptr<ISynthVoice>> voices;
     SynthEngine synth;
 
     void addNumberOfVoices (int num)
