@@ -110,6 +110,7 @@ lint-fix:
 .PHONY: check-all
 check-all:
 	make lint
+	make build-all
 	make test
 	make test-juce
 	make benchmark
