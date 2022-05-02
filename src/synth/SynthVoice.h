@@ -90,5 +90,6 @@ private:
 
     void setPitchBend (int pitchWheelValue);
     flnum midiNoteToHertz (int midiNote);
+    bool isVoiceOff();
 };
 } // namespace onsen

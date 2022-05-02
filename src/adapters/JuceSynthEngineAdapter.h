@@ -78,19 +78,12 @@ public:
 
     void changeNumberOfVoices (int num)
     {
+        synth.setNumberOfVoices (num);
     }
 
 private:
     Lfo lfo;
     std::vector<std::shared_ptr<ISynthVoice>> voices;
     SynthEngine synth;
-
-    void addNumberOfVoices (int num)
-    {
-    }
-
-    void subNumberOfVoices (int num)
-    {
-    }
 };
 } // namespace onsen

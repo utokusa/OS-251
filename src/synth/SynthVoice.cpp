@@ -73,6 +73,8 @@ void FancySynthVoice::pitchWheelMoved (int newPitchWheelValue)
 
 void FancySynthVoice::renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples)
 {
+    if (isVoiceOff())
+        return;
     int idx = startSample;
     if (angleDelta != 0.0)
     {
@@ -105,13 +107,12 @@ void FancySynthVoice::renderNextBlock (IAudioBuffer* outputBuffer, int startSamp
             ++idx;
             envManager.update();
             smoothedAmp.update();
-            if (envManager.isEnvOff() && smoothedAmp.get() <= 0.001)
+            if (isVoiceOff())
             {
                 smoothedAmp.reset (0.0);
                 angleDelta = 0.0;
                 smoothedAngleDelta.reset (angleDelta);
                 osc.resetState();
-                // clearCurrentNote(); // It's to notify synth engine when it becomes poly synth
                 break;
             }
         }
@@ -140,5 +141,10 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
 flnum FancySynthVoice::midiNoteToHertz (int midiNote)
 {
     return 440.0 * std::pow (2.0, (midiNote - 69) / 12.0);
+}
+
+bool FancySynthVoice::isVoiceOff()
+{
+    return envManager.isEnvOff() && smoothedAmp.get() <= 0.001;
 }
 } // namespace onsen
