@@ -30,6 +30,7 @@ public:
     virtual void pitchWheelMoved (int newPitchWheelValue) = 0;
     virtual void controllerMoved (int, int) = 0;
     virtual void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) = 0;
+    virtual void addPhaseOffset (flnum offset) = 0;
 };
 //==============================================================================
 class FancySynthVoice : public ISynthVoice
@@ -70,6 +71,16 @@ public:
     void pitchWheelMoved (int newPitchWheelValue) override;
     void controllerMoved (int, int) override {}
     void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override;
+
+    void addPhaseOffset (flnum offset) override
+    {
+        assert (0.0 <= offset && offset <= pi * 2.0 + EPSILON);
+        currentAngle += offset;
+        if (currentAngle > pi * 2.0)
+        {
+            currentAngle -= pi * 2.0;
+        }
+    }
 
 private:
     double sampleRate;

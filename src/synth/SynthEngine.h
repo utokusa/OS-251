@@ -17,6 +17,7 @@
 #include "../dsp/MasterVolume.h"
 #include "SynthParams.h"
 #include "SynthVoice.h"
+#include <cstdlib>
 #include <memory>
 #include <vector>
 
@@ -42,6 +43,7 @@ public:
           masterVolume (synthParams->master())
     {
         assert (voices.size() == voicesToNote.size());
+        addPhaseOffsetToVoices();
     }
 
     void setCurrentPlaybackSampleRate (double sampleRate)
@@ -249,6 +251,16 @@ private:
             voices[i]->stopNote (0.0, true);
             voicesToNote[i] = INIT_NOTE_NUMBER;
             lfo->noteOff();
+        }
+    }
+
+    void addPhaseOffsetToVoices()
+    {
+        for (int i = 0; i < voices.size(); i++)
+        {
+            flnum phaseOffset = static_cast<float> (rand()) / static_cast<float> (RAND_MAX); // [0, 1]
+            phaseOffset *= 2 * pi; // [0, 2 * pi]
+            voices[i]->addPhaseOffset (phaseOffset);
         }
     }
 };
