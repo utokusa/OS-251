@@ -30,12 +30,13 @@ public:
         IPositionInfo* const positionInfo,
         Lfo* lfo,
         std::vector<std::shared_ptr<ISynthVoice>>& voices)
-        : params (synthParams),
+        : pitchBendValue (INIT_PITCHBEND_VALUE),
+          numVoices (INIT_NUMBER_OF_VOICES),
+          isUnison (false),
+          params (synthParams),
           lfo (lfo),
           voices (voices),
           voicesToNote (getMaxNumVoices(), INIT_NOTE_NUMBER),
-          pitchBendValue (INIT_PITCHBEND_VALUE),
-          numVoices (INIT_NUMBER_OF_VOICES),
           hpf (params->hpf(), 2),
           chorus(),
           masterVolume (synthParams->master())
@@ -72,6 +73,7 @@ public:
     {
         assert (0 <= noteNumber && noteNumber <= 127);
         assert (0 <= intVelocity && intVelocity <= 127);
+
         if (intVelocity == 0)
         {
             noteOff (noteNumber);
@@ -79,52 +81,26 @@ public:
         }
         flnum velocity = static_cast<flnum> (intVelocity) / 127.0;
 
-        // If there is already the same note, reuse the voice
-        for (int i = 0; i < numVoices; i++)
+        if (isUnison)
         {
-            if (voicesToNote[i] == noteNumber)
-            {
-                voices[i]->stopNote (0.0, false);
-                lfo->noteOff();
-                voices[i]->startNote (noteNumber, velocity, pitchBendValue);
-                lfo->noteOn();
-                return;
-            }
+            noteOnUnisonMode (noteNumber, velocity);
         }
-
-        // Try to find a free voice. If found, use it
-        for (int i = 0; i < numVoices; i++)
+        else
         {
-            if (isVoiceAvailable (i))
-            {
-                voices[i]->startNote (noteNumber, velocity, pitchBendValue);
-                voicesToNote[i] = noteNumber;
-                lfo->noteOn();
-                return;
-            }
+            noteOnPolyMode (noteNumber, velocity);
         }
-
-        // The case where there is no free voice, use the voice with the largest ID.
-        int voiceIdToUse = numVoices - 1;
-        assert (0 <= voiceIdToUse && voiceIdToUse < getMaxNumVoices());
-        voices[voiceIdToUse]->stopNote (0.0, false);
-        lfo->noteOff();
-        voices[voiceIdToUse]->startNote (noteNumber, velocity, pitchBendValue);
-        voicesToNote[voiceIdToUse] = noteNumber;
-        lfo->noteOn();
     }
 
     void noteOff (int noteNumber)
     {
-        for (int i = 0; i < numVoices; i++)
+        assert (0 <= noteNumber && noteNumber <= 127);
+        if (isUnison)
         {
-            if (noteNumber == voicesToNote[i])
-            {
-                voices[i]->stopNote (0.0, true);
-                lfo->noteOff();
-                voicesToNote[i] = INIT_NOTE_NUMBER;
-                return;
-            }
+            noteOffUnisonMode (noteNumber);
+        }
+        else
+        {
+            noteOffPolyMode (noteNumber);
         }
     }
 
@@ -168,7 +144,16 @@ public:
         }
     }
 
+    void setIsUnison (bool val)
+    {
+        isUnison = val;
+        allNoteOff();
+    }
+
 private:
+    int pitchBendValue;
+    int numVoices;
+    bool isUnison;
     SynthParams* const params;
     Lfo* lfo;
     std::vector<std::shared_ptr<ISynthVoice>>& voices;
@@ -176,8 +161,6 @@ private:
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
-    int pitchBendValue;
-    int numVoices;
     static constexpr int MAX_NUM_VOICES = 24;
     static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
     static constexpr int INIT_NOTE_NUMBER = -1;
@@ -187,6 +170,86 @@ private:
     {
         assert (0 <= voiceId && voiceId < getMaxNumVoices());
         return voicesToNote[voiceId] == INIT_NOTE_NUMBER;
+    }
+
+    void noteOnPolyMode (int noteNumber, flnum velocity)
+    {
+        // If there is already the same note, reuse the voice
+        for (int i = 0; i < numVoices; i++)
+        {
+            if (voicesToNote[i] == noteNumber)
+            {
+                voices[i]->stopNote (0.0, false);
+                lfo->noteOff();
+                voices[i]->startNote (noteNumber, velocity, pitchBendValue);
+                lfo->noteOn();
+                return;
+            }
+        }
+
+        // Try to find a free voice. If found, use it
+        for (int i = 0; i < numVoices; i++)
+        {
+            if (isVoiceAvailable (i))
+            {
+                voices[i]->startNote (noteNumber, velocity, pitchBendValue);
+                voicesToNote[i] = noteNumber;
+                lfo->noteOn();
+                return;
+            }
+        }
+
+        // The case where there is no free voice, use the voice with the largest ID.
+        int voiceIdToUse = numVoices - 1;
+        assert (0 <= voiceIdToUse && voiceIdToUse < getMaxNumVoices());
+        voices[voiceIdToUse]->stopNote (0.0, false);
+        lfo->noteOff();
+        voices[voiceIdToUse]->startNote (noteNumber, velocity, pitchBendValue);
+        voicesToNote[voiceIdToUse] = noteNumber;
+        lfo->noteOn();
+    }
+
+    void noteOffPolyMode (int noteNumber)
+    {
+        for (int i = 0; i < numVoices; i++)
+        {
+            if (noteNumber == voicesToNote[i])
+            {
+                voices[i]->stopNote (0.0, true);
+                lfo->noteOff();
+                voicesToNote[i] = INIT_NOTE_NUMBER;
+                return;
+            }
+        }
+    }
+
+    void noteOnUnisonMode (int noteNumber, flnum velocity)
+    {
+        for (int i = 0; i < numVoices; i++)
+        {
+            if (! isVoiceAvailable (i))
+            {
+                voices[i]->stopNote (0.0, false);
+                lfo->noteOff();
+            }
+            voices[i]->startNote (noteNumber, velocity, pitchBendValue);
+            voicesToNote[i] = noteNumber;
+            lfo->noteOn();
+        }
+    }
+
+    void noteOffUnisonMode (int noteNumber)
+    {
+        if (noteNumber != voicesToNote[0]) // check for all available voices
+        {
+            return;
+        }
+        for (int i = 0; i < numVoices; i++)
+        {
+            voices[i]->stopNote (0.0, true);
+            voicesToNote[i] = INIT_NOTE_NUMBER;
+            lfo->noteOff();
+        }
     }
 };
 } // namespace onsen

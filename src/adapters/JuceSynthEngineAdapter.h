@@ -81,6 +81,11 @@ public:
         synth.setNumberOfVoices (num);
     }
 
+    void changeIsUnison (int val)
+    {
+        synth.setIsUnison (val);
+    }
+
 private:
     Lfo lfo;
     std::vector<std::shared_ptr<ISynthVoice>> voices;

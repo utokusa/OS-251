@@ -263,6 +263,9 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
     parameters.addParameterListener ("numVoices", this);
 
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("unisonOn", "Unison", "", nrange, 0.0, valueToOnOff, nullptr, true));
+    parameters.addParameterListener ("unisonOn", this);
+
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 
     // Preset management
@@ -486,6 +489,11 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     {
         const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::SynthEngine::getMaxNumVoices());
         synthEngine.changeNumberOfVoices (num);
+    }
+    else if (parameterID == "unisonOn")
+    {
+        bool unisonOn = newValue > 0.5;
+        synthEngine.changeIsUnison (unisonOn);
     }
 }
 
