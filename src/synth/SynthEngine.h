@@ -150,6 +150,7 @@ public:
     {
         isUnison = val;
         allNoteOff();
+        setDetune (val);
     }
 
 private:
@@ -256,11 +257,35 @@ private:
 
     void addPhaseOffsetToVoices()
     {
-        for (int i = 0; i < voices.size(); i++)
+        for (int i = 0; i < getMaxNumVoices(); i++)
         {
-            flnum phaseOffset = static_cast<float> (rand()) / static_cast<float> (RAND_MAX); // [0, 1]
+            flnum phaseOffset = static_cast<flnum> (rand()) / static_cast<flnum> (RAND_MAX); // [0, 1]
             phaseOffset *= 2 * pi; // [0, 2 * pi]
             voices[i]->addPhaseOffset (phaseOffset);
+        }
+    }
+
+    void setDetune (bool val)
+    {
+        constexpr flnum maxDetuneVal = 0.2;
+        if (val)
+        {
+            for (int i = 0; i < getMaxNumVoices(); i++)
+            {
+                flnum detune = static_cast<flnum> (i) / static_cast<flnum> (getMaxNumVoices()) * maxDetuneVal;
+                if (i % 2)
+                {
+                    detune *= -1.0;
+                }
+                voices[i]->setDetune (detune);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < getMaxNumVoices(); i++)
+            {
+                voices[i]->setDetune (0.0);
+            }
         }
     }
 };

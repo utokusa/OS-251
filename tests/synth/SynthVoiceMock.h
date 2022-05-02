@@ -58,6 +58,7 @@ public:
     void controllerMoved (int, int) override {}
     void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override {}
     void addPhaseOffset (flnum offset) override {}
+    void setDetune (flnum val) override {}
 
     void setVoiceId (int id) { voiceId = id; }
     int getVoiceId() { return voiceId; }

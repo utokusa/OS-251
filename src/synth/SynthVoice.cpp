@@ -99,7 +99,7 @@ void FancySynthVoice::renderNextBlock (IAudioBuffer* outputBuffer, int startSamp
             flnum lfoVal = lfo->getLevel (idx);
             smoothedAngleDelta.setSmoothness (p->getPortamento());
             smoothedAngleDelta.update();
-            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
+            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + detune + lfoPitchDepth * lfoVal);
             if (currentAngle > pi * 2.0)
             {
                 currentAngle -= pi * 2.0;

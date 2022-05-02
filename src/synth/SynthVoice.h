@@ -31,6 +31,7 @@ public:
     virtual void controllerMoved (int, int) = 0;
     virtual void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) = 0;
     virtual void addPhaseOffset (flnum offset) = 0;
+    virtual void setDetune (flnum val) = 0;
 };
 //==============================================================================
 class FancySynthVoice : public ISynthVoice
@@ -51,7 +52,8 @@ public:
           lfo (_lfo),
           filter (synthParams->filter(), &env, lfo),
           isNoteOn (false),
-          isNoteOverlapped (false)
+          isNoteOverlapped (false),
+          detune (0.0)
     {
     }
 
@@ -82,6 +84,11 @@ public:
         }
     }
 
+    void setDetune (flnum val) override
+    {
+        detune = val;
+    }
+
 private:
     double sampleRate;
     MasterParams* const p;
@@ -98,6 +105,7 @@ private:
     Filter filter;
     bool isNoteOn;
     bool isNoteOverlapped;
+    flnum detune;
 
     void setPitchBend (int pitchWheelValue);
     flnum midiNoteToHertz (int midiNote);
