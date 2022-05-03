@@ -329,6 +329,53 @@ TEST_F (SynthEngineTest, UnisonCornerCase1)
     ASSERT_EQ (logs[8], "stopNote: 2 1");
 }
 
+TEST_F (SynthEngineTest, SustainPedal1)
+{
+    synth.setNumberOfVoices (2);
+    synth.noteOn (69, 100);
+    synth.setSustainPedalDown (true);
+    synth.noteOff (69);
+    ASSERT_EQ (logs.size(), 1);
+    ASSERT_EQ (logs[0], "startNote: 0 69 0.79 8192");
+    synth.setSustainPedalDown (false);
+    ASSERT_EQ (logs.size(), 2);
+    ASSERT_EQ (logs[1], "stopNote: 0 1");
+}
+
+TEST_F (SynthEngineTest, SustainPedal2)
+{
+    synth.setNumberOfVoices (2);
+    synth.noteOn (69, 100);
+    synth.setSustainPedalDown (true);
+    synth.noteOn (60, 100);
+    synth.noteOff (69);
+    ASSERT_EQ (logs.size(), 2);
+    ASSERT_EQ (logs[0], "startNote: 0 69 0.79 8192");
+    ASSERT_EQ (logs[1], "startNote: 1 60 0.79 8192");
+    synth.setSustainPedalDown (false);
+    ASSERT_EQ (logs.size(), 3);
+    ASSERT_EQ (logs[2], "stopNote: 0 1");
+}
+
+TEST_F (SynthEngineTest, SustainPedalWithUnison)
+{
+    synth.setNumberOfVoices (2);
+    synth.setIsUnison (true);
+    ASSERT_EQ (logs.size(), 2);
+    ASSERT_EQ (logs[0], "stopNote: 0 1");
+    ASSERT_EQ (logs[1], "stopNote: 1 1");
+    synth.noteOn (69, 100);
+    synth.setSustainPedalDown (true);
+    synth.noteOff (69);
+    ASSERT_EQ (logs.size(), 4);
+    ASSERT_EQ (logs[2], "startNote: 0 69 0.79 8192");
+    ASSERT_EQ (logs[3], "startNote: 1 69 0.79 8192");
+    synth.setSustainPedalDown (false);
+    ASSERT_EQ (logs.size(), 6);
+    ASSERT_EQ (logs[4], "stopNote: 0 1");
+    ASSERT_EQ (logs[5], "stopNote: 1 1");
+}
+
 // Assertion tests
 // They don't pass on GitHub Actions. So I skip them for now.
 // This PR might be related https://github.com/google/googletest/issues/234 .

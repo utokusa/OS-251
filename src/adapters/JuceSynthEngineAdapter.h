@@ -68,6 +68,14 @@ public:
                 {
                     synth.setPitchWheel (midiMsg.getPitchWheelValue());
                 }
+                else if (midiMsg.isSustainPedalOn())
+                {
+                    synth.setSustainPedalDown (true);
+                }
+                else if (midiMsg.isSustainPedalOff())
+                {
+                    synth.setSustainPedalDown (false);
+                }
                 it++;
             }
             // render audio

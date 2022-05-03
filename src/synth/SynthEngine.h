@@ -34,6 +34,7 @@ public:
         : pitchBendValue (INIT_PITCHBEND_VALUE),
           numVoices (INIT_NUMBER_OF_VOICES),
           isUnison (false),
+          isSustainPedalDown (false),
           params (synthParams),
           lfo (lfo),
           voices (voices),
@@ -124,6 +125,28 @@ public:
             voices[i]->setPitchWheel (pitchBendValue);
     }
 
+    void setSustainPedalDown (bool val)
+    {
+        if (isSustainPedalDown == val)
+        {
+            return;
+        }
+        // The pedal's state has changed
+        isSustainPedalDown = val;
+        if (! isSustainPedalDown)
+        {
+            for (int i = 0; i < numVoices; i++)
+            {
+                if (voicesToNote[i] == WAITING_FOR_SUSTAIN_PEDAL_UP)
+                {
+                    voices[i]->stopNote (0.0, true);
+                    voicesToNote[i] = INIT_NOTE_NUMBER;
+                }
+                lfo->noteOff();
+            }
+        }
+    }
+
     static constexpr int getMaxNumVoices()
     {
         return MAX_NUM_VOICES;
@@ -157,6 +180,7 @@ private:
     int pitchBendValue;
     int numVoices;
     bool isUnison;
+    bool isSustainPedalDown;
     SynthParams* const params;
     Lfo* lfo;
     std::vector<std::shared_ptr<ISynthVoice>>& voices;
@@ -166,7 +190,10 @@ private:
     MasterVolume masterVolume;
     static constexpr int MAX_NUM_VOICES = 24;
     static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
+    //  --- for voicesToNote --->
     static constexpr int INIT_NOTE_NUMBER = -1;
+    static constexpr int WAITING_FOR_SUSTAIN_PEDAL_UP = -2;
+    // <--- for voicesToNote ---
     static constexpr int INIT_NUMBER_OF_VOICES = 1;
 
     bool isVoiceAvailable (int voiceId)
@@ -218,9 +245,16 @@ private:
         {
             if (noteNumber == voicesToNote[i])
             {
-                voices[i]->stopNote (0.0, true);
-                lfo->noteOff();
-                voicesToNote[i] = INIT_NOTE_NUMBER;
+                if (isSustainPedalDown)
+                {
+                    voicesToNote[i] = WAITING_FOR_SUSTAIN_PEDAL_UP;
+                }
+                else
+                {
+                    voices[i]->stopNote (0.0, true);
+                    lfo->noteOff();
+                    voicesToNote[i] = INIT_NOTE_NUMBER;
+                }
                 return;
             }
         }
@@ -243,15 +277,22 @@ private:
 
     void noteOffUnisonMode (int noteNumber)
     {
-        if (noteNumber != voicesToNote[0]) // check for all available voices
+        if (noteNumber != voicesToNote[0]) // it checks for all available voices not only voice 0
         {
             return;
         }
         for (int i = 0; i < numVoices; i++)
         {
-            voices[i]->stopNote (0.0, true);
-            voicesToNote[i] = INIT_NOTE_NUMBER;
-            lfo->noteOff();
+            if (isSustainPedalDown)
+            {
+                voicesToNote[i] = WAITING_FOR_SUSTAIN_PEDAL_UP;
+            }
+            else
+            {
+                voices[i]->stopNote (0.0, true);
+                voicesToNote[i] = INIT_NOTE_NUMBER;
+                lfo->noteOff();
+            }
         }
     }
 
