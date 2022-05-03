@@ -66,7 +66,7 @@ public:
                 }
                 else if (midiMsg.isPitchWheel())
                 {
-                    synth.updatePitchWheel (midiMsg.getPitchWheelValue());
+                    synth.setPitchWheel (midiMsg.getPitchWheelValue());
                 }
                 it++;
             }

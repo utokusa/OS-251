@@ -116,12 +116,12 @@ public:
         lfo->allNoteOff();
     }
 
-    void updatePitchWheel (int val)
+    void setPitchWheel (int val)
     {
         assert (0 <= val && val <= 16383); // Should be treated like a signed 14 bit integer
         pitchBendValue = val;
         for (int i = 0; i < numVoices; i++)
-            voices[i]->pitchWheelMoved (pitchBendValue);
+            voices[i]->setPitchWheel (pitchBendValue);
     }
 
     static constexpr int getMaxNumVoices()

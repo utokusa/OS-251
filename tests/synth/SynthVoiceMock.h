@@ -49,13 +49,12 @@ public:
         ss << "stopNote: " << voiceId << " " << allowTailOff;
         logs.push_back (ss.str());
     }
-    void pitchWheelMoved (int newPitchWheelValue) override
+    void setPitchWheel (int newPitchWheelValue) override
     {
         std::stringstream ss;
-        ss << "pitchWheelMoved: " << voiceId << " " << newPitchWheelValue;
+        ss << "setPitchWheel: " << voiceId << " " << newPitchWheelValue;
         logs.push_back (ss.str());
     }
-    void controllerMoved (int, int) override {}
     void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override {}
     void addPhaseOffset (flnum offset) override {}
     void setDetune (flnum val) override {}

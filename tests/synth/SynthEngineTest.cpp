@@ -98,14 +98,14 @@ TEST_F (SynthEngineTest, SynthAssignNotesToOneVoiceCornerCase1)
 TEST_F (SynthEngineTest, SynthAssignNotesToOneVoiceSimpleWithPitchbend)
 {
     synth.setNumberOfVoices (1);
-    synth.updatePitchWheel (10000);
+    synth.setPitchWheel (10000);
     synth.noteOn (69, 127);
-    synth.updatePitchWheel (10001);
+    synth.setPitchWheel (10001);
     synth.noteOn (64, 127);
     ASSERT_EQ (logs.size(), 5);
-    ASSERT_EQ (logs[0], "pitchWheelMoved: 0 10000");
+    ASSERT_EQ (logs[0], "setPitchWheel: 0 10000");
     ASSERT_EQ (logs[1], "startNote: 0 69 1.00 10000");
-    ASSERT_EQ (logs[2], "pitchWheelMoved: 0 10001");
+    ASSERT_EQ (logs[2], "setPitchWheel: 0 10001");
     ASSERT_EQ (logs[3], "stopNote: 0 0");
     ASSERT_EQ (logs[4], "startNote: 0 64 1.00 10001");
 }
@@ -159,16 +159,16 @@ TEST_F (SynthEngineTest, SynthAssignNotesToTwoVoiceCornerCase1)
 TEST_F (SynthEngineTest, SynthAssignNotesToTwoVoiceSimpleWithPitchbend)
 {
     synth.setNumberOfVoices (2);
-    synth.updatePitchWheel (10000);
+    synth.setPitchWheel (10000);
     synth.noteOn (69, 127);
-    synth.updatePitchWheel (10001);
+    synth.setPitchWheel (10001);
     synth.noteOn (64, 127);
     ASSERT_EQ (logs.size(), 6);
-    ASSERT_EQ (logs[0], "pitchWheelMoved: 0 10000");
-    ASSERT_EQ (logs[1], "pitchWheelMoved: 1 10000");
+    ASSERT_EQ (logs[0], "setPitchWheel: 0 10000");
+    ASSERT_EQ (logs[1], "setPitchWheel: 1 10000");
     ASSERT_EQ (logs[2], "startNote: 0 69 1.00 10000");
-    ASSERT_EQ (logs[3], "pitchWheelMoved: 0 10001");
-    ASSERT_EQ (logs[4], "pitchWheelMoved: 1 10001");
+    ASSERT_EQ (logs[3], "setPitchWheel: 0 10001");
+    ASSERT_EQ (logs[4], "setPitchWheel: 1 10001");
     ASSERT_EQ (logs[5], "startNote: 1 64 1.00 10001");
 }
 
@@ -355,7 +355,7 @@ TEST_F (SynthEngineTest, UnisonCornerCase1)
 
 // TEST_F (SynthEngineTest, WrongPitchBend)
 // {
-//     ASSERT_DEATH ({ synth.updatePitchWheel (-1); }, "0 <= val && val <= 16383");
-//     ASSERT_DEATH ({ synth.updatePitchWheel (16384); }, "0 <= val && val <= 16383");
+//     ASSERT_DEATH ({ synth.setPitchWheel (-1); }, "0 <= val && val <= 16383");
+//     ASSERT_DEATH ({ synth.setPitchWheel (16384); }, "0 <= val && val <= 16383");
 // }
 } // namespace onsen

@@ -66,7 +66,7 @@ void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
     isNoteOn = false;
 }
 
-void FancySynthVoice::pitchWheelMoved (int newPitchWheelValue)
+void FancySynthVoice::setPitchWheel (int newPitchWheelValue)
 {
     setPitchBend (newPitchWheelValue);
 }

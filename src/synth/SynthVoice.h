@@ -27,8 +27,7 @@ public:
     virtual void setCurrentPlaybackSampleRate (const double newRate) = 0;
     virtual void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) = 0;
     virtual void stopNote (flnum /*velocity*/, bool allowTailOff) = 0;
-    virtual void pitchWheelMoved (int newPitchWheelValue) = 0;
-    virtual void controllerMoved (int, int) = 0;
+    virtual void setPitchWheel (int newPitchWheelValue) = 0;
     virtual void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) = 0;
     virtual void addPhaseOffset (flnum offset) = 0;
     virtual void setDetune (flnum val) = 0;
@@ -70,8 +69,7 @@ public:
     void setCurrentPlaybackSampleRate (const double newRate) override;
     void startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition) override;
     void stopNote (flnum /*velocity*/, bool allowTailOff) override;
-    void pitchWheelMoved (int newPitchWheelValue) override;
-    void controllerMoved (int, int) override {}
+    void setPitchWheel (int newPitchWheelValue) override;
     void renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples) override;
 
     void addPhaseOffset (flnum offset) override
