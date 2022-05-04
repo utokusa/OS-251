@@ -35,10 +35,12 @@ public:
           numVoices (INIT_NUMBER_OF_VOICES),
           isUnison (false),
           isSustainPedalDown (false),
+          isSostenutoPedalDown (false),
           params (synthParams),
           lfo (lfo),
           voices (voices),
           voicesToNote (getMaxNumVoices(), INIT_NOTE_NUMBER),
+          isUnderSostenutoPedal (getMaxNumVoices()),
           hpf (params->hpf(), 2),
           chorus(),
           masterVolume (synthParams->master())
@@ -147,6 +149,42 @@ public:
         }
     }
 
+    void setSostenutoPedalDown (bool val)
+    {
+        if (isSostenutoPedalDown == val)
+        {
+            return;
+        }
+        // The pedal's state has changed
+        isSostenutoPedalDown = val;
+        if (isSostenutoPedalDown)
+        {
+            for (int i = 0; i < numVoices; i++)
+            {
+                if (voicesToNote[i] != INIT_NOTE_NUMBER)
+                {
+                    isUnderSostenutoPedal[i] = true;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < numVoices; i++)
+            {
+                if (isUnderSostenutoPedal[i])
+                {
+                    isUnderSostenutoPedal[i] = false;
+                    if (voicesToNote[i] != INIT_NOTE_NUMBER && voicesToNote[i] != WAITING_FOR_SUSTAIN_PEDAL_UP)
+                    {
+                        voices[i]->stopNote (0.0, true);
+                        lfo->noteOff();
+                        voicesToNote[i] = INIT_NOTE_NUMBER;
+                    }
+                }
+            }
+        }
+    }
+
     static constexpr int getMaxNumVoices()
     {
         return MAX_NUM_VOICES;
@@ -181,10 +219,12 @@ private:
     int numVoices;
     bool isUnison;
     bool isSustainPedalDown;
+    bool isSostenutoPedalDown;
     SynthParams* const params;
     Lfo* lfo;
     std::vector<std::shared_ptr<ISynthVoice>>& voices;
     std::vector<int> voicesToNote;
+    std::vector<bool> isUnderSostenutoPedal;
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
@@ -249,6 +289,10 @@ private:
                 {
                     voicesToNote[i] = WAITING_FOR_SUSTAIN_PEDAL_UP;
                 }
+                else if (isSostenutoPedalDown && isUnderSostenutoPedal[i])
+                {
+                    // Do nothing
+                }
                 else
                 {
                     voices[i]->stopNote (0.0, true);
@@ -269,6 +313,7 @@ private:
                 voices[i]->stopNote (0.0, false);
                 lfo->noteOff();
             }
+            isUnderSostenutoPedal[i] = false; // regardress of isSostenutoPedalDown
             voices[i]->startNote (noteNumber, velocity, pitchBendValue);
             voicesToNote[i] = noteNumber;
             lfo->noteOn();
@@ -286,6 +331,10 @@ private:
             if (isSustainPedalDown)
             {
                 voicesToNote[i] = WAITING_FOR_SUSTAIN_PEDAL_UP;
+            }
+            else if (isSostenutoPedalDown && isUnderSostenutoPedal[i])
+            {
+                // Do nothing
             }
             else
             {

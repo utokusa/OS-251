@@ -76,6 +76,14 @@ public:
                 {
                     synth.setSustainPedalDown (false);
                 }
+                else if (midiMsg.isSostenutoPedalOn())
+                {
+                    synth.setSostenutoPedalDown (true);
+                }
+                else if (midiMsg.isSostenutoPedalOff())
+                {
+                    synth.setSostenutoPedalDown (false);
+                }
                 it++;
             }
             // render audio
