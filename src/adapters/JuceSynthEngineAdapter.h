@@ -18,10 +18,8 @@ class JuceSynthEngineAdapter
 {
 public:
     JuceSynthEngineAdapter() = delete;
-    JuceSynthEngineAdapter (SynthParams* const synthParams, IPositionInfo* const positionInfo)
-        : lfo (synthParams->lfo(), positionInfo),
-          voices (FancySynthVoice::buildVoices (SynthEngine::getMaxNumVoices(), synthParams, &lfo)),
-          synth (synthParams, positionInfo, &lfo, voices)
+    JuceSynthEngineAdapter (SynthEngine& synth)
+        : synth (synth)
     {
     }
 
@@ -103,8 +101,6 @@ public:
     }
 
 private:
-    Lfo lfo;
-    std::vector<std::shared_ptr<ISynthVoice>> voices;
-    SynthEngine synth;
+    SynthEngine& synth;
 };
 } // namespace onsen

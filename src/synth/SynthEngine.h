@@ -56,6 +56,7 @@ public:
             voices[i]->setCurrentPlaybackSampleRate (sampleRate);
         chorus.setCurrentPlaybackSampleRate (sampleRate);
         hpf.setCurrentPlaybackSampleRate (sampleRate);
+        masterVolume.setCurrentPlaybackSampleRate (sampleRate);
     }
     void setSamplesPerBlock (int samplesPerBlock)
     {
@@ -212,6 +213,14 @@ public:
         isUnison = val;
         allNoteOff();
         setDetune (val);
+    }
+
+    //==============================================================================
+    // UI output
+
+    bool isClipping()
+    {
+        return masterVolume.isClipping();
     }
 
 private:

@@ -120,6 +120,7 @@ target_sources(Os251 PRIVATE
         synth/SynthVoice.cpp
         services/PresetManager.cpp
         views/PresetManagerView.cpp
+        views/ClippingIndicatorView.cpp
         )
 
 # Add an explicit include path here so that react-juce's EcmascriptEngine can find

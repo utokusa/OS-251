@@ -19,6 +19,7 @@ namespace colors
     constexpr unsigned int darkGray2 = 0xff2e2e2e;
     constexpr unsigned int almostBlack = 0xff181f22;
     constexpr unsigned int blue = 0xff42a2c8;
+    constexpr unsigned int red = 0xff8D2323;
 
     //==============================================================================
     constexpr unsigned int primaryColor = 0xff8BC6C6;

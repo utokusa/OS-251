@@ -27,7 +27,11 @@ Os251AudioProcessor::Os251AudioProcessor()
       synthParams(),
       positionInfo(),
       jucePositionInfo (&positionInfo),
-      synthEngine (&synthParams, &jucePositionInfo),
+      lfo (synthParams.lfo(), &jucePositionInfo),
+      voices (onsen::FancySynthVoice::buildVoices (onsen::SynthEngine::getMaxNumVoices(), &synthParams, &lfo)),
+      synth (&synthParams, &jucePositionInfo, &lfo, voices),
+      synthEngineAdapter (synth),
+      synthUi (synth),
       processorState (parameters),
       presetManager (
           &processorState,
@@ -350,7 +354,7 @@ void Os251AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    synthEngine.prepareToPlay (samplesPerBlock, sampleRate);
+    synthEngineAdapter.prepareToPlay (samplesPerBlock, sampleRate);
     synthParams.prepareToPlay (samplesPerBlock, sampleRate);
 }
 
@@ -358,7 +362,7 @@ void Os251AudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    synthEngine.releaseResources();
+    synthEngineAdapter.releaseResources();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -424,7 +428,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     }
 
     onsen::JuceAudioBuffer audioBuffer (&buffer);
-    synthEngine.renderNextBlock (&audioBuffer, midiMessages, 0, buffer.getNumSamples());
+    synthEngineAdapter.renderNextBlock (&audioBuffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================
@@ -437,7 +441,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
     // Look and feel
     juce::LookAndFeel::setDefaultLookAndFeel (&laf);
-    return new Os251AudioProcessorEditor (*this, parameters, presetManager);
+    return new Os251AudioProcessorEditor (*this, parameters, presetManager, &synthUi);
 }
 
 //==============================================================================
@@ -488,12 +492,12 @@ void Os251AudioProcessor::parameterChanged (const juce::String& parameterID, flo
     if (parameterID == "numVoices")
     {
         const int num = onsen::DspUtil::mapFlnumToInt (newValue, 0.0, 1.0, 1, onsen::SynthEngine::getMaxNumVoices());
-        synthEngine.changeNumberOfVoices (num);
+        synthEngineAdapter.changeNumberOfVoices (num);
     }
     else if (parameterID == "unisonOn")
     {
         bool unisonOn = newValue > 0.5;
-        synthEngine.changeIsUnison (unisonOn);
+        synthEngineAdapter.changeIsUnison (unisonOn);
     }
 }
 

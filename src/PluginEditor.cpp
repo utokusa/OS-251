@@ -9,14 +9,16 @@
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
 #include "services/TmpFileManager.h"
+#include "views/ClippingIndicatorView.h"
 #include "views/PresetManagerView.h"
 #include <iostream>
 
 //==============================================================================
-Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState&, onsen::PresetManager& _presetManager)
+Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState&, onsen::PresetManager& _presetManager, onsen::ISynthUi* _synthUi)
     : juce::AudioProcessorEditor (&proc),
       audioProcessor (proc),
       presetManager (_presetManager),
+      synthUi (_synthUi),
       engine (std::make_shared<reactjuce::EcmascriptEngine>()),
       appRoot (engine),
       harness (std::make_unique<reactjuce::AppHarness> (appRoot)),
@@ -152,6 +154,15 @@ void Os251AudioProcessorEditor::updateUi()
 
 void Os251AudioProcessorEditor::beforeBundleEvaluated()
 {
+    appRoot.registerViewType (
+        "ClippingIndicatorView",
+        [this]() -> reactjuce::ViewManager::ViewPair {
+            auto view = std::make_unique<onsen::ClippingIndicatorView> (synthUi);
+            auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
+
+            return { std::move (view), std::move (shadowView) };
+        });
+
     appRoot.registerViewType (
         "PresetManagerView",
         [this]() -> reactjuce::ViewManager::ViewPair {
