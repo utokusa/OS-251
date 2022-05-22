@@ -89,7 +89,7 @@ build-benchmark:
 	cmake --build $(BUILD_DIR) --config $(CONFIG) --target Os251_Benchmark
 
 .PHONY: benchmark
-benchmark: build-test-juce
+benchmark: build-benchmark
 	${BENCHMARK_BIN_PATH}
 
 #

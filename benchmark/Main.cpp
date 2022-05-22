@@ -47,7 +47,14 @@ constexpr int VEL_OFF = 0x00;
 class SynthEngineFixture : public benchmark::Fixture
 {
 public:
-    SynthEngineFixture() : synthParams(), positionInfo(), synthEngine (&synthParams, &positionInfo) {}
+    SynthEngineFixture() : synthParams(),
+                           positionInfo(),
+                           lfo (synthParams.lfo(), &positionInfo),
+                           voices (onsen::FancySynthVoice::buildVoices (onsen::SynthEngine::getMaxNumVoices(), &synthParams, &lfo)),
+                           synth (&synthParams, &positionInfo, &lfo, voices),
+                           synthEngineAdapter (synth)
+    {
+    }
     void SetUp (::benchmark::State& state) override
     {
         // Oscillator parameters
@@ -101,7 +108,7 @@ public:
         masterParams->setPortamentoPtr (&portamento);
         masterParams->setMasterVolumePtr (&masterVolume);
 
-        synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
+        synthEngineAdapter.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
 
         for (const auto& note : notes)
         {
@@ -116,7 +123,7 @@ public:
     void render()
     {
         onsen::JuceAudioBuffer audioBuffer (&outputAudio);
-        synthEngine.renderNextBlock (&audioBuffer, inputMidiBuffer, 0, NUM_SAMPLE);
+        synthEngineAdapter.renderNextBlock (&audioBuffer, inputMidiBuffer, 0, NUM_SAMPLE);
     }
 
     //==============================================================================
@@ -124,7 +131,10 @@ private:
     // Private member variables
     onsen::SynthParams synthParams;
     onsen::PositionInfoMock positionInfo;
-    onsen::JuceSynthEngineAdapter synthEngine;
+    onsen::Lfo lfo;
+    std::vector<std::shared_ptr<onsen::ISynthVoice>> voices;
+    onsen::SynthEngine synth;
+    onsen::JuceSynthEngineAdapter synthEngineAdapter;
 
     std::atomic<flnum> sinGain = { 0.5f };
     std::atomic<flnum> squareGain = { 0.5f };
