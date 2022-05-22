@@ -5,7 +5,6 @@ import {
   View
 } from 'react-juce'
 import { textColor } from './Colors'
-import { ClippingIndicator } from './ClippingIndicator'
 import { PresetManager } from './PresetManager'
 
 class Menu extends Component {
@@ -16,8 +15,7 @@ class Menu extends Component {
           <Text {...styles.logo_text}>
             OS-251
           </Text>
-          <ClippingIndicator {...styles.clipping_indicator}/>
-          <PresetManager {...styles.preset_manager}/>
+          <PresetManager {...styles.preset_manager} />
         </View>
       </View>
     )
@@ -42,17 +40,11 @@ const styles = {
     fontSize: 20.0,
     color: textColor
   },
-  clipping_indicator: {
-    height: 20,
-    width: 70,
-    marginTop: 1,
-    marginLeft: 190
-  },
   preset_manager: {
     height: 20,
     width: 360,
     marginTop: 1,
-    marginLeft: 40
+    marginLeft: 300
   }
 }
 

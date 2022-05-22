@@ -1,6 +1,7 @@
 import Menu from './Menu'
 import SliderModule from './SliderModule'
 import ButtonModule from './ButtonModule'
+import { ClippingIndicator } from './ClippingIndicator'
 
 import React, { Component, ReactNode } from 'react'
 
@@ -216,7 +217,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>AMP</Text></View>
-              <View {...styles.param_row_header_element}></View>
+              <ClippingIndicator {...styles.param_row_header_element} />
             </View>
             <View {...styles.param_row_body}>
               <SliderModule
