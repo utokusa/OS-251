@@ -466,7 +466,9 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName (parameters.state.getType()))
         {
-            parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+            auto newState = juce::ValueTree::fromXml (*xmlState);
+            onsen::PresetManager::fixPresetState (newState);
+            parameters.replaceState (newState);
             presetManager.requireToUpdatePresetNameOnUI();
         }
 }

@@ -199,14 +199,32 @@ bool PresetManager::validatePresetXml (juce::XmlElement const* const presetXml)
 
 void PresetManager::loadPresetState (juce::XmlElement const* const presetXml)
 {
-    processorState->replaceState (juce::ValueTree::fromXml (
-        *(presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName()))));
+    auto newState = juce::ValueTree::fromXml (
+        *(presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName())));
+
+    fixPresetState (newState);
+    processorState->replaceState (newState);
 }
 
 void PresetManager::requireToUpdatePresetNameOnUI()
 {
     if (onNeedToUpdateUI != nullptr)
         onNeedToUpdateUI();
+}
+
+// Fix preset given by user
+void PresetManager::fixPresetState (juce::ValueTree& state)
+{
+    // TODO: improve the implementation so that other parameters can be recovered
+    auto unisonOnParam = state.getChildWithProperty (juce::Identifier ("id"), "unisonOn");
+    if (! unisonOnParam.isValid())
+    {
+        juce::ValueTree unisonOnParam (juce::Identifier ("PARAM"));
+        unisonOnParam.setProperty (juce::Identifier ("id"), "unisonOn", nullptr);
+        constexpr float defaultParameterValue = 0.0;
+        unisonOnParam.setProperty (juce::Identifier ("value"), defaultParameterValue, nullptr);
+        state.appendChild (unisonOnParam, nullptr);
+    }
 }
 
 void PresetManager::loadDefaultFileSafely()

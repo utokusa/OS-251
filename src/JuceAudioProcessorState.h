@@ -30,6 +30,8 @@ public:
     void replaceState (const juce::ValueTree& newState) override
     {
         processorState.replaceState (newState);
+        std::cout << "after replace: " << processorState.state.toXmlString() << std::endl;
+        std::cout << "----------" << std::endl;
     }
 
     juce::ValueTree copyState() override

@@ -50,6 +50,7 @@ public:
     void loadPrev();
     void loadNext();
     void requireToUpdatePresetNameOnUI();
+    static void fixPresetState (juce::ValueTree& state);
 
     //==============================================================================
     std::function<void()> onNeedToUpdateUI;
