@@ -238,7 +238,7 @@ void PresetManager::loadDefaultFileSafely()
         restoreDefaultPreset();
 
         // Retry to load the default preset.
-        // To prevent infinate loop, I don't use recursive function call like
+        // To prevent infinite loop, I don't use recursive function call like
         // putting loadDefaultFileSafely() here.
         juce::XmlDocument newXmlDocument (getDefaultPresetFile());
         std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
