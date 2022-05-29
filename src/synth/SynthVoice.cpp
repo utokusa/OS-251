@@ -11,14 +11,9 @@
 namespace onsen
 {
 //==============================================================================
-bool FancySynthVoice::canPlaySound (juce::SynthesiserSound* sound)
-{
-    return dynamic_cast<FancySynthSound*> (sound) != nullptr;
-}
-
 void FancySynthVoice::setCurrentPlaybackSampleRate (const double newRate)
 {
-    juce::SynthesiserVoice::setCurrentPlaybackSampleRate (newRate);
+    sampleRate = newRate;
     envManager.setCurrentPlaybackSampleRate (newRate);
     filter.setCurrentPlaybackSampleRate (newRate);
     osc.setCurrentPlaybackSampleRate (newRate);
@@ -26,7 +21,7 @@ void FancySynthVoice::setCurrentPlaybackSampleRate (const double newRate)
     smoothedAngleDelta.prepareToPlay (newRate);
 }
 
-void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::SynthesiserSound*, int currentPitchWheelPosition)
+void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, int currentPitchWheelPosition)
 {
     setPitchBend (currentPitchWheelPosition);
 
@@ -34,8 +29,8 @@ void FancySynthVoice::startNote (int midiNoteNumber, flnum velocity, juce::Synth
     envManager.noteOn();
 
     flnum adjustOctave = 2.0;
-    flnum cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz (midiNoteNumber) / adjustOctave;
-    flnum cyclesPerSample = cyclesPerSecond / getSampleRate();
+    flnum cyclesPerSecond = midiNoteToHertz (midiNoteNumber) / adjustOctave;
+    flnum cyclesPerSample = cyclesPerSecond / sampleRate;
 
     angleDelta = cyclesPerSample * 2.0 * pi;
     if (isNoteOverlapped)
@@ -62,7 +57,7 @@ void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
     else
     {
         // Change note immediatelly
-        clearCurrentNote();
+        // clearCurrentNote(); // It's to notify synth engine when it becomes poly synth
         angleDelta = 0.0;
         isNoteOverlapped = isNoteOn;
     }
@@ -71,13 +66,15 @@ void FancySynthVoice::stopNote (float /*velocity*/, bool allowTailOff)
     isNoteOn = false;
 }
 
-void FancySynthVoice::pitchWheelMoved (int newPitchWheelValue)
+void FancySynthVoice::setPitchWheel (int newPitchWheelValue)
 {
     setPitchBend (newPitchWheelValue);
 }
 
-void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+void FancySynthVoice::renderNextBlock (IAudioBuffer* outputBuffer, int startSample, int numSamples)
 {
+    if (isVoiceOff())
+        return;
     int idx = startSample;
     if (angleDelta != 0.0)
     {
@@ -92,14 +89,17 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             currentSample = filter.process (currentSample, idx);
             currentSample *= smoothedAmp.get();
 
-            for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                outputBuffer.addSample (i, idx, currentSample);
+            for (auto i = outputBuffer->getNumChannels(); --i >= 0;)
+            {
+                flnum* bufferPtr = outputBuffer->getWritePointer (i);
+                bufferPtr[idx] += currentSample;
+            }
 
             flnum lfoPitchDepth = lfo->getPitchAmount();
             flnum lfoVal = lfo->getLevel (idx);
             smoothedAngleDelta.setSmoothness (p->getPortamento());
             smoothedAngleDelta.update();
-            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + lfoPitchDepth * lfoVal);
+            currentAngle += smoothedAngleDelta.get() * p->getFreqRatio() * (1.0 * pitchBend + detune + lfoPitchDepth * lfoVal);
             if (currentAngle > pi * 2.0)
             {
                 currentAngle -= pi * 2.0;
@@ -107,13 +107,12 @@ void FancySynthVoice::renderNextBlock (juce::AudioSampleBuffer& outputBuffer, in
             ++idx;
             envManager.update();
             smoothedAmp.update();
-            if (envManager.isEnvOff() && smoothedAmp.get() <= 0.001)
+            if (isVoiceOff())
             {
                 smoothedAmp.reset (0.0);
                 angleDelta = 0.0;
                 smoothedAngleDelta.reset (angleDelta);
                 osc.resetState();
-                clearCurrentNote();
                 break;
             }
         }
@@ -137,5 +136,15 @@ void FancySynthVoice::setPitchBend (int pitchWheelValue)
     {
         pitchBend = 1.0 / (1.0 + (p->getPitchBendWidthInFreqRatio() - 1.0) * (8192.0 - static_cast<flnum> (pitchWheelValue)) / 8192.0);
     }
+}
+
+flnum FancySynthVoice::midiNoteToHertz (int midiNote)
+{
+    return 440.0 * std::pow (2.0, (midiNote - 69) / 12.0);
+}
+
+bool FancySynthVoice::isVoiceOff()
+{
+    return envManager.isEnvOff() && smoothedAmp.get() <= 0.001;
 }
 } // namespace onsen

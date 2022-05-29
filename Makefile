@@ -12,6 +12,7 @@ ifeq ($(OS), Windows_NT)
 	STANDALONE_BIN_PATH=.\${BUILD_DIR}\src\Os251_artefacts\${CONFIG}\Standalone\OS-251.exe
 	TESTS_BIN_PATH:=.\${BUILD_DIR}\tests\${CONFIG}\Os251_Tests.exe
 	TESTS_USING_JUCE_BIN_PATH:=.\${BUILD_DIR}\tests/Os251_TestsUsingJuce_artefacts\${CONFIG}\Os251_TestsUsingJuce.exe
+	BENCHMARK_BIN_PATH:=.\${BUILD_DIR}\benchmark\Os251_Benchmark_artefacts\${CONFIG}\Os251_Benchmark.exe
 	RM_COMMAND=rmdir /s /q ${BUILD_DIR}
 	# Use default just because I don't know how to use Ninja in Windows 
 	GENERATOR_OPTION=
@@ -28,6 +29,7 @@ else
 	endif
 	TESTS_BIN_PATH:=./${BUILD_DIR}/tests/Os251_Tests
 	TESTS_USING_JUCE_BIN_PATH:=./${BUILD_DIR}/tests/Os251_TestsUsingJuce_artefacts/${CONFIG}/Os251_TestsUsingJuce
+	BENCHMARK_BIN_PATH:=./${BUILD_DIR}/benchmark/Os251_Benchmark_artefacts/${CONFIG}/Os251_Benchmark
 	RM_COMMAND=rm -rf ${BUILD_DIR}
 endif
 
@@ -78,6 +80,40 @@ test-juce: build-test-juce
 test-all: test test-juce
 	make test
 	make test-juce
+
+#
+# Benchmark
+#
+
+build-benchmark:
+	cmake --build $(BUILD_DIR) --config $(CONFIG) --target Os251_Benchmark
+
+.PHONY: benchmark
+benchmark: build-benchmark
+	${BENCHMARK_BIN_PATH}
+
+#
+# Lint
+#
+
+.PHONY: lint
+lint:
+	./lint.sh
+
+.PHONY: lint-fix
+lint-fix:
+	./lint.sh fix
+
+#
+# All check
+#
+.PHONY: check-all
+check-all:
+	make lint
+	make build-all
+	make test
+	make test-juce
+	make benchmark
 
 #
 # Clean up

@@ -15,7 +15,7 @@ class Menu extends Component {
           <Text {...styles.logo_text}>
             OS-251
           </Text>
-          <PresetManager {...styles.preset_manager}/>
+          <PresetManager {...styles.preset_manager} />
         </View>
       </View>
     )

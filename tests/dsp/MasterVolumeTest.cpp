@@ -119,4 +119,32 @@ TEST_F (MasterVolumeTest, RenderPartOfBuffer)
         }
     }
 }
+
+TEST_F (MasterVolumeTest, ClippingIndicator)
+{
+    masterParam.setMasterVolume (1.0);
+    double sampleRate = 100;
+    double secPerSample = 1.0 / sampleRate; // 0.01 sec per sample for sampleRate = 100
+    masterVolume.setCurrentPlaybackSampleRate (sampleRate);
+
+    static constexpr double maxClipIndicateTimeSec = 0.1; // It should be the same as the implementation
+
+    // Clip the first sample
+    int clippingSample = 0;
+    flnum clippingAudioAmp = 100.0;
+    for (int ch = 0; ch < numChannels; ch++)
+    {
+        audioBuffer.setSample (ch, clippingSample, clippingAudioAmp);
+    }
+    masterVolume.render (&audioBuffer, 0, 1);
+    EXPECT_TRUE (masterVolume.isClipping());
+
+    // Until maxClipIndicateTimeSec passes, isClipping is true
+    masterVolume.render (&audioBuffer, 1, 10);
+    EXPECT_TRUE (masterVolume.isClipping());
+
+    // After maxClipIndicateTimeSec sec, isClipping should become false again
+    masterVolume.render (&audioBuffer, 11, 1);
+    EXPECT_FALSE (masterVolume.isClipping());
+}
 } // namespace onsen

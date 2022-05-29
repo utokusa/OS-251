@@ -8,7 +8,8 @@
 #include <algorithm>
 #include <benchmark/benchmark.h>
 
-#include "../src/synth/SynthEngine.h"
+#include "../src/adapters/JuceAudioBuffer.h"
+#include "../src/adapters/JuceSynthEngineAdapter.h"
 #include "../tests/dsp/util/PositionInfoMock.h"
 
 //==============================================================================
@@ -46,7 +47,14 @@ constexpr int VEL_OFF = 0x00;
 class SynthEngineFixture : public benchmark::Fixture
 {
 public:
-    SynthEngineFixture() : synthParams(), positionInfo(), synthEngine (&synthParams, &positionInfo) {}
+    SynthEngineFixture() : synthParams(),
+                           positionInfo(),
+                           lfo (synthParams.lfo(), &positionInfo),
+                           voices (onsen::FancySynthVoice::buildVoices (onsen::SynthEngine::getMaxNumVoices(), &synthParams, &lfo)),
+                           synth (&synthParams, &positionInfo, &lfo, voices),
+                           synthEngineAdapter (synth)
+    {
+    }
     void SetUp (::benchmark::State& state) override
     {
         // Oscillator parameters
@@ -100,7 +108,7 @@ public:
         masterParams->setPortamentoPtr (&portamento);
         masterParams->setMasterVolumePtr (&masterVolume);
 
-        synthEngine.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
+        synthEngineAdapter.prepareToPlay (NUM_SAMPLE, SAMPLE_RATE);
 
         for (const auto& note : notes)
         {
@@ -114,7 +122,8 @@ public:
 
     void render()
     {
-        synthEngine.renderNextBlock (outputAudio, inputMidiBuffer, 0, NUM_SAMPLE);
+        onsen::JuceAudioBuffer audioBuffer (&outputAudio);
+        synthEngineAdapter.renderNextBlock (&audioBuffer, inputMidiBuffer, 0, NUM_SAMPLE);
     }
 
     //==============================================================================
@@ -122,7 +131,10 @@ private:
     // Private member variables
     onsen::SynthParams synthParams;
     onsen::PositionInfoMock positionInfo;
-    onsen::SynthEngine synthEngine;
+    onsen::Lfo lfo;
+    std::vector<std::shared_ptr<onsen::ISynthVoice>> voices;
+    onsen::SynthEngine synth;
+    onsen::JuceSynthEngineAdapter synthEngineAdapter;
 
     std::atomic<flnum> sinGain = { 0.5f };
     std::atomic<flnum> squareGain = { 0.5f };

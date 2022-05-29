@@ -33,7 +33,6 @@ public:
     static constexpr int dynamicRange = 48;
     static constexpr int maxOctaveTuneVal = 3; // unit is [octave]
     static constexpr int maxSemitoneTuneVal = 12; // unit is [semitone] or [st]
-    static constexpr int maxNumVoices = 24;
 
     //==============================================================================
     bool getEnvForAmpOn() const override

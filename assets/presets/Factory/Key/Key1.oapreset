@@ -2,7 +2,7 @@
 
 <Preset>
   <Gadget>OS-251</Gadget>
-  <SavedByVersion>1.1.0</SavedByVersion>
+  <SavedByVersion>1.1.1</SavedByVersion>
   <Version>0</Version>
   <State>
     <OS-251>
@@ -37,6 +37,7 @@
       <PARAM id="subSquareGain" value="0.0"/>
       <PARAM id="sustain" value="0.5049999952316284"/>
       <PARAM id="syncOn" value="0.0"/>
+      <PARAM id="unisonOn" value="0.0"/>
     </OS-251>
   </State>
 </Preset>

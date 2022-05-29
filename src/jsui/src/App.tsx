@@ -1,7 +1,7 @@
 import Menu from './Menu'
 import SliderModule from './SliderModule'
 import ButtonModule from './ButtonModule'
-import DummyModule from './DummyModule'
+import { ClippingIndicator } from './ClippingIndicator'
 
 import React, { Component, ReactNode } from 'react'
 
@@ -14,6 +14,7 @@ import { backgroundColor, backgroundColorDark, testColorSecondary, textColorDark
 interface IState {
   isEnvForAmpOn?: boolean
   isSyncOn?: boolean
+  isUnisonOn?: boolean
   isChorusOn?: boolean
 }
 
@@ -23,11 +24,13 @@ class App extends Component<{}, IState> {
 
     this._onEnvForAmpToggled = this._onEnvForAmpToggled.bind(this)
     this._onSyncToggled = this._onSyncToggled.bind(this)
+    this._onUnisonToggled = this._onUnisonToggled.bind(this)
     this._onChorusToggled = this._onChorusToggled.bind(this)
 
     this.state = {
       isEnvForAmpOn: true,
       isSyncOn: false,
+      isUnisonOn: false,
       isChorusOn: false
     }
   }
@@ -44,6 +47,12 @@ class App extends Component<{}, IState> {
     })
   }
 
+  _onUnisonToggled (toggled: boolean): void {
+    this.setState({
+      isUnisonOn: toggled
+    })
+  }
+
   _onChorusToggled (toggled: boolean): void {
     this.setState({
       isChorusOn: toggled
@@ -57,14 +66,14 @@ class App extends Component<{}, IState> {
         <View {...styles.content}>
           <View {...styles.param_row}>
             <View {...styles.param_row_header}>
-            <View {...styles.param_row_header_element}><Text {...styles.groupText}>OSC</Text></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
-            <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>OSC</Text></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}></View>
             </View>
             <View {...styles.param_row_body}>
               <SliderModule
@@ -154,7 +163,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
-              <View {...styles.param_row_header_element}></View>
+              <View {...styles.param_row_header_element}><Text {...styles.groupText}>UNISON</Text></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>HPF</Text></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>CHORUS</Text></View>
             </View>
@@ -181,7 +190,12 @@ class App extends Component<{}, IState> {
                 paramId="lfoDelay"
                 paramLabel="LFO Delay"
               />
-              <DummyModule />
+              <ButtonModule
+                paramId="unisonOn"
+                paramLabel="Unison"
+                onToggled={this._onUnisonToggled}
+                isOn={this.state.isUnisonOn}
+              />
               <SliderModule
                 paramId="hpfFreq"
                 paramLabel="HPF Freq"
@@ -203,7 +217,7 @@ class App extends Component<{}, IState> {
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}></View>
               <View {...styles.param_row_header_element}><Text {...styles.groupText}>AMP</Text></View>
-              <View {...styles.param_row_header_element}></View>
+              <ClippingIndicator {...styles.param_row_header_element} />
             </View>
             <View {...styles.param_row_body}>
               <SliderModule

@@ -24,7 +24,7 @@ class Os251AudioProcessorEditor : public juce::AudioProcessorEditor,
                                   public juce::Timer
 {
 public:
-    Os251AudioProcessorEditor (Os251AudioProcessor&, juce::AudioProcessorValueTreeState&, onsen::PresetManager&);
+    Os251AudioProcessorEditor (Os251AudioProcessor&, juce::AudioProcessorValueTreeState&, onsen::PresetManager&, onsen::ISynthUi* synthUi);
     ~Os251AudioProcessorEditor() override;
 
     //==============================================================================
@@ -44,6 +44,7 @@ private:
 
     Os251AudioProcessor& audioProcessor;
     onsen::PresetManager& presetManager;
+    onsen::ISynthUi* const synthUi;
 
     std::shared_ptr<reactjuce::EcmascriptEngine> engine;
     reactjuce::ReactApplicationRoot appRoot;
