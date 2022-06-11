@@ -7,6 +7,7 @@
 #include "../../src/services/PresetManager.h"
 #include "../../src/services/TmpFileManager.h"
 #include "AudioProcessorStateMock.h"
+#include "PresetsForTest.h"
 #include <JuceHeader.h>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -135,6 +136,86 @@ TEST_F (PresetManagerTest, LoadBrokenDefaultPreset)
     EXPECT_EQ (stateXml->getChildByAttribute ("id", "attack")->getAttributeValue (1), "0.0");
     EXPECT_EQ (stateXml->getChildByAttribute ("id", "resonance")->getAttributeValue (1), "0.3499999940395355");
     EXPECT_EQ (stateXml->getChildByAttribute ("id", "masterVolume")->getAttributeValue (1), "0.5");
+}
+
+// LoadPresetWithMissingParameter
+TEST_F (PresetManagerTest, LoadPresetWithMissingParameter)
+{
+    presetManager.scanPresets();
+    // preset data from version 1.1.0
+    auto file = presetManager.getUserPresetDir().getChildFile ("OldPresetVersion110.oapreset");
+    juce::FileOutputStream fs (file);
+    fs.writeString (oldPresetVersion110);
+    fs.flush();
+
+    presetManager.loadPreset (file);
+    // Current preset should be the default
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), file);
+    auto state = processorState.copyState();
+    auto stateXml = state.createXml();
+    EXPECT_TRUE (stateXml->hasTagName ("OS-251"));
+    // Check one of the preset's values
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "decay")->getAttributeValue (1 /*value*/), "0.3199999630451202");
+    // Check unison's value which is not included in preset for version 1.1.0
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "unisonOn")->getAttributeValue (1 /*value*/), "0.0");
+}
+
+TEST_F (PresetManagerTest, LoadPresetWithNonSupportedParameter)
+{
+    // preset data with an invalid param (Or future version's parameter)
+    presetManager.scanPresets();
+    auto file = presetManager.getUserPresetDir().getChildFile ("presetWithInvalidParam.oapreset");
+    juce::FileOutputStream fs (file);
+    fs.writeString (presetWithInvalidParam);
+    fs.flush();
+
+    presetManager.loadPreset (file);
+    // Current preset should be the default
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), file);
+    auto state = processorState.copyState();
+    auto stateXml = state.createXml();
+    EXPECT_TRUE (stateXml->hasTagName ("OS-251"));
+    // Check one of the preset's values
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "decay")->getAttributeValue (1 /*value*/), "0.3199999630451202");
+    // Check extra invalid parameter is not loaded
+    // "futureParam" is included in the preset file but not current version of OS-251
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "futureParam"), nullptr);
+}
+
+TEST_F (PresetManagerTest, LoadPresetWithInvalidParameterValue)
+{
+    presetManager.scanPresets();
+    auto file = presetManager.getUserPresetDir().getChildFile ("presetWithInvalidParamValue.oapreset");
+    juce::FileOutputStream fs (file);
+    fs.writeString (presetWithInvalidParamValue);
+    fs.flush();
+
+    presetManager.loadPreset (file);
+    // Current preset should be the default
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), file);
+    auto state = processorState.copyState();
+    auto stateXml = state.createXml();
+    EXPECT_TRUE (stateXml->hasTagName ("OS-251"));
+    // "decay" value is "100.0" in the input, so the default value should be used
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "decay")->getAttributeValue (1 /*value*/), "1.0");
+}
+
+TEST_F (PresetManagerTest, LoadPresetWithInvalidParameterValueType)
+{
+    presetManager.scanPresets();
+    auto file = presetManager.getUserPresetDir().getChildFile ("presetWithInvalidParamValueType.oapreset");
+    juce::FileOutputStream fs (file);
+    fs.writeString (presetWithInvalidParamValueType);
+    fs.flush();
+
+    presetManager.loadPreset (file);
+    // Current preset should be the default
+    EXPECT_EQ (presetManager.getCurrentPresetFile(), file);
+    auto state = processorState.copyState();
+    auto stateXml = state.createXml();
+    EXPECT_TRUE (stateXml->hasTagName ("OS-251"));
+    // "decay" value is "invalid" in the input, so the default value should be used
+    EXPECT_EQ (stateXml->getChildByAttribute ("id", "decay")->getAttributeValue (1 /*value*/), "1.0");
 }
 
 TEST_F (PresetManagerTest, LoadPrevAndNext)
