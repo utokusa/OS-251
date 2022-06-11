@@ -20,13 +20,13 @@ public:
     virtual juce::String getProcessorName() = 0;
     virtual juce::ValueTree copyState() = 0;
     virtual juce::ValueTree* getState() = 0;
-    virtual void setPreset (juce::String relativePresetPath) = 0;
+    virtual void setPresetName (juce::String relativePresetPath) = 0;
     virtual juce::String getPreset() = 0;
 };
 
 namespace AudioProcessorStateUtil
 {
-    inline void setPreset (juce::ValueTree& state, juce::String relativePresetPath)
+    inline void setPresetName (juce::ValueTree& state, juce::String relativePresetPath)
     {
         auto cp = state.getChildWithName (juce::Identifier ("CurrentPreset"));
 

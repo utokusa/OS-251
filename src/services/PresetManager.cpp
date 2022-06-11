@@ -83,8 +83,7 @@ void PresetManager::savePreset (juce::File file)
     }
 
     // TODO: Handle error causing while it's writing file
-    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-    processorState->setPreset (presetRelativePath);
+    setPresetNameToProcessorState (file);
 
     auto state = processorState->copyState();
     std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
@@ -124,8 +123,7 @@ void PresetManager::loadPreset (juce::File file)
     if (validatePresetXml (presetXml.get()))
     {
         loadPresetState (presetXml.get());
-        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-        processorState->setPreset (presetRelativePath);
+        setPresetNameToProcessorState (file);
         currentPresetFile = file;
     }
     else
@@ -290,16 +288,13 @@ void PresetManager::loadDefaultFileSafely()
         juce::XmlDocument newXmlDocument (getDefaultPresetFile());
         std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
         loadPresetState (newPresetXml.get());
-        // TODO: Remove duplication. The following 2 lines appear repeatedly.
-        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-        processorState->setPreset (presetRelativePath);
+        setPresetNameToProcessorState (file);
         currentPresetFile = file;
         return;
     }
 
     loadPresetState (presetXml.get());
-    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-    processorState->setPreset (presetRelativePath);
+    setPresetNameToProcessorState (file);
     currentPresetFile = file;
 }
 
@@ -411,4 +406,9 @@ bool PresetManager::isParamValueValid (const juce::var& value)
     return 0.0f - PARAM_EPSILON <= convertedValue && convertedValue <= 1.0f + PARAM_EPSILON;
 }
 
+void PresetManager::setPresetNameToProcessorState (const juce::File& presetFile)
+{
+    auto presetRelativePath = presetFile.getRelativePathFrom (getPresetDir());
+    processorState->setPresetName (presetRelativePath);
+}
 } // namespace onsen

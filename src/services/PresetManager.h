@@ -78,5 +78,6 @@ private:
     void restoreUserPresetFolder();
     void updateCurrentPresetBasedOnProcessorState();
     static bool isParamValueValid (const juce::var& value);
+    void setPresetNameToProcessorState (const juce::File& presetFile);
 };
 } // namespace onsen
