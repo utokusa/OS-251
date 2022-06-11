@@ -83,8 +83,7 @@ void PresetManager::savePreset (juce::File file)
     }
 
     // TODO: Handle error causing while it's writing file
-    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-    processorState->setPreset (presetRelativePath);
+    setPresetNameToProcessorState (file);
 
     auto state = processorState->copyState();
     std::unique_ptr<juce::XmlElement> stateXml (state.createXml());
@@ -124,8 +123,7 @@ void PresetManager::loadPreset (juce::File file)
     if (validatePresetXml (presetXml.get()))
     {
         loadPresetState (presetXml.get());
-        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-        processorState->setPreset (presetRelativePath);
+        setPresetNameToProcessorState (file);
         currentPresetFile = file;
     }
     else
@@ -202,7 +200,7 @@ void PresetManager::loadPresetState (juce::XmlElement const* const presetXml)
     auto newState = juce::ValueTree::fromXml (
         *(presetXml->getChildByName ("State")->getChildByName (processorState->getProcessorName())));
 
-    fixPresetState (newState);
+    newState = fixPresetState (newState);
     processorState->replaceState (newState);
 }
 
@@ -212,19 +210,66 @@ void PresetManager::requireToUpdatePresetNameOnUI()
         onNeedToUpdateUI();
 }
 
-// Fix preset given by user
-void PresetManager::fixPresetState (juce::ValueTree& state)
+// Fix preset given by user or by plugin host
+juce::ValueTree PresetManager::fixPresetState (juce::ValueTree& state)
 {
-    // TODO: improve the implementation so that other parameters can be recovered
-    auto unisonOnParam = state.getChildWithProperty (juce::Identifier ("id"), "unisonOn");
-    if (! unisonOnParam.isValid())
+    // It looks like fixing preset data, but actually create preset state based on
+    // the default preset state
+    std::unique_ptr<juce::XmlElement> defaultPresetXml = juce::parseXML (BinaryData::Default_oapreset);
+
+    // TODO: Fix hard-coded "OS-251". It was originally provided by `processorState->getProcessorName()` in other places.
+    auto fixedState = juce::ValueTree::fromXml (
+        *(defaultPresetXml->getChildByName ("State")->getChildByName ("OS-251")));
+
+    for (auto it = fixedState.begin(); it != fixedState.end(); ++it)
     {
-        juce::ValueTree unisonOnParam (juce::Identifier ("PARAM"));
-        unisonOnParam.setProperty (juce::Identifier ("id"), "unisonOn", nullptr);
-        constexpr float defaultParameterValue = 0.0;
-        unisonOnParam.setProperty (juce::Identifier ("value"), defaultParameterValue, nullptr);
-        state.appendChild (unisonOnParam, nullptr);
+        if ((*it).hasType (juce::Identifier ("PARAM")))
+        {
+            auto paramId = (*it)[juce::Identifier ("id")];
+            // Find the corresponding param in the input state `state` by `paramId`
+            auto paramFromInputState = state.getChildWithProperty (juce::Identifier ("id"), paramId);
+            // If input value is valid, overwrite the default value with it
+            if (
+                paramFromInputState.isValid()
+                && paramFromInputState.hasProperty (juce::Identifier ("value"))
+                && isParamValueValid (paramFromInputState[juce::Identifier ("value")]))
+            {
+                float newValue = static_cast<float> (paramFromInputState[juce::Identifier ("value")]);
+                if (0.0f <= newValue && newValue <= 1.0f)
+                {
+                    (*it).setProperty (juce::Identifier ("value"), paramFromInputState[juce::Identifier ("value")], nullptr);
+                }
+                else if (newValue < 0.0f)
+                {
+                    // Prepare for floating point error
+                    (*it).setProperty (juce::Identifier ("value"), juce::var ("0.0"), nullptr);
+                }
+                else
+                {
+                    // Prepare for floating point error
+                    (*it).setProperty (juce::Identifier ("value"), juce::var ("1.0"), nullptr);
+                }
+            }
+        }
     }
+
+    return fixedState;
+}
+
+juce::ValueTree PresetManager::fixProcessorState (juce::ValueTree& state)
+{
+    // It looks like fixing processor state data, but actually create a state based on
+    // the default preset state
+    auto fixedState = fixPresetState (state);
+
+    auto cp = state.getChildWithName (juce::Identifier ("CurrentPreset"));
+    if (cp.isValid() && cp.hasProperty (juce::Identifier ("path")))
+    {
+        constexpr int ADD_TO_LAST = -1;
+        fixedState.addChild (cp, ADD_TO_LAST, nullptr);
+    }
+
+    return fixedState;
 }
 
 void PresetManager::loadDefaultFileSafely()
@@ -238,21 +283,18 @@ void PresetManager::loadDefaultFileSafely()
         restoreDefaultPreset();
 
         // Retry to load the default preset.
-        // To prevent infinate loop, I don't use recursive function call like
+        // To prevent infinite loop, I don't use recursive function call like
         // putting loadDefaultFileSafely() here.
         juce::XmlDocument newXmlDocument (getDefaultPresetFile());
         std::unique_ptr<juce::XmlElement> newPresetXml (xmlDocument.getDocumentElement());
         loadPresetState (newPresetXml.get());
-        // TODO: Remove duplication. The following 2 lines appear repeatedly.
-        auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-        processorState->setPreset (presetRelativePath);
+        setPresetNameToProcessorState (file);
         currentPresetFile = file;
         return;
     }
 
     loadPresetState (presetXml.get());
-    auto presetRelativePath = file.getRelativePathFrom (getPresetDir());
-    processorState->setPreset (presetRelativePath);
+    setPresetNameToProcessorState (file);
     currentPresetFile = file;
 }
 
@@ -340,5 +382,33 @@ void PresetManager::updateCurrentPresetBasedOnProcessorState()
     {
         currentPresetFile = "";
     }
+}
+
+bool PresetManager::isParamValueValid (const juce::var& value)
+{
+    // This cast doesn't throw and returns 0 for invalid values
+    if (! value.isString())
+    {
+        return false;
+    }
+
+    // static_cast<float> (value) doesn't throw error and just returns 0 even if value is not a string
+    // that represents a floating-point number.
+    // So we need to have an extra check
+    float x;
+    bool isFloatString = static_cast<bool> (sscanf (value.toString().toRawUTF8(), "%f", &x));
+    if (! isFloatString)
+    {
+        return false;
+    }
+
+    float convertedValue = static_cast<float> (value);
+    return 0.0f - PARAM_EPSILON <= convertedValue && convertedValue <= 1.0f + PARAM_EPSILON;
+}
+
+void PresetManager::setPresetNameToProcessorState (const juce::File& presetFile)
+{
+    auto presetRelativePath = presetFile.getRelativePathFrom (getPresetDir());
+    processorState->setPresetName (presetRelativePath);
 }
 } // namespace onsen

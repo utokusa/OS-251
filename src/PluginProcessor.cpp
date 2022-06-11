@@ -68,9 +68,9 @@ Os251AudioProcessor::Os251AudioProcessor()
     auto valueToOnOff = [] (float value) { return value > 0.5 ? juce::String ("ON") : juce::String ("OFF"); };
 
     // Master octave tuning
-    auto pitchBendWidtValToStr = [] (float value) { return juce::String (
-                                                        onsen::DspUtil::mapFlnumToInt (
-                                                            value, 0.0, 1.0, 0, onsen::MasterParams::maxPitchBendWidth)); };
+    auto pitchBendWidthValToStr = [] (float value) { return juce::String (
+                                                         onsen::DspUtil::mapFlnumToInt (
+                                                             value, 0.0, 1.0, 0, onsen::MasterParams::maxPitchBendWidth)); };
     auto masterOctaveTuningValToStr = [] (float value) { return juce::String (
                                                              onsen::DspUtil::mapFlnumToInt (value, 0.0, 1.0, -onsen::MasterParams::maxOctaveTuneVal, onsen::MasterParams::maxOctaveTuneVal)); };
     auto masterSemitoneTuningValToStr = [] (float value) { return juce::String (
@@ -228,7 +228,7 @@ Os251AudioProcessor::Os251AudioProcessor()
     parameters.addParameterListener ("envForAmpOn", this);
 
     // Pitch bend width
-    parameters.createAndAddParameter (std::make_unique<Parameter> ("pitchBendWidth", "Pitch Bend", "", nrange, 0.5, pitchBendWidtValToStr, nullptr, true));
+    parameters.createAndAddParameter (std::make_unique<Parameter> ("pitchBendWidth", "Pitch Bend", "", nrange, 0.5, pitchBendWidthValToStr, nullptr, true));
     masterParams->setPitchBendWidthPtr (parameters.getRawParameterValue (("pitchBendWidth")));
     parameters.addParameterListener ("pitchBendWidth", this);
 
@@ -391,7 +391,7 @@ bool Os251AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 
 void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    // Host inforrmation
+    // Host information
     auto playHead = getPlayHead();
     if (playHead)
     {
@@ -467,7 +467,7 @@ void Os251AudioProcessor::setStateInformation (const void* data, int sizeInBytes
         if (xmlState->hasTagName (parameters.state.getType()))
         {
             auto newState = juce::ValueTree::fromXml (*xmlState);
-            onsen::PresetManager::fixPresetState (newState);
+            newState = onsen::PresetManager::fixProcessorState (newState);
             parameters.replaceState (newState);
             presetManager.requireToUpdatePresetNameOnUI();
         }

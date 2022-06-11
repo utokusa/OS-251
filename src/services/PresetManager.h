@@ -50,7 +50,8 @@ public:
     void loadPrev();
     void loadNext();
     void requireToUpdatePresetNameOnUI();
-    static void fixPresetState (juce::ValueTree& state);
+    static juce::ValueTree fixPresetState (juce::ValueTree& state);
+    static juce::ValueTree fixProcessorState (juce::ValueTree& state);
 
     //==============================================================================
     std::function<void()> onNeedToUpdateUI;
@@ -62,6 +63,7 @@ private:
     juce::Array<juce::File> userPresetFiles;
     juce::Array<juce::File> presetFiles;
     juce::File currentPresetFile;
+    static constexpr float PARAM_EPSILON = 0.0001;
 
     //==============================================================================
     bool validatePresetFile (juce::File file);
@@ -75,5 +77,7 @@ private:
     void restoreFactoryPresets();
     void restoreUserPresetFolder();
     void updateCurrentPresetBasedOnProcessorState();
+    static bool isParamValueValid (const juce::var& value);
+    void setPresetNameToProcessorState (const juce::File& presetFile);
 };
 } // namespace onsen

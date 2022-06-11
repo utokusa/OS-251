@@ -44,9 +44,9 @@ public:
         return &processorState.state;
     }
 
-    void setPreset (juce::String relativePresetPath) override
+    void setPresetName (juce::String relativePresetPath) override
     {
-        AudioProcessorStateUtil::setPreset (processorState.state, relativePresetPath);
+        AudioProcessorStateUtil::setPresetName (processorState.state, relativePresetPath);
     }
 
     /*
