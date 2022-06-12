@@ -266,7 +266,11 @@ juce::ValueTree PresetManager::fixProcessorState (juce::ValueTree& state)
     if (cp.isValid() && cp.hasProperty (juce::Identifier ("path")))
     {
         constexpr int ADD_TO_LAST = -1;
-        fixedState.addChild (cp, ADD_TO_LAST, nullptr);
+        // Need to create a copy for `cp` because we don't want to
+        // remove `cp` from `state`.
+        // If you pass `cp` to addChild(), you would get
+        // an assertion error `jassert(cp.getParanet() == nullptr)`.
+        fixedState.addChild (cp.createCopy(), ADD_TO_LAST, nullptr);
     }
 
     return fixedState;
