@@ -259,16 +259,20 @@ Os251AudioProcessor::Os251AudioProcessor()
 
     // ---
 
-    // Parameters used with callback
+    // Parameters that are not kept in `synthParams`.
+    // They are changed through functions like `SynthEngineAdapter::changeNumberOfVoices()` or
+    // `SynthEngineAdapter::changeIsUnison()`.
 
     // Number of voices
     // TODO: We need a smarter way to set the initial value.
     constexpr float defaultFlnumNumVoices = 0.285; // The number will be converted to 8. OS-251 has 8 voices as default.
     parameters.createAndAddParameter (std::make_unique<Parameter> ("numVoices", "Num Voices", "", nrange, defaultFlnumNumVoices, numVoicesToStr, nullptr, true));
     parameters.addParameterListener ("numVoices", this);
+    synthEngineAdapter.changeNumberOfVoices (8); // set default value
 
     parameters.createAndAddParameter (std::make_unique<Parameter> ("unisonOn", "Unison", "", nrange, 0.0, valueToOnOff, nullptr, true));
     parameters.addParameterListener ("unisonOn", this);
+    synthEngineAdapter.changeIsUnison (false); // set default value
 
     parameters.state = juce::ValueTree (juce::Identifier ("OS-251"));
 
