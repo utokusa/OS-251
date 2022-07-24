@@ -82,14 +82,14 @@ public:
     }
     flnum getPortamento() const override
     {
-        // Whwn knob value is 0, portamento is OFF
+        // When knob value is 0, portamento is OFF
         if (portamentoVal == 0.0)
         {
             return 0.0;
         }
 
-        constexpr flnum minPortament = 0.999;
-        return minPortament + portamentoVal * (1.0 - minPortament);
+        constexpr flnum minPortamento = 0.999;
+        return minPortamento + portamentoVal * (1.0 - minPortamento);
     }
     void setPortamentoPtr (const std::atomic<flnum>* _portamento)
     {
