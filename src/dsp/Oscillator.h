@@ -37,16 +37,22 @@ public:
         const flnum secondAngleRad = shapePhase (angleRad * 2, shapeModulationAmount);
 
         flnum currentSample = 0.0;
-        if (const auto gain = p->getSinGain() > 0.0)
-            currentSample += sinWave (secondAngleRad) * gain;
-        if (const auto gain = p->getSquareGain() > 0.0)
-            currentSample += squareWave (secondAngleRad) * gain;
-        if (const auto gain = p->getSawGain() > 0.0)
-            currentSample += sawWave (secondAngleRad) * gain;
-        if (const auto gain = p->getSubSquareGain() > 0.0)
-            currentSample += squareWave (firstAngleRad) * gain;
-        if (const auto gain = p->getNoiseGain() > 0.0)
-            currentSample += noiseWave() * gain;
+        const auto sinGain = p->getSinGain();
+        const auto squareGain = p->getSquareGain();
+        const auto sawGain = p->getSawGain();
+        const auto subSquareGain = p->getSubSquareGain();
+        const auto noiseGain = p->getNoiseGain();
+
+        if (sinGain > 0.0)
+            currentSample += sinWave (secondAngleRad) * sinGain;
+        if (squareGain > 0.0)
+            currentSample += squareWave (secondAngleRad) * squareGain;
+        if (sawGain > 0.0)
+            currentSample += sawWave (secondAngleRad) * sawGain;
+        if (subSquareGain > 0.0)
+            currentSample += squareWave (firstAngleRad) * subSquareGain;
+        if (noiseGain > 0.0)
+            currentSample += noiseWave() * noiseGain;
 
         return currentSample;
     }
