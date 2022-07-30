@@ -9,7 +9,9 @@
 #pragma once
 
 #include "../dsp/DspCommon.h"
+#include "ParamCommon.h"
 #include <atomic>
+#include <vector>
 
 namespace onsen
 {
@@ -28,18 +30,28 @@ public:
     {
         return chorusOnVal > 0.5;
     }
-    void setChorusOnPtr (const std::atomic<flnum>* _chorusOn)
+
+    void setChorusOnPtr (std::atomic<flnum>* _chorusOn)
     {
         chorusOn = _chorusOn;
         chorusOnVal = *chorusOn;
     }
+
     void parameterChanged()
     {
         chorusOnVal = *chorusOn;
     }
 
+    std::vector<ParamMetaInfo> getParamMetaList()
+    {
+        constexpr int numDecimal = 4;
+        return {
+            { "chorusOn", "Chorus", 0.0, &chorusOn, ParamUtil::valueToOnOffString }
+        };
+    }
+
 private:
-    const std::atomic<flnum>* chorusOn {};
+    std::atomic<flnum>* chorusOn {};
     flnum chorusOnVal = 0.0;
 };
 } // namespace onsen

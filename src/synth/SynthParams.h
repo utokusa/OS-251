@@ -57,6 +57,45 @@ public:
     {
     }
 
+    std::vector<ParamMetaInfo> getParamMetaList()
+    {
+        std::vector<ParamMetaInfo> ret;
+
+        auto envelopePML = envelopeParams.getParamMetaList();
+        ret.insert (ret.end(), envelopePML.begin(), envelopePML.end());
+
+        auto lfoPML = lfoParams.getParamMetaList();
+        ret.insert (ret.end(), lfoPML.begin(), lfoPML.end());
+
+        auto filterPML = filterParams.getParamMetaList();
+        ret.insert (ret.end(), filterPML.begin(), filterPML.end());
+
+        auto oscillatorPML = oscillatorParams.getParamMetaList();
+        ret.insert (ret.end(), oscillatorPML.begin(), oscillatorPML.end());
+
+        auto chorusPML = chorusParams.getParamMetaList();
+        ret.insert (ret.end(), chorusPML.begin(), chorusPML.end());
+
+        auto hpfPML = hpfParams.getParamMetaList();
+        ret.insert (ret.end(), hpfPML.begin(), hpfPML.end());
+
+        auto masterPML = masterParams.getParamMetaList();
+        ret.insert (ret.end(), masterPML.begin(), masterPML.end());
+
+        return ret;
+    }
+
+    void parameterChanged()
+    {
+        envelopeParams.parameterChanged();
+        lfoParams.parameterChanged();
+        filterParams.parameterChanged();
+        oscillatorParams.parameterChanged();
+        chorusParams.parameterChanged();
+        hpfParams.parameterChanged();
+        masterParams.parameterChanged();
+    }
+
 private:
     // plugin parameters
     EnvelopeParams envelopeParams;

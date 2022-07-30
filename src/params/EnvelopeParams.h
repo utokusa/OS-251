@@ -9,7 +9,9 @@
 #pragma once
 
 #include "../dsp/DspCommon.h"
+#include "ParamCommon.h"
 #include <atomic>
+#include <vector>
 
 namespace onsen
 {
@@ -33,42 +35,50 @@ public:
         constexpr flnum maxValSec = 2.0;
         return minValSec + attackTimeCurve (attackVal) * (maxValSec - minValSec);
     }
-    void setAttackPtr (const std::atomic<flnum>* _attack)
+
+    void setAttackPtr (std::atomic<flnum>* _attack)
     {
         attack = _attack;
         attackVal = *attack;
     }
+
     flnum getDecay() const override
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 0.5;
         return minValSec + decayTimeCurve (decayVal) * (maxValSec - minValSec);
     }
-    void setDecayPtr (const std::atomic<flnum>* _decay)
+
+    void setDecayPtr (std::atomic<flnum>* _decay)
     {
         decay = _decay;
         decayVal = *decay;
     }
+
     flnum getSustain() const override
     {
         return sustainVal;
     }
-    void setSustainPtr (const std::atomic<flnum>* _sustain)
+
+    void setSustainPtr (std::atomic<flnum>* _sustain)
     {
         sustain = _sustain;
         sustainVal = *sustain;
     }
+
     flnum getRelease() const override
     {
         constexpr flnum minValSec = 0.004;
         constexpr flnum maxValSec = 2.0;
         return minValSec + releaseTimeCurve (releaseVal) * (maxValSec - minValSec);
     }
-    void setReleasePtr (const std::atomic<flnum>* _release)
+
+    void setReleasePtr (std::atomic<flnum>* _release)
     {
         release = _release;
         releaseVal = *release;
     }
+
     void parameterChanged()
     {
         attackVal = *attack;
@@ -77,11 +87,22 @@ public:
         releaseVal = *release;
     }
 
+    std::vector<ParamMetaInfo> getParamMetaList()
+    {
+        constexpr int numDecimal = 4;
+        return {
+            { "attack", "Attack", 0.0, &attack, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "decay", "Decay", 1.0, &decay, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "sustain", "Sustain", 1.0, &sustain, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "release", "Release", 0.5, &release, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } }
+        };
+    }
+
 private:
-    const std::atomic<flnum>* attack {};
-    const std::atomic<flnum>* decay {};
-    const std::atomic<flnum>* sustain {};
-    const std::atomic<flnum>* release {};
+    std::atomic<flnum>* attack {};
+    std::atomic<flnum>* decay {};
+    std::atomic<flnum>* sustain {};
+    std::atomic<flnum>* release {};
 
     flnum attackVal = 0.0;
     flnum decayVal = 0.0;
