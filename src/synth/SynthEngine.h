@@ -188,7 +188,7 @@ public:
 
     static constexpr int getMaxNumVoices()
     {
-        return MAX_NUM_VOICES;
+        return OscillatorConfig::MAX_NUM_VOICES;
     }
 
     void setNumberOfVoices (int num)
@@ -237,7 +237,6 @@ private:
     Hpf hpf;
     Chorus chorus;
     MasterVolume masterVolume;
-    static constexpr int MAX_NUM_VOICES = 24;
     static constexpr int INIT_PITCHBEND_VALUE = 8192; // no pitchbend
     //  --- for voicesToNote --->
     static constexpr int INIT_NOTE_NUMBER = -1;
