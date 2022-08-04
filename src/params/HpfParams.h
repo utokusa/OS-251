@@ -9,7 +9,9 @@
 #pragma once
 
 #include "../dsp/DspCommon.h"
+#include "ParamCommon.h"
 #include <atomic>
+#include <vector>
 
 namespace onsen
 {
@@ -28,11 +30,13 @@ public:
     {
         return lowestFreqVal() * pow (freqBaseNumber(), frequencyVal);
     }
-    void setFrequencyPtr (const std::atomic<flnum>* _frequency)
+
+    void setFrequencyPtr (std::atomic<flnum>* _frequency)
     {
         frequency = _frequency;
         frequencyVal = *frequency;
     }
+
     void parameterChanged()
     {
         frequencyVal = *frequency;
@@ -50,8 +54,15 @@ public:
         return 1000.0;
     }
 
+    std::vector<ParamMetaInfo> getParamMetaList()
+    {
+        return {
+            { "hpfFreq", "HPF Freq", 0.0, &frequency, [] (float value) { return ParamUtil::valueToFreqString (value, lowestFreqVal(), freqBaseNumber()); } },
+        };
+    }
+
 private:
-    const std::atomic<flnum>* frequency {};
+    std::atomic<flnum>* frequency {};
 
     flnum frequencyVal = 0.0;
 };

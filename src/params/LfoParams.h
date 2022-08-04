@@ -9,7 +9,9 @@
 #pragma once
 
 #include "../dsp/DspCommon.h"
+#include "ParamCommon.h"
 #include <atomic>
+#include <vector>
 
 namespace onsen
 {
@@ -36,11 +38,13 @@ public:
     {
         return lowestRateVal() * pow (rateBaseNumber(), rateVal);
     }
-    void setRatePtr (const std::atomic<flnum>* _rate)
+
+    void setRatePtr (std::atomic<flnum>* _rate)
     {
         rate = _rate;
         rateVal = *rate;
     }
+
     // Returns syncd LFO rate in [quarter note].
     flnum getRateSync() const override
     {
@@ -49,69 +53,83 @@ public:
                    DspUtil::mapFlnumToInt (rateSyncVal, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal(), true))
                / rateSyncDenominatorVal();
     }
-    void setRateSyncPtr (const std::atomic<flnum>* _rateSync)
+
+    void setRateSyncPtr (std::atomic<flnum>* _rateSync)
     {
         rateSync = _rateSync;
         rateSyncVal = *rateSync;
     }
+
     flnum getPhase() const override
     {
         constexpr flnum minVal = 0.0;
         constexpr flnum maxVal = 2 * pi;
         return minVal + (phaseVal) * (maxVal - minVal);
     }
-    void setPhasePtr (const std::atomic<flnum>* _phase)
+
+    void setPhasePtr (std::atomic<flnum>* _phase)
     {
         phase = _phase;
         phaseVal = *phase;
     }
+
     flnum getDelay() const override
     {
         constexpr flnum minVal = 0.995;
         constexpr flnum maxVal = 0.99999;
         return minVal + (delayVal) * (maxVal - minVal);
     }
-    void setDelayPtr (const std::atomic<flnum>* _rate)
+
+    void setDelayPtr (std::atomic<flnum>* _rate)
     {
         delay = _rate;
         delayVal = *delay;
     }
+
     bool getSyncOn() const override
     {
         return syncOnVal > 0.5;
     }
-    void setSyncOnPtr (const std::atomic<flnum>* _syncOn)
+
+    void setSyncOnPtr (std::atomic<flnum>* _syncOn)
     {
         syncOn = _syncOn;
         syncOnVal = *syncOn;
     }
+
     flnum getPitch() const override
     {
         return ZeroOneToZeroOne::square (pitchVal);
     }
-    void setPitchPtr (const std::atomic<flnum>* _pitch)
+
+    void setPitchPtr (std::atomic<flnum>* _pitch)
     {
         pitch = _pitch;
         pitchVal = *pitch;
     }
+
     flnum getFilterFreq() const override
     {
         return filterFreqVal;
     }
-    void setFilterFreqPtr (const std::atomic<flnum>* _filterFreq)
+
+    void setFilterFreqPtr (std::atomic<flnum>* _filterFreq)
     {
         filterFreq = _filterFreq;
         filterFreqVal = *filterFreq;
     }
+
     flnum getShape() const override
     {
         return shapeVal;
     }
-    void setShapePtr (const std::atomic<flnum>* _shape)
+
+    void setShapePtr (std::atomic<flnum>* _shape)
     {
         shape = _shape;
         shapeVal = *shape;
     }
+
     void parameterChanged()
     {
         rateVal = *rate;
@@ -150,20 +168,38 @@ public:
         return 48;
     }
 
+    std::vector<ParamMetaInfo> getParamMetaList()
+    {
+        constexpr int numDecimal = 4;
+        return {
+            { "rate", "LFO Rate", 0.0, &rate, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "rateSync", "Synced LFO Rate", 0.0, &rateSync, [] (float value) { return std::to_string (
+                                                                                           DspUtil::mapFlnumToInt (value, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal(), true))
+                                                                                       + "/"
+                                                                                       + std::to_string (rateSyncDenominatorVal()); } },
+            { "lfoPhase", "LFO Phase", 0.0, &phase, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "lfoDelay", "LFO Delay", 0.5, &delay, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "syncOn", "Sync", 0.0, &syncOn, ParamUtil::valueToOnOffString },
+            { "lfoPitch", "LFO -> Pitch", 0.0, &pitch, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "lfoFilterFreq", "LFO -> Freq", 0.0, &filterFreq, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "lfoShape", "LFO -> Shape", 0.0, &shape, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+        };
+    }
+
 private:
     // LFO rate
-    const std::atomic<flnum>* rate {};
-    const std::atomic<flnum>* rateSync {};
+    std::atomic<flnum>* rate {};
+    std::atomic<flnum>* rateSync {};
     // LFO phase
-    const std::atomic<flnum>* phase {};
+    std::atomic<flnum>* phase {};
     // LFO delay
-    const std::atomic<flnum>* delay {};
+    std::atomic<flnum>* delay {};
     // Sync On
-    const std::atomic<flnum>* syncOn {};
+    std::atomic<flnum>* syncOn {};
     // Amount of modulation
-    const std::atomic<flnum>* pitch {};
-    const std::atomic<flnum>* filterFreq {};
-    const std::atomic<flnum>* shape {};
+    std::atomic<flnum>* pitch {};
+    std::atomic<flnum>* filterFreq {};
+    std::atomic<flnum>* shape {};
 
     flnum rateVal = 0.0;
     flnum rateSyncVal = 0.0;
