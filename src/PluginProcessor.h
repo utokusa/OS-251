@@ -61,8 +61,8 @@ public:
 
 private:
     //==============================================================================
-    juce::AudioProcessorValueTreeState parameters;
     onsen::SynthParams synthParams;
+    juce::AudioProcessorValueTreeState apvts;
     juce::AudioPlayHead::CurrentPositionInfo positionInfo;
     onsen::JucePositionInfo jucePositionInfo;
     onsen::Lfo lfo;
@@ -76,6 +76,7 @@ private:
 
     //==============================================================================
     void parameterChanged (const juce::String& parameterID, float newValue) override;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessor)
 };
