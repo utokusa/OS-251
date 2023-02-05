@@ -26,7 +26,7 @@ protected:
     static constexpr double sampleRate = 44100;
     static constexpr flnum samplesPerBlock = 512;
     SynthParamsMockValues synthParamsMockValues {};
-    std::unique_ptr<SynthParams> synthParams { synthParamsMockValues.buildSynthParams() };
+    std::shared_ptr<SynthParams> synthParams { synthParamsMockValues.getSynthParams() };
     PositionInfoMock positionInfo {};
     Lfo lfo { synthParams->lfo(), &positionInfo };
     std::vector<std::string> logs;
