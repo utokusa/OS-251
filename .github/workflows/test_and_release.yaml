@@ -33,7 +33,7 @@ jobs:
           }
         - {
             name: "macOS Latest Clang",
-            os: macos-latest,
+            os: macos-12,
             cc: "clang", cxx: "clang++"
           }
 
