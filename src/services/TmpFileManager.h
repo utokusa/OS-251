@@ -47,7 +47,7 @@ namespace TmpFileManager
         return tmpFile;
     }
 
-    inline void cleanUpTmpDir (const juce::File& tmpDir)
+    [[maybe_unused]] inline void cleanUpTmpDir (const juce::File& tmpDir)
     {
         // Clean up the tmp folder
         //
@@ -57,7 +57,7 @@ namespace TmpFileManager
 
         // Currently OS-251 use the tmp folder only for the js bundle.
         // The file name is something like "temp_6e09bcc5.main.js".
-        auto files = tmpDir.findChildFiles (juce::File::TypesOfFileToFind::findFiles, false, "*.js");
+        auto files = tmpDir.findChildFiles (juce::File::TypesOfFileToFind::findFiles, false, "*");
         for (auto f : files)
         {
             long long createdAt = f.getCreationTime().toMilliseconds();

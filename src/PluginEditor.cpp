@@ -89,26 +89,6 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 }
 
 //==============================================================================
-juce::File Os251AudioProcessorEditor::getBundle()
-{
-    const juce::File dir = onsen::TmpFileManager::getTmpDir();
-    const juce::String jsFileName = "main.js";
-    juce::File bundle = onsen::TmpFileManager::createTempFile (dir, jsFileName);
-    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted on the caller
-
-    {
-        dir.createDirectory();
-        juce::FileOutputStream fs = juce::FileOutputStream (bundle);
-        fs.write (BinaryData::main_js, BinaryData::main_jsSize);
-        fs.flush();
-    }
-
-#if JUCE_DEBUG
-    juce::File sourceDir = juce::File (OS251_SOURCE_DIR);
-    bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
-#endif
-    return bundle;
-}
 
 void Os251AudioProcessorEditor::setUpParameters()
 {

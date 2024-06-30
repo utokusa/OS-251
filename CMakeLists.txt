@@ -42,9 +42,6 @@ FetchContent_MakeAvailable(
 # Enable JUCE. Do not use find_package to prevent from mix up with one globally installed.
 add_subdirectory(lib/JUCE)
 
-# Adding any custom modules you might have:
-juce_add_module(lib/react-juce/react_juce)
-
 enable_testing()
 configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR})
 
