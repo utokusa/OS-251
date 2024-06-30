@@ -82,7 +82,7 @@ void FancySynthVoice::renderNextBlock (IAudioBuffer* outputBuffer, int startSamp
         {
             envManager.switchTarget (p->getEnvForAmpOn());
             flnum currentSample = osc.oscillatorVal (
-                currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount());
+                currentAngle, lfo->getLevel (idx) * lfo->getShapeAmount(), smoothedAngleDelta.get());
             flnum rawAmp = level * envManager.getLevel();
             smoothedAmp.set (rawAmp);
             smoothedAmp.update();

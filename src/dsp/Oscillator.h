@@ -31,10 +31,12 @@ public:
 
     // Return oscillator voltage value.
     // Angle is in radian.
-    flnum oscillatorVal (flnum angleRad, flnum shapeModulationAmount)
+    flnum oscillatorVal (flnum angleRad, flnum shapeModulationAmount, flnum angleRadInc)
     {
         const flnum firstAngleRad = angleRad;
+        const flnum firstAngleRadInc = angleRadInc;
         const flnum secondAngleRad = shapePhase (angleRad * 2, shapeModulationAmount);
+        const flnum secondAngleRadInc = angleRadInc * 2.0;
 
         flnum currentSample = 0.0;
         const auto sinGain = p->getSinGain();
@@ -46,11 +48,11 @@ public:
         if (sinGain > 0.0)
             currentSample += sinWave (secondAngleRad) * sinGain;
         if (squareGain > 0.0)
-            currentSample += squareWave (secondAngleRad) * squareGain;
+            currentSample += squareWave (secondAngleRad, secondAngleRadInc) * squareGain;
         if (sawGain > 0.0)
-            currentSample += sawWave (secondAngleRad) * sawGain;
+            currentSample += sawWave (secondAngleRad, secondAngleRadInc) * sawGain;
         if (subSquareGain > 0.0)
-            currentSample += squareWave (firstAngleRad) * subSquareGain;
+            currentSample += squareWave (firstAngleRad, firstAngleRadInc) * subSquareGain;
         if (noiseGain > 0.0)
             currentSample += noiseWave() * noiseGain;
 
@@ -68,6 +70,7 @@ public:
     }
 
 private:
+    static constexpr bool ANTI_ALIAS = false;
     IOscillatorParams* const p;
     std::random_device seedGen;
     std::default_random_engine randEngine;
@@ -83,6 +86,26 @@ private:
         return angle;
     }
 
+    flnum polyBlep (flnum angle, flnum angleInc)
+    {
+        flnum dt = angleInc / (2.0 * pi);
+        flnum t = angle / (2.0 * pi);
+        if (t < dt)
+        {
+            t /= dt;
+            return -t * t + 2.0 * t - 1.0;
+        }
+        else if (t > 1.0 - dt)
+        {
+            t = (t - 1.0) / dt;
+            return t * t + 2.0 * t + 1.0;
+        }
+        else
+        {
+            return 0.0;
+        }
+    }
+
     // TODO: extract waveforms as function
 
     static flnum sinWave (flnum angle)
@@ -90,12 +113,41 @@ private:
         return std::sin (angle);
     }
 
-    static flnum squareWave (flnum angle)
+    static flnum squareWaveNaive (flnum angle)
     {
         return angle < pi ? 1.0 : -1.0;
     }
 
-    static flnum sawWave (flnum angle)
+    flnum squareWave (flnum angle, flnum angleInc)
+    {
+        if (ANTI_ALIAS)
+        {
+            flnum val = squareWaveNaive (angle);
+            val += polyBlep (angle, angleInc);
+            val -= polyBlep (fmod (angle + pi, 2.0 * pi), angleInc);
+            return val;
+        }
+        else
+        {
+            return squareWaveNaive (angle);
+        }
+    }
+
+    flnum sawWave (flnum angle, flnum angleInc)
+    {
+        if (ANTI_ALIAS)
+        {
+            flnum val = sawWaveNaive (angle);
+            val -= polyBlep (angle, angleInc);
+            return val;
+        }
+        else
+        {
+            return sawWaveNaive (angle);
+        }
+    }
+
+    static flnum sawWaveNaive (flnum angle)
     {
         return std::min (2.0 * angle / (2.0 * pi), 2.0) - 1.0;
     }
@@ -112,11 +164,12 @@ private:
         smoothedShape.update();
         flnum shape = std::clamp<flnum> (smoothedShape.get(), 0.0, 1.0);
         flnum normalizedAngle = std::clamp (angle / (2.0 * pi), 0.0, 1.0);
-        flnum shaped = 2.0 * pi * (shape * map (normalizedAngle) + (1.0 - shape) * normalizedAngle);
+        flnum shaped = 2.0 * pi * (shape * curve (normalizedAngle) + (1.0 - shape) * normalizedAngle);
         return shaped;
     }
 
-    flnum map (flnum in0to1)
+    // Taeks [0,1] and returns [0,1]
+    flnum curve (flnum in0to1)
     {
         flnum out0to1 = in0to1 * in0to1 * in0to1 * in0to1 * in0to1 * in0to1 * in0to1 * in0to1;
         return out0to1;
