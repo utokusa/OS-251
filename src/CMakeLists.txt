@@ -111,7 +111,7 @@ juce_add_binary_data(Os251Binaries
 
 target_sources(Os251 PRIVATE
         PluginProcessor.cpp
-        # PluginEditor.cpp
+        PluginEditor.cpp
         dsp/Chorus.cpp
         dsp/Envelope.cpp
         synth/SynthEngine.cpp

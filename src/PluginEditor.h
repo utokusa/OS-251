@@ -10,6 +10,8 @@
 
 #include "JuceAudioProcessorState.h"
 #include "PluginProcessor.h"
+#include "views/ClippingIndicatorView.h"
+#include "views/PresetManagerView.h"
 #include <JuceHeader.h>
 #include <atomic>
 #include <memory>
@@ -35,30 +37,15 @@ public:
     void timerCallback() override;
 
 private:
-    juce::File getBundle();
-    void setUpParameters();
-    void updateUi();
-    void beforeBundleEvaluated();
-    void afterBundleEvaluated();
     //==============================================================================
 
     Os251AudioProcessor& audioProcessor;
     onsen::PresetManager& presetManager;
     onsen::ISynthUi* const synthUi;
-
-    std::shared_ptr<reactjuce::EcmascriptEngine> engine;
-    reactjuce::ReactApplicationRoot appRoot;
-    std::unique_ptr<reactjuce::AppHarness> harness;
-    juce::String tmpUiBundlePath;
+    juce::GenericAudioProcessorEditor genericEditor;
+    onsen::PresetManagerView presetManagerView;
 
     std::unordered_map<juce::String, juce::AudioProcessorParameter*> parameterById;
-    std::vector<std::atomic<bool>> dirtyParamFlags;
-
-    static constexpr int bodyWidth = 758;
-    static constexpr int bodyHeight = 420;
-    static constexpr int headerHeight = 32;
-    static constexpr int appWidth = bodyWidth;
-    static constexpr int appHeight = bodyHeight + headerHeight;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };

@@ -7,7 +7,7 @@
 */
 
 #include "PluginProcessor.h"
-// #include "PluginEditor.h"
+#include "PluginEditor.h"
 #include "adapters/JuceAudioBuffer.h"
 #include "services/TmpFileManager.h"
 
@@ -236,8 +236,7 @@ juce::AudioProcessorEditor* Os251AudioProcessor::createEditor()
 {
     // Look and feel
     juce::LookAndFeel::setDefaultLookAndFeel (&laf);
-    // return new Os251AudioProcessorEditor (*this, apvts, presetManager, &synthUi);
-    return new juce::GenericAudioProcessorEditor (*this);
+    return new Os251AudioProcessorEditor (*this, apvts, presetManager, &synthUi);
 }
 
 //==============================================================================
