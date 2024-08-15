@@ -17,7 +17,7 @@ namespace onsen
 //==============================================================================
 class JucePositionInfo : public IPositionInfo
 {
-    using CurrentPositionInfo = juce::AudioPlayHead::CurrentPositionInfo;
+    using CurrentPositionInfo = juce::AudioPlayHead::PositionInfo;
 
 public:
     JucePositionInfo() = delete;
@@ -25,17 +25,19 @@ public:
 
     flnum getBpm() const override
     {
-        return positionInfo->bpm;
+        // TODO: fix optional
+        return *positionInfo->getBpm();
     }
 
     bool isPlaying() const override
     {
-        return positionInfo->isPlaying;
+        return positionInfo->getIsPlaying();
     }
 
     flnum getPpqPosition() const override
     {
-        return positionInfo->ppqPosition;
+        // TODO: fix optional
+        return *positionInfo->getPpqPosition();
     }
 
 private:

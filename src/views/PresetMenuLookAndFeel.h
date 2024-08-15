@@ -73,6 +73,8 @@ public:
 
     juce::Font getComboBoxFont (juce::ComboBox& box) override
     {
+        // For juce 8
+        // return juce::Font(juce::FontOptions(juce::Font::getDefaultMonospacedFontName(), std::min (13.0f, static_cast<float> (box.getHeight()) * 0.85f), juce::Font::plain));
         return { std::min (13.0f, static_cast<float> (box.getHeight()) * 0.85f) };
     }
 
