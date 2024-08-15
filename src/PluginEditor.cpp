@@ -9,12 +9,12 @@
 #include <iostream>
 
 //==============================================================================
-Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState&, onsen::PresetManager& _presetManager, onsen::ISynthUi* _synthUi)
+Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState& vts, onsen::PresetManager& _presetManager, onsen::ISynthUi* _synthUi)
     : juce::AudioProcessorEditor (&proc),
       audioProcessor (proc),
       presetManager (_presetManager),
       synthUi (_synthUi),
-      genericEditor (audioProcessor),
+      valueTreeState (vts),
       presetManagerView (presetManager)
 {
     auto& processorParams = audioProcessor.getParameters();
@@ -27,10 +27,18 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
         param->addListener (this);
     }
 
-    addAndMakeVisible (genericEditor);
     addAndMakeVisible (presetManagerView);
 
-    setSize (genericEditor.getWidth(), genericEditor.getHeight() + 45);
+    // Initialize frequency slider (knob).
+    // s_freq.setLookAndFeel (&largeKnobLookAndFeel);
+    s_freq.setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_freq.setTextBoxIsEditable (false);
+    s_freqLabel.setText (valueTreeState.getParameter ("frequency")->name, juce::dontSendNotification);
+    addAndMakeVisible (s_freq);
+    s_freqAttachment.reset (new SliderAttachment (valueTreeState, "frequency", s_freq));
+    addAndMakeVisible (s_freqLabel);
+
+    setSize (600, 400);
     startTimerHz (30);
 }
 
@@ -59,7 +67,11 @@ void Os251AudioProcessorEditor::timerCallback()
 //==============================================================================
 void Os251AudioProcessorEditor::resized()
 {
-    presetManagerView.setBounds (20, getHeight() - 30, genericEditor.getWidth() - 20, 30);
+    presetManagerView.setBounds (20, 20, 600 - 20, 30);
+
+    s_freq.setBounds (20, 80, 100, 100);
+    s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);
+    s_freqLabel.setBounds (20, 60, 100, 30);
 }
 
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)

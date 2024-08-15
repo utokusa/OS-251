@@ -38,14 +38,22 @@ public:
 
 private:
     //==============================================================================
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
     Os251AudioProcessor& audioProcessor;
     onsen::PresetManager& presetManager;
     onsen::ISynthUi* const synthUi;
-    juce::GenericAudioProcessorEditor genericEditor;
+    juce::AudioProcessorValueTreeState& valueTreeState;
+
     onsen::PresetManagerView presetManagerView;
 
     std::unordered_map<juce::String, juce::AudioProcessorParameter*> parameterById;
+
+    //==============================================================================
+
+    juce::Slider s_freq;
+    juce::Label s_freqLabel;
+    std::unique_ptr<SliderAttachment> s_freqAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };
