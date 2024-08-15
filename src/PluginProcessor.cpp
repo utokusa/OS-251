@@ -191,8 +191,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     if (playHead)
     {
         // Update positionInfo which jucePositionInfo has its pointer
-        // TODO: fix cases where return the value with type Optional< PositionInfo > doesn't have value
-        positionInfo = *playHead->getPosition();
+        positionInfo = playHead->getPosition().orFallback (juce::AudioPlayHead::PositionInfo {});
     }
 
     // Audio

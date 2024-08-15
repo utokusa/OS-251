@@ -25,8 +25,7 @@ public:
 
     flnum getBpm() const override
     {
-        // TODO: fix optional
-        return *positionInfo->getBpm();
+        return positionInfo->getBpm().orFallback (120.0);
     }
 
     bool isPlaying() const override
@@ -36,8 +35,7 @@ public:
 
     flnum getPpqPosition() const override
     {
-        // TODO: fix optional
-        return *positionInfo->getPpqPosition();
+        return positionInfo->getPpqPosition().orFallback (0.0);
     }
 
 private:
