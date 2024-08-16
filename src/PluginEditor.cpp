@@ -15,7 +15,8 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
       presetManager (_presetManager),
       synthUi (_synthUi),
       valueTreeState (vts),
-      presetManagerView (presetManager)
+      presetManagerView (presetManager),
+      clippingIndicatorView (_synthUi)
 {
     auto& processorParams = audioProcessor.getParameters();
 
@@ -28,6 +29,8 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
     }
 
     addAndMakeVisible (presetManagerView);
+
+    addAndMakeVisible (clippingIndicatorView);
 
     // Initialize frequency slider (knob).
     // s_freq.setLookAndFeel (&largeKnobLookAndFeel);
@@ -77,7 +80,10 @@ void Os251AudioProcessorEditor::timerCallback()
 //==============================================================================
 void Os251AudioProcessorEditor::resized()
 {
-    presetManagerView.setBounds (20, 20, 600 - 20, 30);
+    constexpr int clippingIndicatorViewWidth = 100;
+    presetManagerView.setBounds (20, 20, 600 - 20 - clippingIndicatorViewWidth, 30);
+
+    clippingIndicatorView.setBounds (500, 20, clippingIndicatorViewWidth, 100);
 
     s_freq.setBounds (20, 80, 100, 100);
     s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);

@@ -47,6 +47,7 @@ private:
     juce::AudioProcessorValueTreeState& valueTreeState;
 
     onsen::PresetManagerView presetManagerView;
+    onsen::ClippingIndicatorView clippingIndicatorView;
 
     std::unordered_map<juce::String, juce::AudioProcessorParameter*> parameterById;
 
