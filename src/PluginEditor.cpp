@@ -38,6 +38,16 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
     s_freqAttachment.reset (new SliderAttachment (valueTreeState, "frequency", s_freq));
     addAndMakeVisible (s_freqLabel);
 
+    // b_chorusOn.setLookAndFeel (&largeKnobLookAndFeel);
+    // b_chorusOn.setColour (juce::TextButton::buttonColourId, juce::Colours::red);
+    b_chorusOn.setColour (juce::TextButton::buttonOnColourId, juce::Colours::green);
+    b_chorusOnLabel.setText (valueTreeState.getParameter ("chorusOn")->name, juce::dontSendNotification);
+    addAndMakeVisible (b_chorusOn);
+    b_chorusOnAttachment.reset (new ButtonAttachment (valueTreeState, "chorusOn", b_chorusOn));
+
+    b_chorusOn.setClickingTogglesState (true);
+    addAndMakeVisible (b_chorusOnLabel);
+
     setSize (600, 400);
     startTimerHz (30);
 }
@@ -72,6 +82,10 @@ void Os251AudioProcessorEditor::resized()
     s_freq.setBounds (20, 80, 100, 100);
     s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);
     s_freqLabel.setBounds (20, 60, 100, 30);
+
+    constexpr int distX = 200;
+    b_chorusOn.setBounds (20 + distX, 90, 60, 40);
+    b_chorusOnLabel.setBounds (20 + distX, 60, 100, 30);
 }
 
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)
