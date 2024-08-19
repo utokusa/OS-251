@@ -38,6 +38,12 @@ public:
 
 private:
     //==============================================================================
+    enum class ParamType
+    {
+        SLIDER,
+        BUTTON,
+    };
+
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
 
@@ -60,6 +66,55 @@ private:
     juce::TextButton b_chorusOn;
     juce::Label b_chorusOnLabel;
     std::unique_ptr<ButtonAttachment> b_chorusOnAttachment;
+
+    std::vector<std::pair<std::string, ParamType>> paramLayout {
+        { "sinGain", ParamType::SLIDER },
+        { "squareGain", ParamType::SLIDER },
+        { "sawGain", ParamType::SLIDER },
+        { "subSquareGain", ParamType::SLIDER },
+
+        { "noiseGain", ParamType::SLIDER },
+        { "shape", ParamType::SLIDER },
+        { "lfoShape", ParamType::SLIDER },
+        { "numVoices", ParamType::SLIDER },
+
+        { "attack", ParamType::SLIDER },
+        { "decay", ParamType::SLIDER },
+        { "sustain", ParamType::SLIDER },
+        { "release", ParamType::SLIDER },
+
+        { "frequency", ParamType::SLIDER },
+        { "resonance", ParamType::SLIDER },
+        { "filterEnv", ParamType::SLIDER },
+        { "lfoFilterFreq", ParamType::SLIDER },
+
+        { "syncOn", ParamType::BUTTON },
+        { "rate", ParamType::SLIDER },
+        { "rateSync", ParamType::SLIDER },
+        { "lfoPhase", ParamType::SLIDER },
+
+        { "lfoDelay", ParamType::SLIDER },
+        { "unisonOn", ParamType::BUTTON },
+        { "hpfFreq", ParamType::SLIDER },
+        { "chorusOn", ParamType::BUTTON },
+
+        { "lfoPitch", ParamType::SLIDER },
+        { "pitchBendWidth", ParamType::SLIDER },
+        { "portamento", ParamType::SLIDER },
+        { "masterOctaveTune", ParamType::SLIDER },
+
+        { "masterSemitoneTune", ParamType::SLIDER },
+        { "masterFineTune", ParamType::SLIDER },
+        { "envForAmpOn", ParamType::SLIDER },
+        { "masterVolume", ParamType::SLIDER },
+    };
+
+    std::unordered_map<std::string, std::unique_ptr<juce::Slider>> sliders;
+    std::unordered_map<std::string, std::unique_ptr<juce::Label>> sliderLabels;
+    std::unordered_map<std::string, std::unique_ptr<SliderAttachment>> sliderAttachment;
+    std::unordered_map<std::string, std::unique_ptr<juce::TextButton>> buttons;
+    std::unordered_map<std::string, std::unique_ptr<juce::Label>> buttonLabels;
+    std::unordered_map<std::string, std::unique_ptr<ButtonAttachment>> buttonAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };
