@@ -105,7 +105,7 @@ private:
 
         { "masterSemitoneTune", ParamType::SLIDER },
         { "masterFineTune", ParamType::SLIDER },
-        { "envForAmpOn", ParamType::SLIDER },
+        { "envForAmpOn", ParamType::BUTTON },
         { "masterVolume", ParamType::SLIDER },
     };
 

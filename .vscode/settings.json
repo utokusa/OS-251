@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "*.mm": "cpp"
+        "*.mm": "cpp",
+        "iosfwd": "cpp"
     }
 }
