@@ -75,7 +75,7 @@ public:
 
     void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
     {
-        const auto fill = juce::Colour (colors::blue);
+        const auto fill = juce::Colour (colors::primaryColor);
         const auto outline = juce::Colour (colors::primaryColorDark);
 
         constexpr auto padding = 5.0;
