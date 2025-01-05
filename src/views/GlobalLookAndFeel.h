@@ -42,11 +42,11 @@ public:
             colors::darkGray,
             colors::darkGray2,
             colors::grey,
-            colors::white,
+            colors::textColor,
             colors::blue,
-            colors::white,
+            colors::textColor,
             colors::almostBlack,
-            colors::white,
+            colors::textColor,
         }),
 #if JUCE_WINDOWS
                           // For Windows we use edited version of Recursive-Regular.ttf

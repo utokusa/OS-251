@@ -6,6 +6,7 @@
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
+#include "views/colors.h"
 #include <iostream>
 
 //==============================================================================
@@ -168,5 +169,5 @@ void Os251AudioProcessorEditor::resized()
 
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colour (onsen::colors::darkGray2));
+    g.fillAll (juce::Colour (onsen::colors::backgroundColorDark));
 }
