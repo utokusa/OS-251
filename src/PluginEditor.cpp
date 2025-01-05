@@ -153,7 +153,8 @@ void Os251AudioProcessorEditor::resized()
             // s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);
             // s_freqLabel.setBounds (20, 60, 100, 30);
             sliders[paramName]->setBounds (x, y + 20, paramWidth - knobMargin, paramHeight - knobMargin);
-            sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, false, textEntryBoxWidth, textEntryBoxHeight);
+            constexpr bool isReadOnly = true;
+            sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, textEntryBoxWidth, textEntryBoxHeight);
             sliderLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
         }
         else /*(p.second == ParamType::BUTTON)*/

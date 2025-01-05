@@ -78,7 +78,7 @@ public:
         const auto fill = juce::Colour (colors::blue);
         const auto outline = juce::Colour (colors::primaryColorDark);
 
-        constexpr auto padding = 4.0;
+        constexpr auto padding = 5.0;
         const auto bounds = juce::Rectangle<int> (x, y, width, height).toFloat().reduced (padding);
         const auto radius = fmin (bounds.getWidth(), bounds.getHeight()) / 2.0;
         const auto rotaryCurrentAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
@@ -98,6 +98,23 @@ public:
             g.setColour (fill);
             g.strokePath (valueArc, juce::PathStrokeType (lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::square));
         }
+    }
+
+    juce::Slider::SliderLayout getSliderLayout (juce::Slider& slider) override
+    {
+        auto const localBounds = slider.getLocalBounds();
+        juce::Slider::SliderLayout layout;
+        layout.textBoxBounds = localBounds.withHeight (14).withCentre (localBounds.getCentre());
+        layout.sliderBounds = localBounds;
+        return layout;
+    }
+
+    juce::Label* createSliderTextBox (juce::Slider& slider) override
+    {
+        auto l = juce::LookAndFeel_V4::createSliderTextBox (slider);
+        l->setInterceptsMouseClicks (false, false);
+        l->setColour (juce::Label::outlineColourId, juce::Colours::transparentWhite);
+        return l;
     }
 
 private:

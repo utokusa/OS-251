@@ -4,6 +4,11 @@ OS-251 is a synthesizer plugin (vst3, au) made with C++ , [JUCE](https://github.
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
+
+Current progress of rewriting the UI:
+
+<div align="center"><img src="screenshot-new-ui.png" width="600px"></div>
+
 ## Download
 
 You can down load pre-built binaries from [release](https://github.com/utokusa/OS-251/releases).
