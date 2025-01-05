@@ -73,6 +73,33 @@ public:
         return typeface;
     }
 
+    void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override
+    {
+        const auto fill = juce::Colour (colors::blue);
+        const auto outline = juce::Colour (colors::primaryColorDark);
+
+        constexpr auto padding = 4.0;
+        const auto bounds = juce::Rectangle<int> (x, y, width, height).toFloat().reduced (padding);
+        const auto radius = fmin (bounds.getWidth(), bounds.getHeight()) / 2.0;
+        const auto rotaryCurrentAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        const auto lineWidth = 3.0;
+
+        if (slider.isEnabled())
+        {
+            juce::Path fullArc;
+            fullArc.addCentredArc (bounds.getCentreX(), bounds.getCentreY(), radius, radius, 0.0f, rotaryStartAngle, rotaryEndAngle, true);
+
+            g.setColour (outline);
+            g.strokePath (fullArc, juce::PathStrokeType (lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::square));
+
+            juce::Path valueArc;
+            valueArc.addCentredArc (bounds.getCentreX(), bounds.getCentreY(), radius, radius, 0.0f, rotaryStartAngle, rotaryCurrentAngle, true);
+
+            g.setColour (fill);
+            g.strokePath (valueArc, juce::PathStrokeType (lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::square));
+        }
+    }
+
 private:
     Laf::ColourScheme colorScheme;
     juce::Typeface::Ptr typeface;
