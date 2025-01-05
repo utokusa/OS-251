@@ -296,13 +296,13 @@ jobs:
         cmake -E tar cvf ${{ github.event.repository.name }}-${{ runner.os }}.zip --format=zip -- ${{ github.event.repository.name }}-${{ runner.os }}
     - if: ${{ runner.os!='macOS' }}
       name: Upload (Windows and Linux)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}-${{ runner.os }}
         path: ${{ github.event.repository.name }}-${{ runner.os }}.zip
     - if: ${{ runner.os=='macOS' }}
       name: Upload (macOS)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}-${{ runner.os }}
         path: ${{ github.event.repository.name }}-${{ runner.os }}.dmg
@@ -327,7 +327,7 @@ jobs:
     - name: Store Release url
       run: |
         echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
       with:
         path: ./upload_url
         name: upload_url
