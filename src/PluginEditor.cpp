@@ -144,13 +144,12 @@ void Os251AudioProcessorEditor::resized()
         if (p.second == ParamType::SLIDER)
         {
             constexpr unsigned int knobMargin = 20;
-            // s_freq.setBounds (20, 80, 100, 100);
-            // s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);
-            // s_freqLabel.setBounds (20, 60, 100, 30);
-            sliders[paramName]->setBounds (x, y + 20, paramWidth - knobMargin, paramHeight - knobMargin);
+            constexpr unsigned int width = paramWidth - knobMargin;
+            sliders[paramName]->setBounds (x, y, width, paramHeight - knobMargin);
             constexpr bool isReadOnly = true;
-            sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, textEntryBoxWidth, textEntryBoxHeight);
-            sliderLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
+            sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, width, textEntryBoxHeight);
+            sliderLabels[paramName]->setBounds (x, y + sliders[paramName]->getHeight() - 14, width, textEntryBoxHeight);
+            sliderLabels[paramName]->setJustificationType (juce::Justification::centred);
         }
         else /*(p.second == ParamType::BUTTON)*/
         {
