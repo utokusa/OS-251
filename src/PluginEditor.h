@@ -118,6 +118,8 @@ private:
     std::unordered_map<std::string, std::unique_ptr<juce::Label>> buttonLabels;
     std::unordered_map<std::string, std::unique_ptr<ButtonAttachment>> buttonAttachment;
 
+    juce::Label synthNameLabel;
+
     // --------- constants
     static constexpr unsigned int numCol = 8;
     static constexpr unsigned int initX = 20;

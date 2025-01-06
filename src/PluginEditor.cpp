@@ -30,6 +30,9 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
         param->addListener (this);
     }
 
+    addAndMakeVisible (synthNameLabel);
+    synthNameLabel.setText ("OS-251", juce::dontSendNotification);
+
     addAndMakeVisible (presetManagerView);
 
     addAndMakeVisible (clippingIndicatorView);
@@ -98,9 +101,10 @@ void Os251AudioProcessorEditor::timerCallback()
 void Os251AudioProcessorEditor::resized()
 {
     constexpr int clippingIndicatorViewWidth = 100;
-    presetManagerView.setBounds (20, 20, 600 - 20 - clippingIndicatorViewWidth, 30);
+    synthNameLabel.setBounds (20, 20, 100, 30);
+    presetManagerView.setBounds (150, 20, 600 - 20 - clippingIndicatorViewWidth, 30);
 
-    clippingIndicatorView.setBounds (500, 20, clippingIndicatorViewWidth, 100);
+    clippingIndicatorView.setBounds (640, 20, clippingIndicatorViewWidth, 100);
 
     for (int i = 0; i < paramLayout.size(); i++)
     {
