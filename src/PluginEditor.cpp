@@ -34,25 +34,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
 
     addAndMakeVisible (clippingIndicatorView);
 
-    // Initialize frequency slider (knob).
-    // // s_freq.setLookAndFeel (&largeKnobLookAndFeel);
-    // s_freq.setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    // s_freq.setTextBoxIsEditable (false);
-    // s_freqLabel.setText (valueTreeState.getParameter ("frequency")->name, juce::dontSendNotification);
-    // addAndMakeVisible (s_freq);
-    // s_freqAttachment.reset (new SliderAttachment (valueTreeState, "frequency", s_freq));
-    // addAndMakeVisible (s_freqLabel);
-
-    // // b_chorusOn.setLookAndFeel (&largeKnobLookAndFeel);
-    // // b_chorusOn.setColour (juce::TextButton::buttonColourId, juce::Colours::red);
-    // b_chorusOn.setColour (juce::TextButton::buttonOnColourId, juce::Colours::green);
-    // b_chorusOnLabel.setText (valueTreeState.getParameter ("chorusOn")->name, juce::dontSendNotification);
-    // addAndMakeVisible (b_chorusOn);
-    // b_chorusOnAttachment.reset (new ButtonAttachment (valueTreeState, "chorusOn", b_chorusOn));
-
-    // b_chorusOn.setClickingTogglesState (true);
-    // addAndMakeVisible (b_chorusOnLabel);
-
     for (const auto& p : paramLayout)
     {
         const auto& paramName = p.first;
@@ -62,7 +43,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
             sliderLabels.try_emplace (paramName, std::make_unique<juce::Label>());
             sliderAttachment.try_emplace (paramName, std::make_unique<SliderAttachment> (valueTreeState, paramName, *sliders[paramName]));
 
-            // sliders[paramName]->setLookAndFeel (&largeKnobLookAndFeel);
             sliders[paramName]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
             sliders[paramName]->setTextBoxIsEditable (false);
             sliderLabels[paramName]->setText (valueTreeState.getParameter (paramName)->name, juce::dontSendNotification);
@@ -85,7 +65,6 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
 
             buttons[paramName]->setClickingTogglesState (true);
             buttons[paramName]->setLookAndFeel (&buttonParamLaf);
-            // addAndMakeVisible (*buttonLabels[paramName]);
         }
     }
 
@@ -123,14 +102,6 @@ void Os251AudioProcessorEditor::resized()
 
     clippingIndicatorView.setBounds (500, 20, clippingIndicatorViewWidth, 100);
 
-    constexpr unsigned int numCol = 8;
-    constexpr unsigned int initX = 20;
-    constexpr unsigned int initY = 60;
-    constexpr unsigned int paramWidth = 100;
-    constexpr unsigned int paramHeight = 100;
-    constexpr unsigned int textEntryBoxWidth = 100;
-    constexpr unsigned int textEntryBoxHeight = 30;
-
     for (int i = 0; i < paramLayout.size(); i++)
     {
         const auto& p = paramLayout[i];
@@ -138,8 +109,8 @@ void Os251AudioProcessorEditor::resized()
 
         const unsigned int row = i / numCol;
         const unsigned int col = i % numCol;
-        const unsigned int x /*of left top*/ = col * paramWidth + initX;
-        const unsigned int y /*of left top*/ = row * paramHeight + initY;
+        const unsigned int x /*of left top*/ = col * paramWidth + 8 + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + 6 + initY;
 
         if (p.second == ParamType::SLIDER)
         {
@@ -154,9 +125,7 @@ void Os251AudioProcessorEditor::resized()
         else /*(p.second == ParamType::BUTTON)*/
         {
             constexpr unsigned int buttonMargin = 20;
-            // b_chorusOn.setBounds (20 + distX, 90, 60, 40);
-            // b_chorusOnLabel.setBounds (20 + distX, 60, 100, 30);
-            buttons[paramName]->setBounds (x, y + 20, paramWidth - buttonMargin, paramHeight - buttonMargin);
+            buttons[paramName]->setBounds (x, y + 12, paramWidth - buttonMargin, paramHeight - buttonMargin);
             buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
         }
     }
@@ -165,4 +134,18 @@ void Os251AudioProcessorEditor::resized()
 void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll (juce::Colour (onsen::colors::backgroundColorDark));
+
+    for (int row = 0; row < paramLayout.size() / numCol + (paramLayout.size() % numCol ? 1 : 0); row++)
+    {
+        const unsigned int x /*of left top*/ = 0 + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + initY;
+        constexpr float heightMargin = 1.0f;
+        const juce::Rectangle bound = { static_cast<float> (x), static_cast<float> (y), static_cast<float> (paramWidth * numCol), static_cast<float> (paramHeight) - heightMargin };
+        constexpr float cornerSize = 8.0f;
+
+        g.setColour (juce::Colour (onsen::colors::backgroundColor));
+        g.fillRoundedRectangle (bound, cornerSize);
+        g.setColour (juce::Colour (onsen::colors::textColor));
+        g.drawRoundedRectangle (bound, cornerSize, 1.5f);
+    }
 }

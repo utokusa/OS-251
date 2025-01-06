@@ -118,5 +118,15 @@ private:
     std::unordered_map<std::string, std::unique_ptr<juce::Label>> buttonLabels;
     std::unordered_map<std::string, std::unique_ptr<ButtonAttachment>> buttonAttachment;
 
+    // --------- constants
+    static constexpr unsigned int numCol = 8;
+    static constexpr unsigned int initX = 20;
+    static constexpr unsigned int initY = 60;
+    static constexpr unsigned int paramWidth = 100;
+    static constexpr unsigned int paramHeight = 100;
+    static constexpr unsigned int rowHeight = paramHeight + 10;
+    static constexpr unsigned int textEntryBoxWidth = 100;
+    static constexpr unsigned int textEntryBoxHeight = 30;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Os251AudioProcessorEditor)
 };
