@@ -17,7 +17,8 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
       synthUi (_synthUi),
       valueTreeState (vts),
       presetManagerView (presetManager),
-      clippingIndicatorView (_synthUi)
+      clippingIndicatorView (_synthUi),
+      buttonParamLaf()
 {
     auto& processorParams = audioProcessor.getParameters();
 
@@ -74,15 +75,17 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
             buttonLabels.try_emplace (paramName, std::make_unique<juce::Label>());
             buttonAttachment.try_emplace (paramName, std::make_unique<ButtonAttachment> (valueTreeState, paramName, *buttons[paramName]));
 
-            // buttons[paramName]->setLookAndFeel (&largeKnobLookAndFeel);
-            // buttons[paramName]->setColour (juce::TextButton::buttonColourId, juce::Colours::red);
-            buttons[paramName]->setColour (juce::TextButton::buttonOnColourId, juce::Colours::green);
-            buttons[paramName]->setButtonText ("");
+            buttons[paramName]->setColour (juce::TextButton::textColourOnId, juce::Colour (onsen::colors::primaryColor));
+            buttons[paramName]->setColour (juce::TextButton::textColourOffId, juce::Colour (onsen::colors::textColor));
+            buttons[paramName]->setColour (juce::TextButton::buttonOnColourId, juce::Colour (onsen::colors::backgroundColorDark));
+            buttons[paramName]->setColour (juce::TextButton::buttonColourId, juce::Colour (onsen::colors::backgroundColorDark));
+            buttons[paramName]->setButtonText (valueTreeState.getParameter (paramName)->name);
             buttonLabels[paramName]->setText (valueTreeState.getParameter (paramName)->name, juce::dontSendNotification);
             addAndMakeVisible (*buttons[paramName]);
 
             buttons[paramName]->setClickingTogglesState (true);
-            addAndMakeVisible (*buttonLabels[paramName]);
+            buttons[paramName]->setLookAndFeel (&buttonParamLaf);
+            // addAndMakeVisible (*buttonLabels[paramName]);
         }
     }
 
@@ -120,14 +123,6 @@ void Os251AudioProcessorEditor::resized()
 
     clippingIndicatorView.setBounds (500, 20, clippingIndicatorViewWidth, 100);
 
-    // s_freq.setBounds (20, 80, 100, 100);
-    // s_freq.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 100, 30);
-    // s_freqLabel.setBounds (20, 60, 100, 30);
-
-    // constexpr int distX = 200;
-    // b_chorusOn.setBounds (20 + distX, 90, 60, 40);
-    // b_chorusOnLabel.setBounds (20 + distX, 60, 100, 30);
-
     constexpr unsigned int numCol = 8;
     constexpr unsigned int initX = 20;
     constexpr unsigned int initY = 60;
@@ -159,10 +154,10 @@ void Os251AudioProcessorEditor::resized()
         }
         else /*(p.second == ParamType::BUTTON)*/
         {
-            constexpr unsigned int buttonMargin = 40;
+            constexpr unsigned int buttonMargin = 20;
             // b_chorusOn.setBounds (20 + distX, 90, 60, 40);
             // b_chorusOnLabel.setBounds (20 + distX, 60, 100, 30);
-            buttons[paramName]->setBounds (x, y + 30, paramWidth - buttonMargin, paramHeight - buttonMargin);
+            buttons[paramName]->setBounds (x, y + 20, paramWidth - buttonMargin, paramHeight - buttonMargin);
             buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
         }
     }

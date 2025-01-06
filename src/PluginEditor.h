@@ -10,6 +10,7 @@
 
 #include "JuceAudioProcessorState.h"
 #include "PluginProcessor.h"
+#include "views/ButtonParamLookAndFeel.h"
 #include "views/ClippingIndicatorView.h"
 #include "views/PresetManagerView.h"
 #include <JuceHeader.h>
@@ -66,6 +67,7 @@ private:
     juce::TextButton b_chorusOn;
     juce::Label b_chorusOnLabel;
     std::unique_ptr<ButtonAttachment> b_chorusOnAttachment;
+    onsen::ButtonParamLookAndFeel buttonParamLaf;
 
     std::vector<std::pair<std::string, ParamType>> paramLayout {
         { "sinGain", ParamType::SLIDER },
