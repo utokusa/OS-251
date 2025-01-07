@@ -172,11 +172,11 @@ public:
     {
         constexpr int numDecimal = 4;
         return {
-            { "rate", "LFO Rate", 0.0, &rate, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
-            { "rateSync", "Synced LFO Rate", 0.0, &rateSync, [] (float value) { return std::to_string (
-                                                                                           DspUtil::mapFlnumToInt (value, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal(), true))
-                                                                                       + "/"
-                                                                                       + std::to_string (rateSyncDenominatorVal()); } },
+            { "rate", "Rate", 0.0, &rate, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
+            { "rateSync", "Synced Rate", 0.0, &rateSync, [] (float value) { return std::to_string (
+                                                                                       DspUtil::mapFlnumToInt (value, 0.0, 1.0, lowestRateSyncNumeratorVal(), highestRateSyncNumeratorVal(), true))
+                                                                                   + "/"
+                                                                                   + std::to_string (rateSyncDenominatorVal()); } },
             { "lfoPhase", "LFO Phase", 0.0, &phase, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
             { "lfoDelay", "LFO Delay", 0.5, &delay, [numDecimal] (float value) { return ParamUtil::valueToString (value, numDecimal); } },
             { "syncOn", "Sync", 0.0, &syncOn, ParamUtil::valueToOnOffString },
