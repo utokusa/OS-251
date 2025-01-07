@@ -114,12 +114,13 @@ void Os251AudioProcessorEditor::resized()
 
         if (p.second == ParamType::SLIDER)
         {
-            constexpr unsigned int knobMargin = 20;
+            constexpr unsigned int knobMargin = 30;
+            constexpr unsigned int yOffset = 10;
             constexpr unsigned int width = paramWidth - knobMargin;
-            sliders[paramName]->setBounds (x, y, width, paramHeight - knobMargin);
+            sliders[paramName]->setBounds (x, y + yOffset, width, paramHeight - knobMargin);
             constexpr bool isReadOnly = true;
             sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, width, textEntryBoxHeight);
-            sliderLabels[paramName]->setBounds (x, y + sliders[paramName]->getHeight() - 14, width, textEntryBoxHeight);
+            sliderLabels[paramName]->setBounds (x, y + yOffset + sliders[paramName]->getHeight() - 14, width, textEntryBoxHeight);
             sliderLabels[paramName]->setJustificationType (juce::Justification::centred);
         }
         else /*(p.second == ParamType::BUTTON)*/
@@ -159,5 +160,28 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
         g.fillRoundedRectangle (bound, cornerSize);
         g.setColour (juce::Colour (onsen::colors::textColor));
         g.drawRoundedRectangle (bound, cornerSize, 1.5f);
+    }
+
+    for (int i = 0; i < paramLayout.size(); i++)
+    {
+        const auto& p = paramLayout[i];
+        const auto& paramName = p.first;
+
+        const unsigned int row = i / numCol;
+        const unsigned int col = i % numCol;
+        const unsigned int x /*of left top*/ = col * paramWidth + 0 + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + 0 + initY;
+        if (! paramGroupLayout[i].empty())
+        {
+            g.setColour (juce::Colour (onsen::colors::testColorSecondary));
+            g.setFont (18.0f);
+            g.drawText (
+                juce::String (paramGroupLayout[i]),
+                x + 4,
+                y + 4,
+                100,
+                100,
+                juce::Justification::topLeft);
+        }
     }
 }

@@ -111,6 +111,48 @@ private:
         { "masterVolume", ParamType::SLIDER },
     };
 
+    std::vector<std::string> paramGroupLayout {
+        { "OSC" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "ENV" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "LPF" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "LFO" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "UNISON" },
+        { "HPF" },
+        { "CHORUS" },
+
+        { "PITCH" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "AMP" },
+        { "" },
+    };
+
     std::unordered_map<std::string, std::unique_ptr<juce::Slider>> sliders;
     std::unordered_map<std::string, std::unique_ptr<juce::Label>> sliderLabels;
     std::unordered_map<std::string, std::unique_ptr<SliderAttachment>> sliderAttachment;
