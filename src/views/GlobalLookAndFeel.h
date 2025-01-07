@@ -68,6 +68,11 @@ public:
 
     ~GlobalLookAndFeel() {}
 
+    juce::Font getLabelFont (juce::Label&) override
+    {
+        return juce::Font ("Arial", 12.0f, juce::Font::plain);
+    }
+
     juce::Typeface::Ptr getTypefaceForFont (const juce::Font& f) override
     {
         return typeface;

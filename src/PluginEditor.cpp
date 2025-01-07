@@ -68,7 +68,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
         }
     }
 
-    setSize (840, 500);
+    setSize (appWidth, appHeight);
     startTimerHz (30);
 }
 
@@ -98,7 +98,7 @@ void Os251AudioProcessorEditor::timerCallback()
 void Os251AudioProcessorEditor::resized()
 {
     constexpr int clippingIndicatorViewWidth = 100;
-    presetManagerView.setBounds (420, 20, 400, 30);
+    presetManagerView.setBounds (400, headerContentsMarginY, 360, headerHeight - headerContentsMarginY);
 
     for (int i = 0; i < paramLayout.size(); i++)
     {
@@ -107,7 +107,7 @@ void Os251AudioProcessorEditor::resized()
 
         const unsigned int row = i / numCol;
         const unsigned int col = i % numCol;
-        constexpr unsigned int offsetForParamX = 8;
+        constexpr unsigned int offsetForParamX = 14;
         constexpr unsigned int offsetForParamY = 6;
         const unsigned int x /*of left top*/ = col * paramWidth + offsetForParamX + initX;
         const unsigned int y /*of left top*/ = row * rowHeight + offsetForParamY + initY;
@@ -125,8 +125,9 @@ void Os251AudioProcessorEditor::resized()
         }
         else /*(p.second == ParamType::BUTTON)*/
         {
-            constexpr unsigned int buttonMargin = 20;
-            buttons[paramName]->setBounds (x, y + 12, paramWidth - buttonMargin, paramHeight - buttonMargin);
+            constexpr unsigned int buttonMarginX = 20;
+            constexpr unsigned int buttonMarginY = 20;
+            buttons[paramName]->setBounds (x - 4, y + 12, paramWidth - buttonMarginX, paramHeight - buttonMarginY);
             buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
         }
 
@@ -143,27 +144,27 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 
     // Synth Name
     g.setColour (juce::Colour (onsen::colors::textColor));
-    g.setFont (23.0f);
+    g.setFont (21.0f);
     constexpr float adjustMarginTop = 1.0f;
     g.drawText (
         juce::String ("OS-251"),
         20,
-        20,
+        headerContentsMarginY - adjustMarginTop,
         100,
-        100,
-        juce::Justification::topLeft);
+        headerHeight - headerContentsMarginY,
+        juce::Justification::centredLeft);
 
     for (int row = 0; row < paramLayout.size() / numCol + (paramLayout.size() % numCol ? 1 : 0); row++)
     {
         const unsigned int x /*of left top*/ = 0 + initX;
         const unsigned int y /*of left top*/ = row * rowHeight + initY;
-        constexpr float heightMargin = 1.0f;
+        constexpr float heightMargin = 0.0f;
         const juce::Rectangle bound = { static_cast<float> (x), static_cast<float> (y), static_cast<float> (paramWidth * numCol), static_cast<float> (paramHeight) - heightMargin };
-        constexpr float cornerSize = 8.0f;
+        constexpr float cornerSize = 12.0f;
 
         g.setColour (juce::Colour (onsen::colors::backgroundColor));
         g.fillRoundedRectangle (bound, cornerSize);
-        g.setColour (juce::Colour (onsen::colors::textColor));
+        g.setColour (juce::Colour (onsen::colors::textColorDark));
         g.drawRoundedRectangle (bound, cornerSize, 1.5f);
     }
 

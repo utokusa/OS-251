@@ -25,10 +25,15 @@ public:
 
     ~ButtonParamLookAndFeel() {}
 
+    juce::Font getTextButtonFont (juce::TextButton&, int buttonHeight) override
+    {
+        return juce::Font ("Arial", 12.0f, juce::Font::plain);
+    }
+
     void drawButtonBackground (juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override
     {
         auto bounds = button.getLocalBounds().toFloat();
-        auto buttonBounds = bounds.withHeight (36).withCentre (bounds.getCentre());
+        auto buttonBounds = bounds.withHeight (32).withCentre (bounds.getCentre());
         auto baseColour = backgroundColour;
 
         if (isMouseOverButton)
@@ -45,7 +50,7 @@ public:
         else
             g.setColour (button.findColour (juce::TextButton::textColourOffId));
 
-        g.drawRoundedRectangle (buttonBounds.reduced (1.0f), 6.0f, 2.0f);
+        g.drawRoundedRectangle (buttonBounds.reduced (1.0f), 6.0f, 1.8f);
     }
 };
 } // namespace onsen

@@ -203,12 +203,19 @@ private:
     std::unordered_map<std::string, std::unique_ptr<ButtonAttachment>> buttonAttachment;
 
     // --------- constants
+    static constexpr int bodyWidth = 758;
+    static constexpr int bodyHeight = 420;
+    static constexpr int headerHeight = 32;
+    static constexpr unsigned int headerContentsMarginY = 8;
+    static constexpr int appWidth = bodyWidth;
+    static constexpr int appHeight = bodyHeight + headerHeight;
     static constexpr unsigned int numCol = 8;
-    static constexpr unsigned int initX = 20;
-    static constexpr unsigned int initY = 50;
-    static constexpr unsigned int paramWidth = 100;
-    static constexpr unsigned int paramHeight = 100;
-    static constexpr unsigned int rowHeight = paramHeight + 10;
+    static constexpr unsigned int initX = 14;
+    ;
+    static constexpr unsigned int initY = 36;
+    static constexpr unsigned int paramWidth = 92;
+    static constexpr unsigned int paramHeight = 96;
+    static constexpr unsigned int rowHeight = paramHeight + 6;
     static constexpr unsigned int textEntryBoxWidth = 100;
     static constexpr unsigned int textEntryBoxHeight = 30;
 
