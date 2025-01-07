@@ -68,7 +68,7 @@ Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc,
         }
     }
 
-    setSize (840, 560);
+    setSize (840, 500);
     startTimerHz (30);
 }
 
@@ -98,9 +98,7 @@ void Os251AudioProcessorEditor::timerCallback()
 void Os251AudioProcessorEditor::resized()
 {
     constexpr int clippingIndicatorViewWidth = 100;
-    presetManagerView.setBounds (150, 20, 600 - 20 - clippingIndicatorViewWidth, 30);
-
-    clippingIndicatorView.setBounds (640, 20, clippingIndicatorViewWidth, 100);
+    presetManagerView.setBounds (420, 20, 400, 30);
 
     for (int i = 0; i < paramLayout.size(); i++)
     {
@@ -109,8 +107,10 @@ void Os251AudioProcessorEditor::resized()
 
         const unsigned int row = i / numCol;
         const unsigned int col = i % numCol;
-        const unsigned int x /*of left top*/ = col * paramWidth + 8 + initX;
-        const unsigned int y /*of left top*/ = row * rowHeight + 6 + initY;
+        constexpr unsigned int offsetForParamX = 8;
+        constexpr unsigned int offsetForParamY = 6;
+        const unsigned int x /*of left top*/ = col * paramWidth + offsetForParamX + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + offsetForParamY + initY;
 
         if (p.second == ParamType::SLIDER)
         {
@@ -128,6 +128,11 @@ void Os251AudioProcessorEditor::resized()
             constexpr unsigned int buttonMargin = 20;
             buttons[paramName]->setBounds (x, y + 12, paramWidth - buttonMargin, paramHeight - buttonMargin);
             buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
+        }
+
+        if (indicatorLayout[i] == "clippingIndicator")
+        {
+            clippingIndicatorView.setBounds (x - offsetForParamX, y - offsetForParamY, clippingIndicatorViewWidth, 100);
         }
     }
 }

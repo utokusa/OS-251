@@ -153,6 +153,48 @@ private:
         { "" },
     };
 
+    std::vector<std::string> indicatorLayout {
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "" },
+
+        { "" },
+        { "" },
+        { "" },
+        { "clippingIndicator" },
+    };
+
     std::unordered_map<std::string, std::unique_ptr<juce::Slider>> sliders;
     std::unordered_map<std::string, std::unique_ptr<juce::Label>> sliderLabels;
     std::unordered_map<std::string, std::unique_ptr<SliderAttachment>> sliderAttachment;
@@ -163,7 +205,7 @@ private:
     // --------- constants
     static constexpr unsigned int numCol = 8;
     static constexpr unsigned int initX = 20;
-    static constexpr unsigned int initY = 60;
+    static constexpr unsigned int initY = 50;
     static constexpr unsigned int paramWidth = 100;
     static constexpr unsigned int paramHeight = 100;
     static constexpr unsigned int rowHeight = paramHeight + 10;
