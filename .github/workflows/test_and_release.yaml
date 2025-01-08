@@ -254,7 +254,7 @@ jobs:
         mkdir signed
         productsign -s $APPLE_DEVELOPER_ID_INSTALLER OS-251.pkg ./signed/OS-251.pkg
     - if: ${{ runner.os=='macOS' }}
-      name: Nortalize .pkg with Gon
+      name: Nortalize .pkg
       run: |
         cd ./build/src/Os251_artefacts/Release/installer/build/signed
         xcrun notarytool submit OS-251.pkg --apple-id ${{ secrets.AC_USERNAME }} \
