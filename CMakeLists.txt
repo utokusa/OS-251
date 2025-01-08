@@ -39,6 +39,14 @@ FetchContent_MakeAvailable(
         googletest
         googlebenchmark)
 
+if(TARGET gtest)
+        target_compile_options(gtest INTERFACE -Wno-error)
+endif()
+
+if(TARGET gbenchmark)
+        target_compile_options(gbenchmark INTERFACE -Wno-error)
+endif()
+
 # Enable JUCE. Do not use find_package to prevent from mix up with one globally installed.
 add_subdirectory(lib/JUCE)
 
