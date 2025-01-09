@@ -97,11 +97,11 @@ jobs:
       run: |
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
         message("::set-output name=timestamp::${current_date}")
-    - name: ccache cache files
-      uses: actions/cache@v1.1.0
+    - name: Cache ccache files
+      uses: actions/cache@v3
       with:
         path: .ccache
-        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        key: ${{ matrix.config.name }}-ccache-${{ github.run_id }}
         restore-keys: |
           ${{ matrix.config.name }}-ccache-
     
