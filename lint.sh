@@ -7,23 +7,23 @@ display_usage() {
 	echo "Lint checking script for both cpp and node codes."
     echo -e "If no argument is passed, it runs with check mode and --all option as default.\n"
 	echo "Usage:"
-    echo -e "$0 [check | fix] [--all | --cpp | --node]"
+    echo -e "$0 [check | fix] [--all | --cpp]"
     echo -e "$0 -h | --help" 
     echo ""
 }
 
 # Tips: clang-format without this script
 # Linux + fix lint
-# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i
+# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' | xargs clang-format -i
 
 # Linux + check lint
-# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run --Werror
+# $ find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' | xargs clang-format -i --dry-run --Werror
 
 # Mac + fix lint
-# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i
+# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' | xargs clang-format -i
 
 # Mac + check lint
-# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*' | xargs clang-format -i --dry-run 
+# $ find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' | xargs clang-format -i --dry-run 
 
 TARGET="all"
 MODE="check"
@@ -38,11 +38,6 @@ do
     if [ "$i" == "--cpp" ]
     then
         TARGET="cpp"
-    fi
-
-    if [ "$i" == "--node" ]
-    then
-        TARGET="node"
     fi
 
     if [ "$i" == "--help" ] || [ "$i" == "-h" ]
@@ -64,21 +59,10 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
     OS="Windows"
 fi
 
-
-if [ "$TARGET" == "all" ] || [ "$TARGET" == "node" ]; then
-    echo "[$0] $MODE node files"
-    if [ "$MODE" == "fix" ]; then
-        npm --prefix=src/jsui run lint:fix
-    else
-        npm --prefix=src/jsui run lint
-    fi
-    echo "[$0] OK"
-fi
-
 if [ "$OS" == "MacOSX" ]; then
-    CPP_FILES=`find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$' -not -path './src/jsui/*'`
+    CPP_FILES=`find -E . -regex '^\./(src|tests|benchmark)/.*\.(cpp|h)$'`
 elif [ "$OS" == "Linux" ] || [ "$OS" == "Windows" ]; then
-    CPP_FILES=`find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*'`
+    CPP_FILES=`find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$'`
 else
     echo "Unknow OS"
     exit 1

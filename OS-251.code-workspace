@@ -3,10 +3,6 @@
         {
             "name": "cpp",
             "path": "."
-        },
-        {
-            "name": "node",
-            "path": "./src/jsui"
         }
     ],
     "extensions": {

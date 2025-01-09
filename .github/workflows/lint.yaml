@@ -11,17 +11,4 @@ jobs:
           clang-format --version
       - name: Run clang-format
         run: |
-          find . -regex '^\./\(src\|tests\|benchmark\)/.*\.\(cpp\|h\)$' -not -path './src/jsui/*' |
-            xargs clang-format -i --dry-run --Werror
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: Install ESLint
-        working-directory: ./src/jsui
-        run: |
-          npm install
-      - name: Run ESLint
-        working-directory: ./src/jsui
-        run: |
-          npx eslint src/
+          make lint

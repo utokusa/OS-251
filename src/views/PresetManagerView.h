@@ -28,6 +28,7 @@ Prev, Next, Revert are normal buttons.
 #include "../services/PresetManager.h"
 #include "PresetMenuLookAndFeel.h"
 #include <JuceHeader.h>
+#include <cassert>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -35,7 +36,7 @@ Prev, Next, Revert are normal buttons.
 namespace onsen
 {
 //==============================================================================
-class PresetManagerView : public reactjuce::View, public juce::Button::Listener
+class PresetManagerView : public juce::Component, public juce::Button::Listener
 {
     struct JuceFileHash
     {

@@ -1,53 +1,72 @@
 /*
   ==============================================================================
-
-   JUCE Plugin Editor for reace-juce
-
+   JUCE Plugin Editor
   ==============================================================================
 */
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
-#include "services/TmpFileManager.h"
-#include "views/ClippingIndicatorView.h"
-#include "views/PresetManagerView.h"
+#include "views/colors.h"
 #include <iostream>
 
 //==============================================================================
-Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState&, onsen::PresetManager& _presetManager, onsen::ISynthUi* _synthUi)
+Os251AudioProcessorEditor::Os251AudioProcessorEditor (Os251AudioProcessor& proc, juce::AudioProcessorValueTreeState& vts, onsen::PresetManager& _presetManager, onsen::ISynthUi* _synthUi)
     : juce::AudioProcessorEditor (&proc),
       audioProcessor (proc),
       presetManager (_presetManager),
       synthUi (_synthUi),
-      engine (std::make_shared<reactjuce::EcmascriptEngine>()),
-      appRoot (engine),
-      harness (std::make_unique<reactjuce::AppHarness> (appRoot)),
-      tmpUiBundlePath(),
-      dirtyParamFlags ((processor.getParameters().size()))
+      valueTreeState (vts),
+      presetManagerView (presetManager),
+      clippingIndicatorView (_synthUi),
+      buttonParamLaf()
 {
-    setUpParameters();
-    harness->onBeforeAll = [this]() {
-        beforeBundleEvaluated();
-    };
+    auto& processorParams = audioProcessor.getParameters();
 
-    harness->onAfterAll = [this]() {
-        afterBundleEvaluated();
-    };
+    for (auto& param : processorParams)
+    {
+        auto paramWithId = dynamic_cast<juce::AudioProcessorParameterWithID*> (param);
+        assert (paramWithId);
+        parameterById[paramWithId->paramID] = param;
+        param->addListener (this);
+    }
 
-    harness->watch (getBundle());
+    addAndMakeVisible (presetManagerView);
 
-#if JUCE_DEBUG
-    harness->start();
-#else
-    harness->once();
-#endif
+    addAndMakeVisible (clippingIndicatorView);
 
-    // Delete tmp file as soon as possible
-    auto tmpUiBundle = juce::File (tmpUiBundlePath);
-    tmpUiBundle.deleteFile();
+    for (const auto& p : paramLayout)
+    {
+        const auto& paramName = p.first;
+        if (p.second == ParamType::SLIDER)
+        {
+            sliders.try_emplace (paramName, std::make_unique<juce::Slider> (paramName));
+            sliderLabels.try_emplace (paramName, std::make_unique<juce::Label>());
+            sliderAttachment.try_emplace (paramName, std::make_unique<SliderAttachment> (valueTreeState, paramName, *sliders[paramName]));
 
-    appRoot.setWantsKeyboardFocus (false);
-    addAndMakeVisible (appRoot);
+            sliders[paramName]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+            sliders[paramName]->setTextBoxIsEditable (false);
+            sliderLabels[paramName]->setText (valueTreeState.getParameter (paramName)->name, juce::dontSendNotification);
+            addAndMakeVisible (*sliders[paramName]);
+            addAndMakeVisible (*sliderLabels[paramName]);
+        }
+        else /*(p.second == ParamType::BUTTON)*/
+        {
+            buttons.try_emplace (paramName, std::make_unique<juce::TextButton> (paramName));
+            buttonLabels.try_emplace (paramName, std::make_unique<juce::Label>());
+            buttonAttachment.try_emplace (paramName, std::make_unique<ButtonAttachment> (valueTreeState, paramName, *buttons[paramName]));
+
+            buttons[paramName]->setColour (juce::TextButton::textColourOnId, juce::Colour (onsen::colors::primaryColor));
+            buttons[paramName]->setColour (juce::TextButton::textColourOffId, juce::Colour (onsen::colors::textColor));
+            buttons[paramName]->setColour (juce::TextButton::buttonOnColourId, juce::Colour (onsen::colors::backgroundColorDark));
+            buttons[paramName]->setColour (juce::TextButton::buttonColourId, juce::Colour (onsen::colors::backgroundColorDark));
+            buttons[paramName]->setButtonText (valueTreeState.getParameter (paramName)->name);
+            buttonLabels[paramName]->setText (valueTreeState.getParameter (paramName)->name, juce::dontSendNotification);
+            addAndMakeVisible (*buttons[paramName]);
+
+            buttons[paramName]->setClickingTogglesState (true);
+            buttons[paramName]->setLookAndFeel (&buttonParamLaf);
+        }
+    }
 
     setSize (appWidth, appHeight);
     startTimerHz (30);
@@ -64,7 +83,6 @@ Os251AudioProcessorEditor::~Os251AudioProcessorEditor()
 //==============================================================================
 void Os251AudioProcessorEditor::parameterValueChanged (int parameterIndex, float newValue)
 {
-    dirtyParamFlags[parameterIndex] = true;
 }
 
 void Os251AudioProcessorEditor::parameterGestureChanged (int, bool)
@@ -74,143 +92,108 @@ void Os251AudioProcessorEditor::parameterGestureChanged (int, bool)
 //==============================================================================
 void Os251AudioProcessorEditor::timerCallback()
 {
-    updateUi();
 }
 
 //==============================================================================
 void Os251AudioProcessorEditor::resized()
 {
-    appRoot.setBounds (getLocalBounds());
-}
+    constexpr int clippingIndicatorViewWidth = 100;
+    presetManagerView.setBounds (400, headerContentsMarginY, 360, headerHeight - headerContentsMarginY);
 
-void Os251AudioProcessorEditor::paint (juce::Graphics& g)
-{
-    g.fillAll (juce::Colours::transparentWhite);
-}
-
-//==============================================================================
-juce::File Os251AudioProcessorEditor::getBundle()
-{
-    const juce::File dir = onsen::TmpFileManager::getTmpDir();
-    const juce::String jsFileName = "main.js";
-    juce::File bundle = onsen::TmpFileManager::createTempFile (dir, jsFileName);
-    tmpUiBundlePath = bundle.getFullPathName(); // It should be deleted on the caller
-
+    for (int i = 0; i < paramLayout.size(); i++)
     {
-        dir.createDirectory();
-        juce::FileOutputStream fs = juce::FileOutputStream (bundle);
-        fs.write (BinaryData::main_js, BinaryData::main_jsSize);
-        fs.flush();
-    }
+        const auto& p = paramLayout[i];
+        const auto& paramName = p.first;
 
-#if JUCE_DEBUG
-    juce::File sourceDir = juce::File (OS251_SOURCE_DIR);
-    bundle = sourceDir.getChildFile ("jsui/build/js/main.js");
-#endif
-    return bundle;
-}
+        const unsigned int row = i / numCol;
+        const unsigned int col = i % numCol;
+        constexpr unsigned int offsetForParamX = 14;
+        constexpr unsigned int offsetForParamY = 6;
+        const unsigned int x /*of left top*/ = col * paramWidth + offsetForParamX + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + offsetForParamY + initY;
 
-void Os251AudioProcessorEditor::setUpParameters()
-{
-    auto& processorParams = audioProcessor.getParameters();
-
-    for (auto& param : processorParams)
-    {
-        auto paramWithId = dynamic_cast<juce::AudioProcessorParameterWithID*> (param);
-        assert (paramWithId);
-        parameterById[paramWithId->paramID] = param;
-        dirtyParamFlags[param->getParameterIndex()] = true;
-        param->addListener (this);
-    }
-}
-void Os251AudioProcessorEditor::updateUi()
-{
-    for (int i = 0; i < dirtyParamFlags.size(); ++i)
-    {
-        if (dirtyParamFlags[i])
+        if (p.second == ParamType::SLIDER)
         {
-            dirtyParamFlags[i] = false;
+            constexpr unsigned int knobMargin = 30;
+            constexpr unsigned int yOffset = 10;
+            constexpr unsigned int width = paramWidth - knobMargin;
+            sliders[paramName]->setBounds (x, y + yOffset, width, paramHeight - knobMargin);
+            constexpr bool isReadOnly = true;
+            sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, width, textEntryBoxHeight);
+            constexpr unsigned int sliderLabelAdjustmentY = 14;
+            sliderLabels[paramName]->setBounds (x, y + yOffset + sliders[paramName]->getHeight() - sliderLabelAdjustmentY, width, textEntryBoxHeight);
+            sliderLabels[paramName]->setJustificationType (juce::Justification::centred);
+        }
+        else /*(p.second == ParamType::BUTTON)*/
+        {
+            constexpr unsigned int buttonMarginX = 20;
+            constexpr unsigned int buttonMarginY = 20;
+            constexpr int buttonAdjustmentX = -4;
+            constexpr int buttonAdjustmentY = 12;
 
-            const auto& param = audioProcessor.getParameters()[i];
+            buttons[paramName]->setBounds (x + buttonAdjustmentX, y + buttonAdjustmentY, paramWidth - buttonMarginX, paramHeight - buttonMarginY);
+            buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
+        }
 
-            auto* paramWithId = dynamic_cast<juce::AudioProcessorParameterWithID*> (param);
-            assert (paramWithId);
-            juce::String paramId = paramWithId->paramID;
-
-            float defaultValue = param->getDefaultValue();
-            const float value = param->getValue();
-            juce::String stringValue = param->getText (value, 0);
-
-            appRoot.dispatchEvent (
-                "parameterValueChange",
-                i,
-                paramId,
-                defaultValue,
-                value,
-                stringValue);
+        if (indicatorLayout[i] == "clippingIndicator")
+        {
+            clippingIndicatorView.setBounds (x - offsetForParamX, y - offsetForParamY, clippingIndicatorViewWidth, 100);
         }
     }
 }
 
-void Os251AudioProcessorEditor::beforeBundleEvaluated()
+void Os251AudioProcessorEditor::paint (juce::Graphics& g)
 {
-    appRoot.registerViewType (
-        "ClippingIndicatorView",
-        [this]() -> reactjuce::ViewManager::ViewPair {
-            auto view = std::make_unique<onsen::ClippingIndicatorView> (synthUi);
-            auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
+    g.fillAll (juce::Colour (onsen::colors::backgroundColorDark));
 
-            return { std::move (view), std::move (shadowView) };
-        });
+    // Synth Name
+    g.setColour (juce::Colour (onsen::colors::textColor));
+    g.setFont (21.0f);
+    constexpr float adjustMarginTop = 1.0f;
+    g.drawText (
+        juce::String ("OS-251"),
+        20,
+        headerContentsMarginY - adjustMarginTop,
+        100,
+        headerHeight - headerContentsMarginY,
+        juce::Justification::centredLeft);
 
-    appRoot.registerViewType (
-        "PresetManagerView",
-        [this]() -> reactjuce::ViewManager::ViewPair {
-            auto view = std::make_unique<onsen::PresetManagerView> (presetManager);
-            auto shadowView = std::make_unique<reactjuce::ShadowView> (view.get());
-
-            return { std::move (view), std::move (shadowView) };
-        });
-
-    engine->registerNativeMethod (
-        "beginParameterChangeGesture",
-        [this] (const juce::var::NativeFunctionArgs& args) {
-            auto paramId = args.arguments[0].toString();
-            auto it = parameterById.find (paramId);
-            if (it != parameterById.end())
-                it->second->beginChangeGesture();
-
-            return juce::var::undefined();
-        });
-
-    engine->registerNativeMethod (
-        "setParameterValueNotifyingHost",
-        [this] (const juce::var::NativeFunctionArgs& args) {
-            auto paramId = args.arguments[0].toString();
-            auto newValue = args.arguments[1];
-            auto it = parameterById.find (paramId);
-            if (it != parameterById.end())
-                it->second->setValueNotifyingHost (newValue);
-
-            return juce::var::undefined();
-        });
-
-    engine->registerNativeMethod (
-        "endParameterChangeGesture",
-        [this] (const juce::var::NativeFunctionArgs& args) {
-            auto paramId = args.arguments[0].toString();
-            auto it = parameterById.find (paramId);
-            if (it != parameterById.end())
-                it->second->endChangeGesture();
-
-            return juce::var::undefined();
-        });
-}
-
-void Os251AudioProcessorEditor::afterBundleEvaluated()
-{
-    for (auto& param : audioProcessor.getParameters())
+    // Draw rectangles for parameter rows
+    for (int row = 0; row < paramLayout.size() / numCol + (paramLayout.size() % numCol ? 1 : 0); row++)
     {
-        parameterValueChanged (param->getParameterIndex(), param->getValue());
+        const unsigned int x /*of left top*/ = 0 + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + initY;
+        constexpr float heightMargin = 0.0f;
+        const juce::Rectangle bound = { static_cast<float> (x), static_cast<float> (y), static_cast<float> (paramWidth * numCol), static_cast<float> (paramHeight) - heightMargin };
+        constexpr float cornerSize = 12.0f;
+
+        g.setColour (juce::Colour (onsen::colors::backgroundColor));
+        g.fillRoundedRectangle (bound, cornerSize);
+        g.setColour (juce::Colour (onsen::colors::textColorDark));
+        g.drawRoundedRectangle (bound, cornerSize, 1.5f);
+    }
+
+    // Labels for parameter group
+    for (int i = 0; i < paramLayout.size(); i++)
+    {
+        const auto& p = paramLayout[i];
+        const auto& paramName = p.first;
+
+        const unsigned int row = i / numCol;
+        const unsigned int col = i % numCol;
+        const unsigned int x /*of left top*/ = col * paramWidth + 0 + initX;
+        const unsigned int y /*of left top*/ = row * rowHeight + 0 + initY;
+        if (! paramGroupLayout[i].empty())
+        {
+            g.setColour (juce::Colour (onsen::colors::testColorSecondary));
+            g.setFont (18.0f);
+            g.drawText (
+                juce::String (paramGroupLayout[i]),
+                x + 4,
+                y + 4,
+                100,
+                100,
+                juce::Justification::topLeft);
+        }
     }
 }

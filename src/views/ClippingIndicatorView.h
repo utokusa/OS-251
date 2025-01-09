@@ -17,7 +17,7 @@ namespace onsen
 {
 //==============================================================================
 // When audio is clipped, the indicator color becomes red
-class ClippingIndicatorView : public reactjuce::View, juce::Timer
+class ClippingIndicatorView : public juce::Component, juce::Timer
 {
 public:
     ClippingIndicatorView (ISynthUi* synthUi);

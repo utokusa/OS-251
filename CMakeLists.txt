@@ -28,12 +28,12 @@ include(FetchContent)
 # Externally provided libraries
 FetchContent_Declare(googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG release-1.12.1
+        GIT_TAG v1.14.0
         )
 
 FetchContent_Declare(googlebenchmark
         GIT_REPOSITORY https://github.com/google/benchmark.git
-        GIT_TAG v1.5.6)
+        GIT_TAG v1.8.5)
 
 FetchContent_MakeAvailable(
         googletest
@@ -41,9 +41,6 @@ FetchContent_MakeAvailable(
 
 # Enable JUCE. Do not use find_package to prevent from mix up with one globally installed.
 add_subdirectory(lib/JUCE)
-
-# Adding any custom modules you might have:
-juce_add_module(lib/react-juce/react_juce)
 
 enable_testing()
 configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR})

@@ -1,6 +1,6 @@
 # OS-251
 
-OS-251 is a synthesizer plugin (vst3, au) made with C++ , [JUCE](https://github.com/juce-framework/JUCE) and [react-juce](https://github.com/nick-thompson/react-juce).
+OS-251 is a synthesizer plugin (vst3, au) made with C++ , [JUCE](https://github.com/juce-framework/JUCE).
 
 <div align="center"><img src="screenshot.png" width="600px"></div>
 
@@ -18,23 +18,13 @@ You can down load pre-built binaries from [release](https://github.com/utokusa/O
   git clone --recursive https://github.com/utokusa/OS-251
   ```
 
-- Build the UI (Node.js and [react-juce](https://github.com/nick-thompson/react-juce))
-  Use Node.js version 14.
-
-  ```bash
-  cd ./src/jsui
-  npm ci
-  npm run build
-  ```
-
 - Build the body of the plugin (C++)
 
   You can build it using CMake.
 
 ### Lint
 
-Lint checking for both C++ and Node.js is available.
-For C++, we use clang-format 11.
+Lint checking with clang-format 11 for C++ is available.
 See details by running `./lint.sh -h`.
 
 ### Code completion

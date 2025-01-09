@@ -191,7 +191,7 @@ void Os251AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     if (playHead)
     {
         // Update positionInfo which jucePositionInfo has its pointer
-        playHead->getCurrentPosition (positionInfo);
+        positionInfo = playHead->getPosition().orFallback (juce::AudioPlayHead::PositionInfo {});
     }
 
     // Audio

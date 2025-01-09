@@ -39,8 +39,7 @@ juce_add_plugin(Os251
         AU_MAIN_TYPE "kAudioUnitType_MusicDevice"
         # AU_SANDBOX_SAFE TRUE
         # AAX_CATEGORY ""
-        LV2_URI https://github.com/utokusa/OS-251
-        LV2_SHARED_LIBRARY_NAME os251lv2
+        LV2URI https://github.com/utokusa/OS-251
         # HARDENED_RUNTIME_ENABLED # macOS app settings
         # HARDENED_RUNTIME_OPTIONS
         # APP_SANDBOX_ENABLED
@@ -66,7 +65,6 @@ target_compile_definitions(Os251
         )
 
 set(BINARY_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/jsui/build/js/main.js
     ${CMAKE_SOURCE_DIR}/assets/Recursive-Regular.ttf
 
     ${CMAKE_SOURCE_DIR}/assets/images/left.png
@@ -123,11 +121,6 @@ target_sources(Os251 PRIVATE
         views/ClippingIndicatorView.cpp
         )
 
-# Add an explicit include path here so that react-juce's EcmascriptEngine can find
-# the included Duktape source. You can optionally point this elsewhere if you'd like to
-# include a custom Duktape build.
-target_include_directories(Os251 PRIVATE react_juce/)
-
 target_link_libraries(Os251 PUBLIC
         Os251Binaries
         juce::juce_audio_basics
@@ -143,7 +136,6 @@ target_link_libraries(Os251 PUBLIC
         juce::juce_graphics
         juce::juce_gui_basics
         juce::juce_gui_extra
-        react_juce
         )
 
 # Avoid link error on linux + gcc

@@ -63,7 +63,7 @@ private:
     //==============================================================================
     onsen::SynthParams synthParams;
     juce::AudioProcessorValueTreeState apvts;
-    juce::AudioPlayHead::CurrentPositionInfo positionInfo;
+    juce::AudioPlayHead::PositionInfo positionInfo;
     onsen::JucePositionInfo jucePositionInfo;
     onsen::Lfo lfo;
     std::vector<std::shared_ptr<onsen::ISynthVoice>> voices;
