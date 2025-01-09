@@ -120,14 +120,18 @@ void Os251AudioProcessorEditor::resized()
             sliders[paramName]->setBounds (x, y + yOffset, width, paramHeight - knobMargin);
             constexpr bool isReadOnly = true;
             sliders[paramName]->setTextBoxStyle (juce::Slider::TextBoxBelow, isReadOnly, width, textEntryBoxHeight);
-            sliderLabels[paramName]->setBounds (x, y + yOffset + sliders[paramName]->getHeight() - 14, width, textEntryBoxHeight);
+            constexpr unsigned int sliderLabelAdjustmentY = 14;
+            sliderLabels[paramName]->setBounds (x, y + yOffset + sliders[paramName]->getHeight() - sliderLabelAdjustmentY, width, textEntryBoxHeight);
             sliderLabels[paramName]->setJustificationType (juce::Justification::centred);
         }
         else /*(p.second == ParamType::BUTTON)*/
         {
             constexpr unsigned int buttonMarginX = 20;
             constexpr unsigned int buttonMarginY = 20;
-            buttons[paramName]->setBounds (x - 4, y + 12, paramWidth - buttonMarginX, paramHeight - buttonMarginY);
+            constexpr int buttonAdjustmentX = -4;
+            constexpr int buttonAdjustmentY = 12;
+
+            buttons[paramName]->setBounds (x + buttonAdjustmentX, y + buttonAdjustmentY, paramWidth - buttonMarginX, paramHeight - buttonMarginY);
             buttonLabels[paramName]->setBounds (x, y, textEntryBoxWidth, textEntryBoxHeight);
         }
 
@@ -154,6 +158,7 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
         headerHeight - headerContentsMarginY,
         juce::Justification::centredLeft);
 
+    // Draw rectangles for parameter rows
     for (int row = 0; row < paramLayout.size() / numCol + (paramLayout.size() % numCol ? 1 : 0); row++)
     {
         const unsigned int x /*of left top*/ = 0 + initX;
@@ -168,6 +173,7 @@ void Os251AudioProcessorEditor::paint (juce::Graphics& g)
         g.drawRoundedRectangle (bound, cornerSize, 1.5f);
     }
 
+    // Labels for parameter group
     for (int i = 0; i < paramLayout.size(); i++)
     {
         const auto& p = paramLayout[i];

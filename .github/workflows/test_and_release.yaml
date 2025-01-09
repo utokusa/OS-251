@@ -372,15 +372,15 @@ jobs:
 
     - id: set_upload_url
       run: |
-        upload_url=`cat ./upload_url`
-        echo ::set-output name=upload_url::$upload_url
+        upload_url=$(cat ./upload_url)
+        echo "upload_url=$upload_url" >> $GITHUB_ENV
     - name: Upload to Release
       id: upload_to_release
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
+        upload_url: ${{ env.upload_url }}
         asset_path: ./${{ github.event.repository.name }}-${{ matrix.config.artifact }}.${{ matrix.config.extention }}
         asset_name: ${{ github.event.repository.name }}-${{ matrix.config.artifact }}.${{ matrix.config.extention }}
         asset_content_type: ${{ matrix.config.contenttype }}
