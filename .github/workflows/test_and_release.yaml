@@ -351,7 +351,7 @@ jobs:
             extention: "zip", contenttype: "application/zip"
           }
         - {
-            name: "macOS Latest Clang", artifact: "macOS",
+            name: "macOS 13 Clang", artifact: "macOS",
             os: ubuntu-latest,
             extention: "dmg", contenttype: "application/octet-stream"
           }
@@ -359,13 +359,13 @@ jobs:
 
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v4
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.config.artifact }}
         path: ./
 
     - name: Download URL
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v4
       with:
         name: upload_url
         path: ./
@@ -376,7 +376,7 @@ jobs:
         echo "upload_url=$upload_url" >> $GITHUB_ENV
     - name: Upload to Release
       id: upload_to_release
-      uses: actions/upload-release-asset@v1.0.1
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
