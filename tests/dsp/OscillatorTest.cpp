@@ -15,6 +15,7 @@ namespace onsen
 {
 //==============================================================================
 // Oscillator
+// TODO: Add tests for anti-aliasing
 
 TEST (OscillatorTest, Sin)
 {
@@ -22,11 +23,11 @@ TEST (OscillatorTest, Sin)
     OscillatorParamsMock params { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     Oscillator osc (&params);
     // Note that sin's algle is twice angleRad parameter of ocillatorVal()
-    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0), 0.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0), 1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0), 0.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0), 0.5, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0, 0.5 * pi), 0.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0, 0.5 * pi), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0, 0.5 * pi), 0.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0, 0.5 * pi), 0.5, EPSILON);
 }
 
 TEST (OscillatorTest, Square)
@@ -35,11 +36,11 @@ TEST (OscillatorTest, Square)
     OscillatorParamsMock params { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
     Oscillator osc (&params);
     // Note that square's algle is twice angleRad parameter of ocillatorVal()
-    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0), 1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0), 1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0, 0.5 * pi), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0, 0.5 * pi), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0, 0.5 * pi), 1.0, EPSILON);
 }
 
 TEST (OscillatorTest, Saw)
@@ -48,11 +49,11 @@ TEST (OscillatorTest, Saw)
     OscillatorParamsMock params { 0.0, 0.0, 1.0, 0.0, 0.0, 0.0 };
     Oscillator osc (&params);
     // Note that saw's algle is twice angleRad parameter of ocillatorVal()
-    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0), -0.5, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0), 0.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0), 0.5, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0), -0.83333331346511841, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0) / 2.0, 0.0, 0.5 * pi), -0.5, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi) / 2.0, 0.0, 0.5 * pi), 0.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0) / 2.0, 0.0, 0.5 * pi), 0.5, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0) / 2.0, 0.0, 0.5 * pi), -0.83333331346511841, EPSILON);
 }
 
 TEST (OscillatorTest, SubSquare)
@@ -61,11 +62,11 @@ TEST (OscillatorTest, SubSquare)
     OscillatorParamsMock params { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 };
     Oscillator osc (&params);
 
-    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0), 1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0), 0.0), 1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi), 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0), 0.0), -1.0, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal (0.0, 0.0, 0.5 * pi), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 2.0), 0.0, 0.5 * pi), 1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi), 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi * 3.0 / 2.0), 0.0, 0.5 * pi), -1.0, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0, 0.5 * pi), 1.0, EPSILON);
 }
 
 TEST (OscillatorTest, Noise)
@@ -80,7 +81,7 @@ TEST (OscillatorTest, Noise)
     // Generate value and calculate mean
     for (int i = 0; i < n; ++i)
     {
-        flnum val = osc.oscillatorVal (0.0, 0.0);
+        flnum val = osc.oscillatorVal (0.0, 0.0, 0.5 * pi);
         EXPECT_LE (val, 1.0);
         EXPECT_GE (val, 0.0);
         vals.push_back (val);
@@ -114,23 +115,23 @@ TEST (OscillatorTest, ChangeShapeAndMixWaves)
     // Use lax epsilon because shape value is smoothed
     constexpr flnum LAX_EPSILON = 0.001;
 
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 2.1993587017059326, EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 2.5326919555664062, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0, 0.5 * pi), 2.1993587017059326, EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0, 0.5 * pi), 2.5326919555664062, EPSILON);
     params.shape = 0.5;
     // Wait for oscillatorVal becames stable
     for (int i = 0; i < NUM_UPDATE; i++)
     {
-        osc.oscillatorVal (0, 0.0);
+        osc.oscillatorVal (0, 0.0, 0.5 * pi);
     }
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.6666688919067383, LAX_EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 2.1997506618499756, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0, 0.5 * pi), 1.6666688919067383, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0, 0.5 * pi), 2.1997506618499756, LAX_EPSILON);
     params.shape = 1.0;
     // Wait for oscillatorVal becames stable
     for (int i = 0; i < NUM_UPDATE; i++)
     {
-        osc.oscillatorVal (0, 0.0);
+        osc.oscillatorVal (0, 0.0, 0.5 * pi);
     }
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0), 1.0000048875808716, LAX_EPSILON);
-    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0), 1.0012624263763428, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 6.0), 0.0, 0.5 * pi), 1.0000048875808716, LAX_EPSILON);
+    EXPECT_NEAR (osc.oscillatorVal ((pi / 3.0), 0.0, 0.5 * pi), 1.0012624263763428, LAX_EPSILON);
 }
 } // namespace onsen
